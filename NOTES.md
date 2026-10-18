@@ -17,10 +17,16 @@ brief's filename (e.g. `img/donuts/Donut-Menu-Choco-Glazed.webp`). The zip had n
 - Drinks: every cup scaled to the same cup-body width on a shared canvas, so cups match in size.
 - Extra "favorite" donut photos not in the brief's map were added under Homie's Favourites:
   Homers, Cookie Monster, Biscoff, Mille-Feuille, Mousse Cake, Maple, Pecan (names need confirming).
-- Not used: `Pink frosted rainbow sprinkle donut` (duplicate of Homers), `Biscoff biscuit-topped crumb donut`,
-  `Vibrant Cereal-Topped Donut Delight`, `Pink Donut Catering Spread`, `Three Donuts in a Long Bakery Box`,
-  `pizza donuts.png`, `Inviting storefront at twilight`, `Cozy ghost latte`, `Dubai Donut Hero Experience`
-  (a website mockup), `HalalFoodJunky.mp4`.
+- Hero: built from the two box photos supplied later (closed box + open box with donuts), saved to img/hero/.
+  The closed photo is split along the lid seam so the lid can lift off. Each donut in the open photo is its own
+  cut-out layer (img/hero/donut-*.webp) under a copy of the front/right walls, so hovered donuts lift behind the wall.
+- Catering: truck illustration (img/brand/truck.webp) + the catering spread photo.
+- Photo wall: display case, Choco Dubai trays, ghost latte, interior, three-donut box, neon sign, cereal donuts.
+- Menu page: pizza donut box photo as the Pizza Donuts banner.
+- Video: media/homies-halalfoodjunky.mp4 (compressed from HalalFoodJunky.mp4), credited to @HalalFoodJunky.
+  Confirm the creator is OK with it being re-hosted on the site.
+- Not used: Inviting storefront at twilight (shows a pink storefront; the real Dearborn exterior in the video is blue),
+  Dubai Donut Hero Experience (a website mockup), and duplicates (Pink frosted rainbow sprinkle, Biscoff crumb donut).
 - Shop photos used: display case, interior, neon sign. Confirm they were taken at the Dearborn shop.
 
 ## Facts used vs. left out
@@ -29,7 +35,8 @@ Left out until confirmed:
 - Hours (listings disagree: 9am–10:40pm, 9am–10:50pm, 9am–11pm, 6am–11pm). The site says "call for today's hours".
 - Official online ordering link (only DoorDash, Uber Eats and Yelp third-party listings were found).
 - Halal wording (brief filenames say "Halal Bacon"; images show beef bacon). Shown as "Bacon".
-- Drive-through, arcade, parking, seating, 30+ varieties, daily prep, food truck, app.
+- Drive-through (the creator video shows a box handed through a car window, but it is not advertised), arcade,
+  parking, seating, 30+ varieties, daily prep, food truck, app.
 - Catering: shown only as "call the shop to plan a big order".
 - "BEIGNEwiches" spelling: press coverage writes "beignwichs". Confirm the current branding.
 
@@ -37,5 +44,3 @@ Left out until confirmed:
 - Simpsonfont (Sharkshock): wired in from the DEMO file `fonts/Simpsonfont-DEMO.otf`, which is free for personal use only.
   A commercial licence (contact dennis@sharkshock.net, see sharkshock.net/license) is needed before launch.
   The demo has limited punctuation; missing characters fall back to Paytone One.
-- A real pink-box product photo: the hero box is built in CSS 3D around real donut cutouts. A studio photo of the
-  actual box, lid open at about 120°, could replace it later.

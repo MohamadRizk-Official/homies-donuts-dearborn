@@ -76,6 +76,7 @@ window.HOMIES_MENU = [
     title: 'Pizza Donuts',
     kicker: 'The savory side of the box',
     savory: true,
+    banner: { img: 'img/shop/pizza-donut-box.webp', alt: 'A pink box of six pizza donuts with cheese, pepperoni and ranch drizzle' },
     groups: [
       {
         id: 'pizza',

@@ -154,6 +154,7 @@
         el('div', {}, [el('span', { class: 'count', text: count + (cat.drinks ? ' drinks' : ' to choose from') })])
       ]);
       var wrap = el('div', { class: 'wrap' }, [head]);
+      if (cat.banner) wrap.appendChild(el('figure', { class: 'cat-banner reveal' }, [el('img', { src: cat.banner.img, alt: cat.banner.alt, loading: 'lazy', width: '1100', height: '733' })]));
       cat.groups.forEach(function (g) {
         var grid = el('div', { class: 'grid' + (cat.drinks ? ' grid--drinks' : ''), role: 'list' });
         g.items.forEach(function (it, i) {
@@ -202,6 +203,63 @@
       }, { rootMargin: '-45% 0px -50% 0px' });
       document.querySelectorAll('.menu-section').forEach(function (s) { spy.observe(s); });
     }
+  }
+
+  /* ---------------- Hero: the box opens ---------------- */
+  var heroBox = document.querySelector('[data-hero-box]');
+  if (heroBox) {
+    var setState = function (cls) { heroBox.classList.add(cls); };
+    if (reduceMotion) {
+      setState('is-open');
+    } else {
+      var imgs = Array.prototype.slice.call(heroBox.querySelectorAll('img'));
+      var ready = Promise.all(imgs.map(function (im) {
+        return im.decode ? im.decode().catch(function () {}) : Promise.resolve();
+      }));
+      // never leave the box shut if an image is slow
+      Promise.race([ready, new Promise(function (r) { setTimeout(r, 2500); })]).then(function () {
+        setState('is-in');
+        setTimeout(function () { setState('is-wiggle'); }, 750);
+        setTimeout(function () { setState('is-opening'); }, 1450);
+        setTimeout(function () { setState('is-open'); }, 2150);
+      });
+    }
+    // phones: tap a donut to make it pop for a moment
+    heroBox.querySelectorAll('.dz .hit').forEach(function (hit) {
+      hit.addEventListener('click', function () {
+        var dz = hit.parentElement;
+        heroBox.querySelectorAll('.dz.is-pop').forEach(function (d) { if (d !== dz) d.classList.remove('is-pop'); });
+        dz.classList.add('is-pop');
+        clearTimeout(dz._popT);
+        dz._popT = setTimeout(function () { dz.classList.remove('is-pop'); }, 1100);
+      });
+    });
+  }
+
+  /* ---------------- Creator video ---------------- */
+  var reel = document.querySelector('[data-reel]');
+  if (reel) {
+    var soundBtn = document.querySelector('[data-reel-sound]');
+    var soundLabel = document.querySelector('[data-reel-label]');
+    var userPaused = false;
+    if (!reduceMotion && 'IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (en.isIntersecting && !userPaused) { reel.play().catch(function () {}); }
+          else if (!en.isIntersecting) { reel.pause(); }
+        });
+      }, { threshold: 0.45 }).observe(reel);
+    }
+    reel.addEventListener('click', function () {
+      if (reel.paused) { userPaused = false; reel.play().catch(function () {}); }
+      else { userPaused = true; reel.pause(); }
+    });
+    soundBtn.addEventListener('click', function () {
+      reel.muted = !reel.muted;
+      if (!reel.muted && reel.paused) { userPaused = false; reel.play().catch(function () {}); }
+      soundBtn.setAttribute('aria-pressed', String(!reel.muted));
+      soundLabel.textContent = reel.muted ? 'Tap for sound' : 'Sound on';
+    });
   }
 
   /* ---------------- Reveal on scroll ---------------- */
