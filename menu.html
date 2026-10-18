@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Menu · Homie's Donuts Dearborn</title>
+  <meta name="description" content="The Homie's Donuts Dearborn menu: donuts, pizza donuts, BUNZ, BEIGNEwiches, desserts, milkshakes, matcha and tropical refreshers.">
+  <meta name="theme-color" content="#fde9ec">
+  <link rel="icon" type="image/png" href="img/brand/homies-logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Paytone+One&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <script>document.documentElement.classList.remove('no-js');</script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- ================= Header ================= -->
+  <header class="site-header" id="top">
+    <div class="bar">
+      <a class="brand" href="index.html" aria-label="Homie's Donuts home">
+        <img src="img/brand/homies-logo.webp" alt="Homie's" width="800" height="209">
+      </a>
+
+      <nav class="primary-nav" aria-label="Main">
+        <ul>
+          <li><a class="nav-link" href="index.html">Home</a></li>
+          <li class="has-mega">
+            <button class="nav-link" type="button" aria-expanded="false" aria-controls="mega-menu" data-mega-toggle aria-current="page">
+              Menu
+              <svg class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 6l4.5 4.5L12.5 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="mega" id="mega-menu" data-mega>
+              <!-- filled from the category list in main.js; static fallback below -->
+              <a class="mega-tile" data-cat="donuts" href="menu.html#donuts"><span class="thumb"><img src="img/donuts/Extra-Favourite-Homers.webp" alt=""></span><span><strong>Donuts</strong><small>Classics, signatures &amp; favourites</small></span></a>
+              <a class="mega-tile" data-cat="pizza-donuts" href="menu.html#pizza-donuts"><span class="thumb"><img src="img/pizza/Pepperoni-Cheese-Hot-Honey-Pizza-Donut.webp" alt=""></span><span><strong>Pizza Donuts</strong><small>Savory, cheesy &amp; golden</small></span></a>
+              <a class="mega-tile" data-cat="bunz" href="menu.html#bunz"><span class="thumb"><img src="img/bunz/BUNZ-Classic.webp" alt=""></span><span><strong>BUNZ</strong><small>Big, swirly cinnamon buns</small></span></a>
+              <a class="mega-tile" data-cat="beignewiches" href="menu.html#beignewiches"><span class="thumb"><img src="img/beignewiches/Savory-Donuts-Fried-Chicken-Pickle-Chipotle-Mayo.webp" alt=""></span><span><strong>BEIGNEwiches</strong><small>Stacked savory sandwiches</small></span></a>
+              <a class="mega-tile" data-cat="desserts" href="menu.html#desserts"><span class="thumb"><img src="img/desserts/Desserts-Macarons.webp" alt=""></span><span><strong>Desserts</strong><small>Dubai chocolate &amp; macarons</small></span></a>
+              <a class="mega-tile" data-cat="drinks" href="menu.html#drinks"><span class="thumb"><img src="img/drinks/Milkshakes-Strawberry.webp" alt=""></span><span><strong>Drinks</strong><small>Milkshakes, matcha &amp; refreshers</small></span></a>
+              <div class="mega-foot"><span>Fresh picks on Michigan Ave, Dearborn</span><a href="menu.html">See the full menu →</a></div>
+            </div>
+          </li>
+          <li><a class="nav-link" href="index.html#catering">Catering</a></li>
+          <li><a class="nav-link" href="index.html#visit">Visit Us</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <a class="btn btn--sm header-cta" href="https://www.google.com/maps/dir/?api=1&amp;destination=23780+Michigan+Ave%2C+Dearborn%2C+MI+48124" target="_blank" rel="noopener" data-primary-cta>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="12" cy="10" r="2.6" fill="currentColor"/></svg>
+          <span data-primary-cta-label>Get Directions</span>
+        </a>
+        <a class="icon-btn call-btn" href="tel:+13137224477" aria-label="Call Homie's Dearborn">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 3.5l2.6.4 1.3 4-1.9 1.4a12 12 0 0 0 6.1 6.1l1.4-1.9 4 1.3.4 2.6c.1 1-.7 1.9-1.7 1.9A16.8 16.8 0 0 1 4.7 5.2c0-1 .9-1.8 1.9-1.7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        </a>
+        <button class="icon-btn burger" type="button" aria-expanded="false" aria-controls="drawer" aria-label="Open menu" data-drawer-toggle>
+          <span class="b-lines" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile drawer -->
+  <div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Site menu" data-drawer>
+    <div class="drawer-top">
+      <img src="img/brand/homies-logo.webp" alt="Homie's">
+      <button class="icon-btn" type="button" aria-label="Close menu" data-drawer-close>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <nav aria-label="Mobile">
+      <ul>
+        <li><a class="drawer-link" href="index.html">Home <span aria-hidden="true">→</span></a></li>
+      </ul>
+      <p class="drawer-sub-title" id="drawer-menu-title">Menu</p>
+      <ul class="drawer-cats" aria-labelledby="drawer-menu-title">
+        <li><a data-cat="donuts" href="menu.html#donuts"><img src="img/donuts/Extra-Favourite-Homers.webp" alt="">Donuts</a></li>
+        <li><a data-cat="pizza-donuts" href="menu.html#pizza-donuts"><img src="img/pizza/Pepperoni-Cheese-Hot-Honey-Pizza-Donut.webp" alt="">Pizza Donuts</a></li>
+        <li><a data-cat="bunz" href="menu.html#bunz"><img src="img/bunz/BUNZ-Classic.webp" alt="">BUNZ</a></li>
+        <li><a data-cat="beignewiches" href="menu.html#beignewiches"><img src="img/beignewiches/Savory-Donuts-Fried-Chicken-Pickle-Chipotle-Mayo.webp" alt="">BEIGNEwiches</a></li>
+        <li><a data-cat="desserts" href="menu.html#desserts"><img src="img/desserts/Desserts-Macarons.webp" alt="">Desserts</a></li>
+        <li><a data-cat="drinks" href="menu.html#drinks"><img src="img/drinks/Milkshakes-Strawberry.webp" alt="">Drinks</a></li>
+      </ul>
+      <ul>
+        <li><a class="drawer-link" href="index.html#catering">Catering <span aria-hidden="true">→</span></a></li>
+        <li><a class="drawer-link" href="index.html#visit">Visit Us <span aria-hidden="true">→</span></a></li>
+      </ul>
+    </nav>
+    <div class="drawer-actions">
+      <a class="btn btn--cream" href="tel:+13137224477">Call us</a>
+      <a class="btn" href="https://www.google.com/maps/dir/?api=1&amp;destination=23780+Michigan+Ave%2C+Dearborn%2C+MI+48124" target="_blank" rel="noopener" data-primary-cta><span data-primary-cta-label>Directions</span></a>
+    </div>
+    <p class="drawer-address">23780 Michigan Ave, Dearborn, MI 48124</p>
+  </div>
+
+  <main id="main">
+    <section class="menu-hero" aria-labelledby="menu-title">
+      <div class="deco" aria-hidden="true" style="inset:0">
+        <span class="cloud" style="top:30%;left:-30px;transform:scale(.8)"></span>
+        <span class="cloud" style="top:16%;right:-20px;transform:scale(.6)"></span>
+        <span class="sprinkle" style="top:60%;left:14%;--c:var(--sky);--r:30deg"></span>
+        <span class="sprinkle" style="top:40%;right:14%;--c:var(--lemon);--r:-30deg;--d:-2s"></span>
+        <span class="sprinkle" style="top:76%;right:30%;--c:var(--pink);--r:70deg;--d:-4s"></span>
+      </div>
+      <div class="wrap">
+        <span class="eyebrow">Homie's Dearborn</span>
+        <h1 id="menu-title">The Menu</h1>
+        <p>Sweet rings, savory surprises and cups piled high. Jump to a category below.</p>
+      </div>
+    </section>
+
+    <nav class="cat-bar" aria-label="Menu categories">
+      <ul>
+        <li><a href="#donuts">Donuts</a></li>
+        <li><a href="#pizza-donuts">Pizza Donuts</a></li>
+        <li><a href="#bunz">BUNZ</a></li>
+        <li><a href="#beignewiches">BEIGNEwiches</a></li>
+        <li><a href="#desserts">Desserts</a></li>
+        <li><a href="#drinks">Drinks</a></li>
+      </ul>
+    </nav>
+
+    <div data-menu></div>
+    <noscript><p class="menu-note">Turn on JavaScript to see menu photos, or call (313) 722-4477.</p></noscript>
+    <p class="menu-note">Menu and availability can change day to day. Ask at the counter for today's lineup.</p>
+  </main>
+
+  <!-- ================= Footer ================= -->
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="foot-grid">
+        <div>
+          <img src="img/brand/homies-logo.webp" alt="Homie's">
+          <p style="margin-top:14px;max-width:34ch">Over-the-top donuts and more, on Michigan Avenue in Dearborn.</p>
+        </div>
+        <div>
+          <h4>Explore</h4>
+          <ul>
+            <li><a href="menu.html#donuts">Donuts</a></li>
+            <li><a href="menu.html#pizza-donuts">Pizza Donuts</a></li>
+            <li><a href="menu.html#bunz">BUNZ</a></li>
+            <li><a href="menu.html#beignewiches">BEIGNEwiches</a></li>
+            <li><a href="menu.html#desserts">Desserts</a></li>
+            <li><a href="menu.html#drinks">Drinks</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Visit</h4>
+          <ul>
+            <li>23780 Michigan Ave<br>Dearborn, MI 48124</li>
+            <li><a href="tel:+13137224477">(313) 722-4477</a></li>
+            <li><a href="index.html#catering">Catering</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot-note"><span>© 2026 Homie's Donuts</span><span>Menu and availability may vary by day.</span></div>
+    </div>
+  </footer>
+
+  <script src="js/menu-data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Homie's Donuts · Dearborn, Michigan Ave</title>
+  <meta name="description" content="Over-the-top donuts, savory pizza donuts, BUNZ, BEIGNEwiches and loaded milkshakes at Homie's Donuts, 23780 Michigan Ave, Dearborn, MI.">
+  <meta name="theme-color" content="#fde9ec">
+  <link rel="icon" type="image/png" href="img/brand/homies-logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Paytone+One&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <script>document.documentElement.classList.remove('no-js');</script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- ================= Header ================= -->
+  <header class="site-header" id="top">
+    <div class="bar">
+      <a class="brand" href="index.html" aria-label="Homie's Donuts home">
+        <img src="img/brand/homies-logo.webp" alt="Homie's" width="800" height="209">
+      </a>
+
+      <nav class="primary-nav" aria-label="Main">
+        <ul>
+          <li><a class="nav-link" href="index.html" aria-current="page">Home</a></li>
+          <li class="has-mega">
+            <button class="nav-link" type="button" aria-expanded="false" aria-controls="mega-menu" data-mega-toggle>
+              Menu
+              <svg class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 6l4.5 4.5L12.5 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="mega" id="mega-menu" data-mega>
+              <!-- filled from the category list in main.js; static fallback below -->
+              <a class="mega-tile" data-cat="donuts" href="menu.html#donuts"><span class="thumb"><img src="img/donuts/Extra-Favourite-Homers.webp" alt=""></span><span><strong>Donuts</strong><small>Classics, signatures &amp; favourites</small></span></a>
+              <a class="mega-tile" data-cat="pizza-donuts" href="menu.html#pizza-donuts"><span class="thumb"><img src="img/pizza/Pepperoni-Cheese-Hot-Honey-Pizza-Donut.webp" alt=""></span><span><strong>Pizza Donuts</strong><small>Savory, cheesy &amp; golden</small></span></a>
+              <a class="mega-tile" data-cat="bunz" href="menu.html#bunz"><span class="thumb"><img src="img/bunz/BUNZ-Classic.webp" alt=""></span><span><strong>BUNZ</strong><small>Big, swirly cinnamon buns</small></span></a>
+              <a class="mega-tile" data-cat="beignewiches" href="menu.html#beignewiches"><span class="thumb"><img src="img/beignewiches/Savory-Donuts-Fried-Chicken-Pickle-Chipotle-Mayo.webp" alt=""></span><span><strong>BEIGNEwiches</strong><small>Stacked savory sandwiches</small></span></a>
+              <a class="mega-tile" data-cat="desserts" href="menu.html#desserts"><span class="thumb"><img src="img/desserts/Desserts-Macarons.webp" alt=""></span><span><strong>Desserts</strong><small>Dubai chocolate &amp; macarons</small></span></a>
+              <a class="mega-tile" data-cat="drinks" href="menu.html#drinks"><span class="thumb"><img src="img/drinks/Milkshakes-Strawberry.webp" alt=""></span><span><strong>Drinks</strong><small>Milkshakes, matcha &amp; refreshers</small></span></a>
+              <div class="mega-foot"><span>Fresh picks on Michigan Ave, Dearborn</span><a href="menu.html">See the full menu →</a></div>
+            </div>
+          </li>
+          <li><a class="nav-link" href="index.html#catering">Catering</a></li>
+          <li><a class="nav-link" href="index.html#visit">Visit Us</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <a class="btn btn--sm header-cta" href="https://www.google.com/maps/dir/?api=1&amp;destination=23780+Michigan+Ave%2C+Dearborn%2C+MI+48124" target="_blank" rel="noopener" data-primary-cta>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="12" cy="10" r="2.6" fill="currentColor"/></svg>
+          <span data-primary-cta-label>Get Directions</span>
+        </a>
+        <a class="icon-btn call-btn" href="tel:+13137224477" aria-label="Call Homie's Dearborn">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 3.5l2.6.4 1.3 4-1.9 1.4a12 12 0 0 0 6.1 6.1l1.4-1.9 4 1.3.4 2.6c.1 1-.7 1.9-1.7 1.9A16.8 16.8 0 0 1 4.7 5.2c0-1 .9-1.8 1.9-1.7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        </a>
+        <button class="icon-btn burger" type="button" aria-expanded="false" aria-controls="drawer" aria-label="Open menu" data-drawer-toggle>
+          <span class="b-lines" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile drawer -->
+  <div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Site menu" data-drawer>
+    <div class="drawer-top">
+      <img src="img/brand/homies-logo.webp" alt="Homie's">
+      <button class="icon-btn" type="button" aria-label="Close menu" data-drawer-close>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <nav aria-label="Mobile">
+      <ul>
+        <li><a class="drawer-link" href="index.html">Home <span aria-hidden="true">→</span></a></li>
+      </ul>
+      <p class="drawer-sub-title" id="drawer-menu-title">Menu</p>
+      <ul class="drawer-cats" aria-labelledby="drawer-menu-title">
+        <li><a data-cat="donuts" href="menu.html#donuts"><img src="img/donuts/Extra-Favourite-Homers.webp" alt="">Donuts</a></li>
+        <li><a data-cat="pizza-donuts" href="menu.html#pizza-donuts"><img src="img/pizza/Pepperoni-Cheese-Hot-Honey-Pizza-Donut.webp" alt="">Pizza Donuts</a></li>
+        <li><a data-cat="bunz" href="menu.html#bunz"><img src="img/bunz/BUNZ-Classic.webp" alt="">BUNZ</a></li>
+        <li><a data-cat="beignewiches" href="menu.html#beignewiches"><img src="img/beignewiches/Savory-Donuts-Fried-Chicken-Pickle-Chipotle-Mayo.webp" alt="">BEIGNEwiches</a></li>
+        <li><a data-cat="desserts" href="menu.html#desserts"><img src="img/desserts/Desserts-Macarons.webp" alt="">Desserts</a></li>
+        <li><a data-cat="drinks" href="menu.html#drinks"><img src="img/drinks/Milkshakes-Strawberry.webp" alt="">Drinks</a></li>
+      </ul>
+      <ul>
+        <li><a class="drawer-link" href="index.html#catering">Catering <span aria-hidden="true">→</span></a></li>
+        <li><a class="drawer-link" href="index.html#visit">Visit Us <span aria-hidden="true">→</span></a></li>
+      </ul>
+    </nav>
+    <div class="drawer-actions">
+      <a class="btn btn--cream" href="tel:+13137224477">Call us</a>
+      <a class="btn" href="https://www.google.com/maps/dir/?api=1&amp;destination=23780+Michigan+Ave%2C+Dearborn%2C+MI+48124" target="_blank" rel="noopener" data-primary-cta><span data-primary-cta-label>Directions</span></a>
+    </div>
+    <p class="drawer-address">23780 Michigan Ave, Dearborn, MI 48124</p>
+  </div>
+
+  <main id="main">
+    <!-- ================= Hero ================= -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="deco" aria-hidden="true" style="inset:0">
+        <span class="cloud c1"></span><span class="cloud c2"></span><span class="cloud c3"></span>
+        <svg class="balloon b1" viewBox="0 0 80 120"><g><circle cx="40" cy="38" r="34" fill="#f37fb0"/><circle cx="40" cy="38" r="12" fill="#fde9ec"/><circle cx="40" cy="38" r="34" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="3" stroke-dasharray="2 9"/><path d="M22 20q4-4 8-2M52 16q5 1 7 5M60 40q2 5-1 9M20 50q2 5 6 7M44 64q5-1 8-4" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M48 14l2 6M27 30l5 2M58 30l-4 3M30 58l3-4" stroke="#ffc83d" stroke-width="3" stroke-linecap="round"/><path d="M26 66l8 30M54 66l-8 30" stroke="#c9937f" stroke-width="1.6"/><rect x="31" y="94" width="18" height="14" rx="3" fill="#c98a5a"/><rect x="31" y="94" width="18" height="4" rx="2" fill="#a86a40"/></g></svg>
+        <span class="sprinkle" style="top:22%;left:46%;--c:var(--sky);--r:30deg"></span>
+        <span class="sprinkle" style="top:70%;left:6%;--c:var(--lemon);--r:-20deg;--d:-2s"></span>
+        <span class="sprinkle" style="top:12%;left:30%;--c:var(--pink);--r:70deg;--d:-4s"></span>
+        <span class="sprinkle" style="top:84%;left:52%;--c:var(--mint);--r:10deg;--d:-1s"></span>
+        <span class="sprinkle" style="top:40%;left:96%;--c:var(--lilac);--r:-50deg;--d:-3s"></span>
+        <svg class="twinkle" style="top:30%;left:8%" viewBox="0 0 20 20"><path d="M10 0l2.4 7.6L20 10l-7.6 2.4L10 20l-2.4-7.6L0 10l7.6-2.4z" fill="currentColor"/></svg>
+        <svg class="twinkle" style="top:76%;right:12%;--d:-1.4s;color:var(--sky)" viewBox="0 0 20 20"><path d="M10 0l2.4 7.6L20 10l-7.6 2.4L10 20l-2.4-7.6L0 10l7.6-2.4z" fill="currentColor"/></svg>
+      </div>
+
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <span class="hero-hello fun">Hey homie!</span>
+          <h1 id="hero-title">Your donut daydream lives on
+            <span class="pop">Michigan Ave.<svg viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true"><path d="M3 14 Q 40 2 78 12 T 152 12 T 226 12 T 297 8" fill="none" stroke="#ffc83d" stroke-width="6" stroke-linecap="round"/></svg></span>
+          </h1>
+          <p class="hero-lede">Wild, wonderful donuts, golden pizza donuts, swirly BUNZ, stacked BEIGNEwiches and loaded milkshakes. Come hungry, leave happy.</p>
+          <div class="hero-ctas">
+            <a class="btn" href="menu.html">Explore the menu
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <a class="btn btn--cream" href="#visit">Plan your visit</a>
+          </div>
+          <a class="hero-chip" href="#visit">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z" fill="currentColor"/><circle cx="12" cy="10" r="2.6" fill="#fff"/></svg>
+            23780 Michigan Ave, Dearborn
+          </a>
+        </div>
+
+        <!-- The pink box: built in CSS 3D; every donut is a real product photo -->
+        <div class="box-stage" role="img" aria-label="An open pink Homie's donut box holding six donuts: Cookie Monster, Homers, Dubai, Pumpkin Spice, Elmo and Choco Sprinkles">
+          <div class="box-float">
+            <div class="box-shadow"></div>
+            <div class="scene">
+              <div class="box">
+                <div class="b-floor">
+                  <div class="face">
+                    <span class="spot" style="left:19%;top:30%"></span>
+                    <span class="spot" style="left:50%;top:30%"></span>
+                    <span class="spot" style="left:81%;top:30%"></span>
+                    <span class="spot" style="left:19%;top:72%"></span>
+                    <span class="spot" style="left:50%;top:72%"></span>
+                    <span class="spot" style="left:81%;top:72%"></span>
+                  </div>
+                </div>
+                <div class="b-back"><div class="face in cream-board"></div><div class="face out pink-board" style="transform:rotateY(180deg)"></div></div>
+                <div class="b-left"><div class="face out pink-board"></div><div class="face in cream-board"></div><span class="rim"></span></div>
+                <div class="b-right"><div class="face out pink-board"></div><div class="face in cream-board"></div><span class="rim"></span></div>
+
+                <div class="b-lid">
+                  <div class="face in">
+                    <div class="lid-print">
+                      <img src="img/brand/homies-logo.webp" alt="">
+                      <span>made in the neighbourhood</span>
+                    </div>
+                    <div class="lid-gloss"></div>
+                  </div>
+                  <div class="face out pink-board"></div>
+                  <span class="lid-edge"></span><span class="lid-side l"></span><span class="lid-side r"></span>
+                </div>
+
+                <!-- back row -->
+                <div class="dn" style="--x:calc(-158 * var(--u));--z:calc(-70 * var(--u));--sz:calc(170 * var(--u));--sy:.8;--dl:.7s"><img src="img/donuts/Extra-Favourite-Cookie-Monster.webp" alt=""></div>
+                <div class="dn" style="--x:0px;--z:calc(-70 * var(--u));--sz:calc(172 * var(--u));--sy:.8;--dl:.78s"><img src="img/donuts/Extra-Favourite-Homers.webp" alt=""></div>
+                <div class="dn" style="--x:calc(158 * var(--u));--z:calc(-70 * var(--u));--sz:calc(170 * var(--u));--sy:.8;--dl:.86s"><img src="img/donuts/Donut-Menu-Dubai.webp" alt=""></div>
+                <!-- front row -->
+                <div class="dn" style="--x:calc(-158 * var(--u));--z:calc(70 * var(--u));--sz:calc(166 * var(--u));--sy:.86;--dl:.94s"><img src="img/donuts/New-Pumpkin-Spice-Donut.webp" alt=""></div>
+                <div class="dn" style="--x:0px;--z:calc(70 * var(--u));--sz:calc(170 * var(--u));--sy:.78;--dl:1.02s"><img src="img/donuts/Homies-Favourites-Elmo-Donut.webp" alt=""></div>
+                <div class="dn" style="--x:calc(158 * var(--u));--z:calc(70 * var(--u));--sz:calc(166 * var(--u));--sy:.8;--dl:1.1s"><img src="img/donuts/Donut-Menu-Choco-Sprinkles.webp" alt=""></div>
+
+                <div class="b-front">
+                  <div class="face out pink-board">
+                    <span class="label"><img src="img/brand/homies-logo.webp" alt=""></span>
+                  </div>
+                  <span class="rim"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= Ribbon ================= -->
+    <div class="ribbon" aria-hidden="true">
+      <div class="ribbon-track">
+        <ul><li>Donuts</li><li>Pizza Donuts</li><li>BUNZ</li><li>BEIGNEwiches</li><li>Desserts</li><li>Milkshakes</li><li>Matcha</li><li>Refreshers</li></ul>
+        <ul><li>Donuts</li><li>Pizza Donuts</li><li>BUNZ</li><li>BEIGNEwiches</li><li>Desserts</li><li>Milkshakes</li><li>Matcha</li><li>Refreshers</li></ul>
+      </div>
+    </div>
+
+    <!-- ================= Display case (donut-first) ================= -->
+    <section class="case-section" aria-labelledby="case-title">
+      <div class="deco" aria-hidden="true" style="inset:0">
+        <span class="sprinkle" style="top:8%;left:12%;--c:var(--pink);--r:40deg"></span>
+        <span class="sprinkle" style="top:14%;right:10%;--c:var(--sky);--r:-30deg;--d:-3s"></span>
+        <svg class="twinkle" style="top:6%;right:24%;--d:-.6s" viewBox="0 0 20 20"><path d="M10 0l2.4 7.6L20 10l-7.6 2.4L10 20l-2.4-7.6L0 10l7.6-2.4z" fill="currentColor"/></svg>
+      </div>
+      <div class="wrap">
+        <div class="section-head reveal">
+          <span class="eyebrow">The display case</span>
+          <h2 id="case-title">Pick a shelf, <span class="squiggle">any shelf</span></h2>
+          <p>Classics that never miss, favourites with personality, and something new for the season. Here's a peek at what's in the case.</p>
+        </div>
+
+        <div class="case reveal">
+          <div class="case-awning" aria-hidden="true"></div>
+          <div data-shelves></div>
+          <div class="case-foot">
+            <a class="btn" href="menu.html#donuts">See every donut
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= Beyond the donut ================= -->
+    <section class="beyond" aria-labelledby="beyond-title">
+      <div class="deco" aria-hidden="true" style="inset:0">
+        <span class="cloud" style="top:6%;right:-30px;transform:scale(.8)"></span>
+        <span class="sprinkle" style="bottom:10%;left:4%;--c:var(--tangerine);--r:60deg"></span>
+      </div>
+      <div class="wrap">
+        <div class="section-head reveal">
+          <span class="eyebrow">Beyond the donut</span>
+          <h2 id="beyond-title">The whole box of tricks</h2>
+          <p>Sweet, savory, sippable. Tap a category to jump right into the menu.</p>
+        </div>
+        <div class="tiles">
+          <a class="tile reveal" data-cat="pizza-donuts" href="menu.html#pizza-donuts">
+            <div class="tile-text"><span class="badge-savory">Savory</span><h3>Pizza Donuts</h3><p>Cheesy, golden and donut-shaped.</p><span class="go">See pizza donuts <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+            <div class="tile-pics"><img src="img/pizza/Pepperoni-Cheese-Hot-Honey-Pizza-Donut.webp" alt=""><img src="img/pizza/Jalapeno-Cheddar-Ranch-Pizza-Donut.webp" alt=""></div>
+          </a>
+          <a class="tile reveal" data-cat="bunz" href="menu.html#bunz" style="--rd:.08s">
+            <div class="tile-text"><h3>BUNZ</h3><p>Big, swirly cinnamon buns with all the toppings.</p><span class="go">See BUNZ <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+            <div class="tile-pics"><img src="img/bunz/BUNZ-Caramel-Pecan.webp" alt=""><img src="img/bunz/BUNZ-Pistachio-Raspberry.webp" alt=""></div>
+          </a>
+          <a class="tile reveal" data-cat="beignewiches" href="menu.html#beignewiches">
+            <div class="tile-text"><span class="badge-savory">Savory</span><h3>BEIGNEwiches</h3><p>Stacked sandwiches on a glazed bun.</p><span class="go">See BEIGNEwiches <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+            <div class="tile-pics"><img src="img/beignewiches/Savory-Donuts-Cheeseburger.webp" alt=""><img src="img/beignewiches/Savory-Donuts-Egg-and-Cheese.webp" alt=""></div>
+          </a>
+          <a class="tile reveal" data-cat="desserts" href="menu.html#desserts" style="--rd:.08s">
+            <div class="tile-text"><h3>Desserts</h3><p>Dubai chocolate and rainbow macarons.</p><span class="go">See desserts <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+            <div class="tile-pics"><img src="img/desserts/Desserts-Macarons.webp" alt=""><img src="img/desserts/Desserts-Dubai-Chocolate.webp" alt=""></div>
+          </a>
+          <a class="tile reveal" data-cat="drinks" href="menu.html#drinks" style="--rd:.16s">
+            <div class="tile-text"><h3>Drinks</h3><p>Milkshakes, matcha and tropical refreshers.</p><span class="go">See drinks <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+            <div class="tile-pics cups"><img src="img/drinks/Milkshakes-Bubblegum.webp" alt=""><img src="img/drinks/Matcha-Strawberry.webp" alt=""><img src="img/drinks/Tropical-Drinks-Mango.webp" alt=""></div>
+          </a>
+          <a class="tile reveal" data-cat="donuts" href="menu.html#donuts" style="--rd:.24s">
+            <div class="tile-text"><h3>All the Donuts</h3><p>Classics, signatures, favourites and seasonal drops.</p><span class="go">See donuts <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+            <div class="tile-pics"><img src="img/donuts/Donut-Menu-Creme-Brulee.webp" alt=""><img src="img/donuts/Donut-Menu-Pistachio.webp" alt=""></div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= Peek inside ================= -->
+    <section class="peek" aria-labelledby="peek-title">
+      <svg class="drip deco" style="top:-1px;left:0;right:0;position:absolute" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0h1440v22c-30 0-34 26-60 26s-26-22-58-22-30 34-62 34-30-30-60-30-40 14-70 14-30-18-62-18-36 30-68 30-28-24-60-24-40 12-72 12-30-20-62-20-34 28-66 28-30-26-62-26-38 16-70 16-32-22-64-22-30 30-62 30-32-28-64-28-36 14-68 14-30-20-62-20-34 26-66 26-28-24-58-24-40 10-72 10-30-22-60-22-36 18-68 18-30-18-62-18V0z" fill="#fdf0f1"/></svg>
+      <div class="wrap">
+        <div class="section-head reveal">
+          <span class="eyebrow">Come say hi</span>
+          <h2 id="peek-title">A peek inside Homie's</h2>
+          <p>Trays stacked high, pink booths, and a neon sign that says it all.</p>
+        </div>
+        <div class="polaroids">
+          <figure class="polaroid reveal" style="--rot:-3deg"><img src="img/shop/display-case.webp" alt="Donut display case with Lemon Crumble, Biscoff, Reese's and Dulce de Leche trays" loading="lazy"><figcaption>Fresh trays</figcaption></figure>
+          <figure class="polaroid reveal" style="--rot:2deg;--rd:.08s"><img src="img/shop/interior.webp" alt="Pink booths, balloons and a checkered floor inside the shop" loading="lazy"><figcaption>Pink booths</figcaption></figure>
+          <figure class="polaroid reveal" style="--rot:-1.5deg;--rd:.16s"><img src="img/shop/neon-sign.webp" alt="Neon sign reading Homies, made in the neighbourhood, with a giant blue sprinkle donut" loading="lazy"><figcaption>Made in the neighbourhood</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= Visit Us ================= -->
+    <section class="visit" id="visit" aria-labelledby="visit-title">
+      <div class="deco" aria-hidden="true" style="inset:0">
+        <span class="sprinkle" style="top:10%;left:6%;--c:var(--sky);--r:-40deg"></span>
+        <span class="sprinkle" style="top:18%;right:8%;--c:var(--pink);--r:20deg;--d:-2s"></span>
+      </div>
+      <div class="wrap">
+        <div class="section-head reveal">
+          <span class="eyebrow">Visit us</span>
+          <h2 id="visit-title">Find us in West Dearborn</h2>
+        </div>
+        <div class="visit-grid">
+          <div class="visit-card reveal">
+            <span class="fun">See you soon!</span>
+            <h3>Homie's Dearborn</h3>
+            <ul class="info-list">
+              <li>
+                <span class="info-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="10" r="2.6" fill="currentColor"/></svg></span>
+                <div><strong>Address</strong><a href="https://www.google.com/maps/search/?api=1&amp;query=23780+Michigan+Ave%2C+Dearborn%2C+MI+48124" target="_blank" rel="noopener">23780 Michigan Ave<br>Dearborn, MI 48124</a></div>
+              </li>
+              <li>
+                <span class="info-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 3.5l2.6.4 1.3 4-1.9 1.4a12 12 0 0 0 6.1 6.1l1.4-1.9 4 1.3.4 2.6c.1 1-.7 1.9-1.7 1.9A16.8 16.8 0 0 1 4.7 5.2c0-1 .9-1.8 1.9-1.7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></span>
+                <div><strong>Phone</strong><a href="tel:+13137224477">(313) 722-4477</a></div>
+              </li>
+              <li>
+                <span class="info-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7v5l3 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+                <!-- HOURS: listings disagree (9–10:40pm / 9–10:50pm / 9–11pm / 6am–11pm). Replace once the shop confirms. -->
+                <div><strong>Hours</strong><span data-hours>Give us a call for today's hours.</span></div>
+              </li>
+            </ul>
+            <div class="visit-actions">
+              <a class="btn" href="https://www.google.com/maps/dir/?api=1&amp;destination=23780+Michigan+Ave%2C+Dearborn%2C+MI+48124" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l18-8-8 18-2-8-8-2z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg>
+                Get directions
+              </a>
+              <a class="btn btn--cream" href="tel:+13137224477">Call the shop</a>
+              <a class="btn btn--sky" href="#" data-order-cta hidden>Order online</a>
+            </div>
+          </div>
+          <div class="map-frame reveal" style="--rd:.1s">
+            <iframe title="Map showing Homie's Donuts at 23780 Michigan Ave, Dearborn" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+              src="https://www.google.com/maps?q=23780+Michigan+Ave,+Dearborn,+MI+48124&amp;output=embed"></iframe>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= Catering (small) ================= -->
+    <section class="catering" id="catering" aria-labelledby="catering-title">
+      <div class="wrap">
+        <div class="cater-card reveal">
+          <div>
+            <span class="eyebrow">Catering</span>
+            <h2 id="catering-title">Feeding a whole crew?</h2>
+            <p>Birthdays, office mornings, family get-togethers. Give the shop a ring to talk big orders and what works for your day.</p>
+            <a class="btn btn--lemon" href="tel:+13137224477">Call to plan an order</a>
+          </div>
+          <div class="cater-pics" aria-hidden="true">
+            <img src="img/donuts/Donut-Menu-Lil-Homies.webp" alt="">
+            <img src="img/desserts/Desserts-Macarons.webp" alt="">
+            <img src="img/donuts/Extra-Favourite-Cookie-Monster.webp" alt="">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= Closing ================= -->
+    <section class="closing" aria-labelledby="closing-title">
+      <div class="deco" aria-hidden="true" style="inset:0">
+        <span class="cloud" style="top:12%;left:-20px;transform:scale(.8)"></span>
+        <span class="cloud" style="top:24%;right:-30px;transform:scale(.6)"></span>
+        <svg class="twinkle" style="top:16%;left:30%" viewBox="0 0 20 20"><path d="M10 0l2.4 7.6L20 10l-7.6 2.4L10 20l-2.4-7.6L0 10l7.6-2.4z" fill="currentColor"/></svg>
+        <svg class="twinkle" style="top:36%;right:22%;--d:-1.2s;color:var(--sky)" viewBox="0 0 20 20"><path d="M10 0l2.4 7.6L20 10l-7.6 2.4L10 20l-2.4-7.6L0 10l7.6-2.4z" fill="currentColor"/></svg>
+      </div>
+      <div class="wrap reveal">
+        <span class="hero-hello fun">Save room for one more</span>
+        <h2 id="closing-title">See you on Michigan Ave.</h2>
+        <p>Bring the kids, bring the crew, bring an appetite. The case is waiting.</p>
+        <div class="hero-ctas" style="justify-content:center">
+          <a class="btn" href="menu.html">Browse the menu</a>
+          <a class="btn btn--cream" href="https://www.google.com/maps/dir/?api=1&amp;destination=23780+Michigan+Ave%2C+Dearborn%2C+MI+48124" target="_blank" rel="noopener">Get directions</a>
+        </div>
+      </div>
+      <div class="hills" aria-hidden="true">
+        <svg viewBox="0 0 1200 150" preserveAspectRatio="xMidYMax slice">
+          <ellipse cx="120" cy="170" rx="220" ry="110" fill="#a6e6cf"/>
+          <ellipse cx="1080" cy="175" rx="240" ry="120" fill="#cbb9ff"/>
+          <ellipse cx="600" cy="190" rx="420" ry="120" fill="#f9cfd7"/>
+          <ellipse cx="360" cy="180" rx="200" ry="80" fill="#ffd9a8"/>
+          <ellipse cx="860" cy="182" rx="210" ry="86" fill="#dcf1fb"/>
+          <!-- lollipop trees -->
+          <g><rect x="196" y="58" width="5" height="60" rx="2" fill="#fff"/><circle cx="198.5" cy="52" r="20" fill="#ef4f93"/><path d="M198.5 52m-12 0a12 12 0 1 0 24 0a8 8 0 1 0-16 0a4 4 0 1 0 8 0" fill="none" stroke="#fff" stroke-width="3"/></g>
+          <g><rect x="986" y="60" width="5" height="60" rx="2" fill="#fff"/><circle cx="988.5" cy="54" r="18" fill="#5fc2ef"/><path d="M988.5 54m-11 0a11 11 0 1 0 22 0a7 7 0 1 0-14 0a3.5 3.5 0 1 0 7 0" fill="none" stroke="#fff" stroke-width="3"/></g>
+          <!-- tiny donut shop -->
+          <g transform="translate(560 40)">
+            <rect x="0" y="34" width="84" height="56" rx="6" fill="#fff8f0"/>
+            <path d="M-6 36h96l-8-18H2z" fill="#ef4f93"/>
+            <path d="M2 18h10l-4 18H-6zM22 18h10l2 18H18zM42 18h10l6 18H40zM62 18h10l10 18H62z" fill="#fff"/>
+            <circle cx="42" cy="6" r="14" fill="#5fc2ef"/><circle cx="42" cy="6" r="5" fill="#f9cfd7"/>
+            <rect x="12" y="52" width="22" height="38" rx="4" fill="#f9cfd7"/>
+            <rect x="44" y="50" width="30" height="20" rx="4" fill="#dcf1fb"/>
+          </g>
+        </svg>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= Footer ================= -->
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="foot-grid">
+        <div>
+          <img src="img/brand/homies-logo.webp" alt="Homie's">
+          <p style="margin-top:14px;max-width:34ch">Over-the-top donuts and more, on Michigan Avenue in Dearborn.</p>
+        </div>
+        <div>
+          <h4>Explore</h4>
+          <ul>
+            <li><a href="menu.html#donuts">Donuts</a></li>
+            <li><a href="menu.html#pizza-donuts">Pizza Donuts</a></li>
+            <li><a href="menu.html#bunz">BUNZ</a></li>
+            <li><a href="menu.html#beignewiches">BEIGNEwiches</a></li>
+            <li><a href="menu.html#desserts">Desserts</a></li>
+            <li><a href="menu.html#drinks">Drinks</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Visit</h4>
+          <ul>
+            <li>23780 Michigan Ave<br>Dearborn, MI 48124</li>
+            <li><a href="tel:+13137224477">(313) 722-4477</a></li>
+            <li><a href="index.html#catering">Catering</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot-note"><span>© 2026 Homie's Donuts</span><span>Menu and availability may vary by day.</span></div>
+    </div>
+  </footer>
+
+  <script src="js/menu-data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
