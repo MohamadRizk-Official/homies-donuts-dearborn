@@ -3,15 +3,19 @@
   'use strict';
 
   /* ------------------------------------------------------------------
-     Site settings. Fill these in once the shop confirms them.
-     orderUrl: leave empty until there is an official ordering link.
-     When set, the header button becomes "Order Online" and the
-     Visit section shows an Order button.
+     Site settings: the one place to change ordering, phone and hours.
+     orderUrl: Homie's Dearborn listing on DoorDash (the only online
+     ordering destination found for 23780 Michigan Ave). If it is ever
+     cleared, every "Order Now" falls back to calling the shop.
+     phone: matches Apple Maps, Yahoo Local and directory listings.
   ------------------------------------------------------------------ */
-  var SITE = {
-    orderUrl: '',
+  var SITE = window.HOMIES_SITE = {
+    orderUrl: 'https://www.doordash.com/store/homie%E2%80%99s-dearborn-dearborn-50915197/',
+    phone: '+13137224477',
+    phoneLabel: '(313) 722-4477',
     hours: '' // e.g. 'Open daily · 9am – 11pm'
   };
+  SITE.orderHref = SITE.orderUrl || ('tel:' + SITE.phone);
 
   var menu = window.HOMIES_MENU || [];
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -38,16 +42,10 @@
   }
 
   /* ---------------- Settings → page ---------------- */
-  if (SITE.orderUrl) {
-    document.querySelectorAll('[data-primary-cta]').forEach(function (a) {
-      a.href = SITE.orderUrl;
-      var label = a.querySelector('[data-primary-cta-label]');
-      if (label) label.textContent = 'Order Online';
-    });
-    document.querySelectorAll('[data-order-cta]').forEach(function (a) {
-      a.href = SITE.orderUrl; a.hidden = false; a.target = '_blank'; a.rel = 'noopener';
-    });
-  }
+  document.querySelectorAll('[data-order-link], [data-order-cta]').forEach(function (a) {
+    a.href = SITE.orderHref; a.hidden = false;
+    if (SITE.orderUrl) { a.target = '_blank'; a.rel = 'noopener'; }
+  });
   if (SITE.hours) {
     document.querySelectorAll('[data-hours]').forEach(function (s) { s.textContent = SITE.hours; });
   }
@@ -93,7 +91,7 @@
       drawerBtn.setAttribute('aria-expanded', String(open));
       drawerBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
       drawer.classList.toggle('is-open', open);
-      document.body.classList.toggle('no-scroll', open);
+      document.documentElement.classList.toggle('no-scroll', open);
       if (open) {
         lastFocus = document.activeElement;
         setTimeout(function () { var f = drawer.querySelector('a, button'); if (f) f.focus(); }, 60);
@@ -129,7 +127,7 @@
       s.items.forEach(function (name) {
         var it = findItem('donuts', name);
         if (!it) return;
-        row.appendChild(el('div', { class: 'shelf-item', role: 'listitem' }, [
+        row.appendChild(el('div', { class: 'shelf-item', role: 'listitem', 'data-product': it.name, 'data-cat-id': 'donuts' }, [
           el('div', { class: 'pic' }, [el('img', { src: it.img, alt: it.name + ' donut', loading: si > 0 ? 'lazy' : 'eager', width: '380', height: '330' })]),
           el('span', { class: 'tagline', text: it.name })
         ]));
@@ -150,7 +148,7 @@
       var head = el('div', { class: 'section-head reveal' }, [
         el('span', { class: 'eyebrow', text: cat.kicker }),
         el('h2', { id: cat.id + '-title', text: cat.title }),
-        cat.savory ? el('span', { class: 'savory-note', text: 'Savory side' }) : null,
+        
         el('div', {}, [el('span', { class: 'count', text: count + (cat.drinks ? ' drinks' : ' to choose from') })])
       ]);
       var wrap = el('div', { class: 'wrap' }, [head]);
@@ -158,7 +156,8 @@
       cat.groups.forEach(function (g) {
         var grid = el('div', { class: 'grid' + (cat.drinks ? ' grid--drinks' : ''), role: 'list' });
         g.items.forEach(function (it, i) {
-          var fig = el('figure', { class: 'card reveal', role: 'listitem', style: '--rd:' + (Math.min(i, 7) * 0.04) + 's' }, [
+          var fig = el('figure', { class: 'card reveal' + (cat.savory ? ' card--savory' : '') + (cat.id === 'beignewiches' ? ' card--wide' : ''), role: 'listitem', style: '--rd:' + (Math.min(i, 7) * 0.04) + 's', 'data-product': it.name, 'data-cat-id': cat.id }, [
+            cat.savory ? el('span', { class: 'ribbon-savory', 'aria-hidden': 'true' }, [el('span', { text: 'Savory' })]) : null,
             it.tag ? el('span', { class: 'tag', 'data-tag': it.tag, text: it.tag }) : null,
             el('div', { class: 'plate' }, [el('img', { src: it.img, alt: it.name + (cat.drinks ? '' : ' — ' + cat.title.replace(/s$/, '')), loading: 'lazy', width: cat.drinks ? '440' : '600', height: cat.drinks ? '860' : '600' })]),
             el('figcaption', { text: it.name })
@@ -172,7 +171,13 @@
         if (!g.title) group.removeAttribute('id');
         wrap.appendChild(group);
       });
-      menuHost.appendChild(el('section', { class: 'menu-section', id: cat.id, 'aria-labelledby': cat.id + '-title' }, [wrap]));
+      var SWIRLS = { 'donuts': '4%,6%,#f4b3c2;84%,52%,#ffd9a8', 'pizza-donuts': '82%,8%,#ffb79d;3%,60%,#bfe0a9', 'bunz': '5%,10%,#e9b874;80%,64%,#f4cfa5', 'beignewiches': '84%,6%,#ffd86a;4%,58%,#f6c98a', 'desserts': '6%,14%,#cbb9ff;82%,60%,#ffc2d6', 'drinks': '80%,4%,#a9dff6;4%,48%,#ffd6e6' };
+      var BALLOONS = { 'donuts': '1,40', 'bunz': '94,30', 'desserts': '2,24', 'drinks': '95,58' };
+      var fx = el('div', { class: 'sec-fx', 'aria-hidden': 'true' }, [el('span', { class: 'sec-rays' })]);
+      for (var sp = 0; sp < 7; sp++) fx.appendChild(el('span', { class: 'sec-sprinkle', style: '--x:' + (5 + (sp * 37) % 90) + '%;--y:' + (8 + (sp * 53) % 84) + '%;--c:' + ['#ef4f93', '#ffc83d', '#5fc2ef', '#7ad36b', '#cbb9ff'][sp % 5] + ';--r:' + (sp * 47 % 180) + 'deg;--d:' + (-sp * 1.7) + 's' }));
+      var secAttrs = { class: 'menu-section', id: cat.id, 'aria-labelledby': cat.id + '-title', 'data-swirls': SWIRLS[cat.id] || '' };
+      if (BALLOONS[cat.id]) secAttrs['data-balloons'] = BALLOONS[cat.id];
+      menuHost.appendChild(el('section', secAttrs, [fx, wrap]));
     });
 
     // re-apply hash scroll now that sections exist
@@ -203,37 +208,6 @@
       }, { rootMargin: '-45% 0px -50% 0px' });
       document.querySelectorAll('.menu-section').forEach(function (s) { spy.observe(s); });
     }
-  }
-
-  /* ---------------- Hero: the box opens ---------------- */
-  var heroBox = document.querySelector('[data-hero-box]');
-  if (heroBox) {
-    var setState = function (cls) { heroBox.classList.add(cls); };
-    if (reduceMotion) {
-      setState('is-open');
-    } else {
-      var imgs = Array.prototype.slice.call(heroBox.querySelectorAll('img'));
-      var ready = Promise.all(imgs.map(function (im) {
-        return im.decode ? im.decode().catch(function () {}) : Promise.resolve();
-      }));
-      // never leave the box shut if an image is slow
-      Promise.race([ready, new Promise(function (r) { setTimeout(r, 2500); })]).then(function () {
-        setState('is-in');
-        setTimeout(function () { setState('is-wiggle'); }, 750);
-        setTimeout(function () { setState('is-opening'); }, 1450);
-        setTimeout(function () { setState('is-open'); }, 2150);
-      });
-    }
-    // phones: tap a donut to make it pop for a moment
-    heroBox.querySelectorAll('.dz .hit').forEach(function (hit) {
-      hit.addEventListener('click', function () {
-        var dz = hit.parentElement;
-        heroBox.querySelectorAll('.dz.is-pop').forEach(function (d) { if (d !== dz) d.classList.remove('is-pop'); });
-        dz.classList.add('is-pop');
-        clearTimeout(dz._popT);
-        dz._popT = setTimeout(function () { dz.classList.remove('is-pop'); }, 1100);
-      });
-    });
   }
 
   /* ---------------- Creator video ---------------- */

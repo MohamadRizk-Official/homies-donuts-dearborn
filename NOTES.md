@@ -17,17 +17,31 @@ brief's filename (e.g. `img/donuts/Donut-Menu-Choco-Glazed.webp`). The zip had n
 - Drinks: every cup scaled to the same cup-body width on a shared canvas, so cups match in size.
 - Extra "favorite" donut photos not in the brief's map were added under Homie's Favourites:
   Homers, Cookie Monster, Biscoff, Mille-Feuille, Mousse Cake, Maple, Pecan (names need confirming).
-- Hero: built from the two box photos supplied later (closed box + open box with donuts), saved to img/hero/.
-  The closed photo is split along the lid seam so the lid can lift off. Each donut in the open photo is its own
-  cut-out layer (img/hero/donut-*.webp) under a copy of the front/right walls, so hovered donuts lift behind the wall.
+- Hero box (js/hero-box.js): the base + donuts are the supplied open-box photo, cut cleanly (img/hero/box-base.webp)
+  with a soft SVG contact shadow instead of the photo's ragged one. The camera was recovered from the box rim
+  (focal ~2240px, box ratio 1.41:1), and the lid is drawn as textured faces projected through that camera, so it
+  hinges on the real back edge, closes over the whole box, and opens to 135°. Lid textures were flattened from
+  the photos: inside (logo + MADE IN THE NEIGHBOURHOOD) from the open box, outside rings from the closed box.
+  Each donut is still its own layer (hover/tap lifts it, tucked behind the box walls).
 - Catering: truck illustration (img/brand/truck.webp) + the catering spread photo.
 - Photo wall: display case, Choco Dubai trays, ghost latte, interior, three-donut box, neon sign, cereal donuts.
 - Menu page: pizza donut box photo as the Pizza Donuts banner.
-- Video: media/homies-halalfoodjunky.mp4 (compressed from HalalFoodJunky.mp4), credited to @HalalFoodJunky.
+- Video: media/homies-halalfoodjunky.mp4 (compressed from HalalFoodJunky.mp4), credited to Halal Food Junkie,
+  https://www.instagram.com/halalfoodjunkie/ (125K followers when checked on 18 Oct 2026; recheck before launch).
   Confirm the creator is OK with it being re-hosted on the site.
 - Not used: Inviting storefront at twilight (shows a pink storefront; the real Dearborn exterior in the video is blue),
   Dubai Donut Hero Experience (a website mockup), and duplicates (Pink frosted rainbow sprinkle, Biscoff crumb donut).
 - Shop photos used: display case, interior, neon sign. Confirm they were taken at the Dearborn shop.
+
+## Ordering, phone and favourites
+- js/main.js SITE.orderUrl = the Homie's Dearborn DoorDash listing (the only online ordering destination found for
+  23780 Michigan Ave). Every Order Now uses it; clear it and they all fall back to calling the shop.
+- Phone (313) 722-4477 matches Apple Maps, Yahoo Local and a directory listing. Not confirmed by an official
+  Homie's source.
+- Favourites detail view (js/product-view.js): copy describes only what is visible in each photo. Images are
+  img/fav/*.webp from the original favourite PNGs (the brief's *-reference.png names weren't in the files).
+- Hero headline options considered: "Open up the happiest box in Dearborn." (chosen), "Dearborn's sweetest box of
+  happy.", "Six donuts. Zero regrets.", "Life's sweeter by the half-dozen."
 
 ## Facts used vs. left out
 Used: address 23780 Michigan Ave, Dearborn, MI 48124; phone (313) 722-4477 (Apple Maps + listings agree).

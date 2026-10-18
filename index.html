@@ -97,10 +97,9 @@
 
   <main id="main">
     <!-- ================= Hero ================= -->
-    <section class="hero" aria-labelledby="hero-title">
+    <section class="hero" aria-labelledby="hero-title" data-balloons="92,14">
       <div class="deco" aria-hidden="true" style="inset:0">
         <span class="cloud c1"></span><span class="cloud c2"></span><span class="cloud c3"></span>
-        <svg class="balloon b1" viewBox="0 0 80 120"><g><circle cx="40" cy="38" r="34" fill="#f37fb0"/><circle cx="40" cy="38" r="12" fill="#fde9ec"/><circle cx="40" cy="38" r="34" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="3" stroke-dasharray="2 9"/><path d="M22 20q4-4 8-2M52 16q5 1 7 5M60 40q2 5-1 9M20 50q2 5 6 7M44 64q5-1 8-4" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M48 14l2 6M27 30l5 2M58 30l-4 3M30 58l3-4" stroke="#ffc83d" stroke-width="3" stroke-linecap="round"/><path d="M26 66l8 30M54 66l-8 30" stroke="#c9937f" stroke-width="1.6"/><rect x="31" y="94" width="18" height="14" rx="3" fill="#c98a5a"/><rect x="31" y="94" width="18" height="4" rx="2" fill="#a86a40"/></g></svg>
         <span class="sprinkle" style="top:22%;left:46%;--c:var(--sky);--r:30deg"></span>
         <span class="sprinkle" style="top:70%;left:6%;--c:var(--lemon);--r:-20deg;--d:-2s"></span>
         <span class="sprinkle" style="top:12%;left:30%;--c:var(--pink);--r:70deg;--d:-4s"></span>
@@ -113,48 +112,56 @@
       <div class="wrap hero-grid">
         <div class="hero-copy">
           <span class="hero-hello fun">Hey homie!</span>
-          <h1 id="hero-title">Your donut daydream lives on
-            <span class="pop">Michigan Ave.<svg viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true"><path d="M3 14 Q 40 2 78 12 T 152 12 T 226 12 T 297 8" fill="none" stroke="#ffc83d" stroke-width="6" stroke-linecap="round"/></svg></span>
+          <h1 id="hero-title">Open up the
+            <span class="pop">happiest box</span>
+            in Dearborn.
+            <svg class="h1-squiggle" viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true"><path d="M3 14 Q 40 2 78 12 T 152 12 T 226 12 T 297 8" fill="none" stroke="#ffc83d" stroke-width="6" stroke-linecap="round"/></svg>
           </h1>
           <p class="hero-lede">Wild, wonderful donuts, golden pizza donuts, swirly BUNZ, stacked BEIGNEwiches and loaded milkshakes. Come hungry, leave happy.</p>
           <div class="hero-ctas">
-            <a class="btn" href="menu.html">Explore the menu
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </a>
-            <a class="btn btn--cream" href="#visit">Plan your visit</a>
+            <a class="btn" href="#" data-order-link data-burst><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1.2 12H6.2L5 8z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg> Order Now</a>
+            <a class="btn btn--cream" href="menu.html" data-burst>Explore Menu <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
           </div>
-          <a class="hero-chip" href="#visit">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z" fill="currentColor"/><circle cx="12" cy="10" r="2.6" fill="#fff"/></svg>
-            23780 Michigan Ave, Dearborn
-          </a>
+          <div class="hero-ctas hero-ctas--small">
+            <a class="btn btn--sm btn--ghost" href="#visit" data-burst>Plan a Visit</a>
+            <a class="btn btn--sm btn--ghost" href="https://www.google.com/maps/dir/?api=1&amp;destination=23780+Michigan+Ave%2C+Dearborn%2C+MI+48124" target="_blank" rel="noopener" data-burst><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="12" cy="10" r="2.6" fill="currentColor"/></svg> Get Directions</a>
+          </div>
+          <p class="hero-address">23780 Michigan Ave, Dearborn</p>
         </div>
 
-        <!-- The pink box: closed photo lifts its lid to reveal the open box; each donut is its own layer -->
-        <div class="hero-box" data-hero-box role="img" aria-label="A pink Homie's donut box opening to show six colourful donuts">
-          <div class="hb-glow" aria-hidden="true"></div>
-          <div class="hb-rays" aria-hidden="true"></div>
-          <div class="hb-open" aria-hidden="true">
-            <img class="hb-base" src="img/hero/box-open.webp" alt="" width="1312" height="1199" fetchpriority="high">
-            <div class="hb-donuts">
-              <div class="dz" style="left:25.457%;top:43.62%;width:19.512%;height:19.016%;--i:0"><span class="hit"></span><span class="dn" style="--m:url(/img/hero/donut-cookie.webp)"><img src="img/hero/donut-cookie.webp" alt=""></span></div>
-              <div class="dz" style="left:43.14%;top:46.872%;width:20.732%;height:19.516%;--i:1"><span class="hit"></span><span class="dn" style="--m:url(/img/hero/donut-pink.webp)"><img src="img/hero/donut-pink.webp" alt=""></span></div>
-              <div class="dz" style="left:61.89%;top:49.625%;width:21.494%;height:21.184%;--i:2"><span class="hit"></span><span class="dn" style="--m:url(/img/hero/donut-pistachio.webp)"><img src="img/hero/donut-pistachio.webp" alt=""></span></div>
-              <div class="dz" style="left:15.777%;top:57.882%;width:21.799%;height:19.016%;--i:3"><span class="hit"></span><span class="dn" style="--m:url(/img/hero/donut-white.webp)"><img src="img/hero/donut-white.webp" alt=""></span></div>
-              <div class="dz" style="left:35.518%;top:63.053%;width:21.646%;height:19.516%;--i:4"><span class="hit"></span><span class="dn" style="--m:url(/img/hero/donut-elmo.webp)"><img src="img/hero/donut-elmo.webp" alt=""></span></div>
-              <div class="dz" style="left:55.793%;top:67.223%;width:23.171%;height:20.851%;--i:5"><span class="hit"></span><span class="dn" style="--m:url(/img/hero/donut-choco.webp)"><img src="img/hero/donut-choco.webp" alt=""></span></div>
+        <!-- The pink box: real photo for the base + donuts; the lid is projected through the photo's camera (js/hero-box.js) -->
+        <div class="hero-box" data-hero-box role="img" aria-label="A pink Homie's donut box whose lid swings open to show six colourful donuts">
+          <div class="hb-stage">
+            <svg class="hb-shadow" viewBox="0 0 1312 1199" preserveAspectRatio="none" aria-hidden="true">
+              <defs>
+                <filter id="hbSoft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="26"/></filter>
+                <filter id="hbContact" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="6"/></filter>
+              </defs>
+              <polygon points="105,957 980,1186 1132,747 398,598" transform="translate(26 30)" fill="rgba(110,45,55,.38)" filter="url(#hbSoft)"/>
+              <polygon points="105,957 980,1186 1132,747 398,598" transform="translate(4 6)" fill="rgba(90,35,45,.5)" filter="url(#hbContact)"/>
+            </svg>
+            <div class="hb-glow" aria-hidden="true"></div>
+            <div class="hb-rays" aria-hidden="true"></div>
+            <div class="hb-lid" data-lid aria-hidden="true"></div>
+            <div class="hb-open" aria-hidden="true">
+              <img class="hb-base" src="img/hero/box-base.webp" alt="" width="1312" height="1199" fetchpriority="high">
+              <div class="hb-donuts">
+                <div class="dz" style="left:25.457%;top:43.62%;width:19.512%;height:19.016%;--i:0"><span class="hit"></span><span class="dn" style="--m:url(/img/hero/donut-cookie.webp)"><img src="img/hero/donut-cookie.webp" alt=""></span></div>
+                <div class="dz" style="left:43.14%;top:46.872%;width:20.732%;height:19.516%;--i:1"><span class="hit"></span><span class="dn" style="--m:url(/img/hero/donut-pink.webp)"><img src="img/hero/donut-pink.webp" alt=""></span></div>
+                <div class="dz" style="left:61.89%;top:49.625%;width:21.494%;height:21.184%;--i:2"><span class="hit"></span><span class="dn" style="--m:url(/img/hero/donut-pistachio.webp)"><img src="img/hero/donut-pistachio.webp" alt=""></span></div>
+                <div class="dz" style="left:15.777%;top:57.882%;width:21.799%;height:19.016%;--i:3"><span class="hit"></span><span class="dn" style="--m:url(/img/hero/donut-white.webp)"><img src="img/hero/donut-white.webp" alt=""></span></div>
+                <div class="dz" style="left:35.518%;top:63.053%;width:21.646%;height:19.516%;--i:4"><span class="hit"></span><span class="dn" style="--m:url(/img/hero/donut-elmo.webp)"><img src="img/hero/donut-elmo.webp" alt=""></span></div>
+                <div class="dz" style="left:55.793%;top:67.223%;width:23.171%;height:20.851%;--i:5"><span class="hit"></span><span class="dn" style="--m:url(/img/hero/donut-choco.webp)"><img src="img/hero/donut-choco.webp" alt=""></span></div>
+              </div>
+              <img class="hb-walls" src="img/hero/box-walls.webp" alt="" style="left:6.784%;top:51.71%;width:82.317%">
+              <div class="hb-dim" aria-hidden="true"></div>
             </div>
-            <img class="hb-walls" src="img/hero/box-walls.webp" alt="" style="left:6.631%;top:51.626%;width:91.235%">
+            <span class="hb-spark" style="left:6%;top:40%;--d:0s" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M10 0l2.4 7.6L20 10l-7.6 2.4L10 20l-2.4-7.6L0 10l7.6-2.4z" fill="currentColor"/></svg></span>
+            <span class="hb-spark" style="left:92%;top:46%;--d:.5s;color:var(--sky)" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M10 0l2.4 7.6L20 10l-7.6 2.4L10 20l-2.4-7.6L0 10l7.6-2.4z" fill="currentColor"/></svg></span>
+            <span class="hb-spark" style="left:18%;top:92%;--d:1s;color:var(--pink)" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M10 0l2.4 7.6L20 10l-7.6 2.4L10 20l-2.4-7.6L0 10l7.6-2.4z" fill="currentColor"/></svg></span>
+            <span class="hb-spark" style="left:80%;top:96%;--d:1.4s" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M10 0l2.4 7.6L20 10l-7.6 2.4L10 20l-2.4-7.6L0 10l7.6-2.4z" fill="currentColor"/></svg></span>
+            <span class="hb-spark" style="left:58%;top:-4%;--d:.8s;color:var(--pink)" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M10 0l2.4 7.6L20 10l-7.6 2.4L10 20l-2.4-7.6L0 10l7.6-2.4z" fill="currentColor"/></svg></span>
           </div>
-          <div class="hb-closed" aria-hidden="true">
-            <img class="hb-c-base" src="img/hero/box-closed.webp" alt="" width="1312" height="1199">
-            <img class="hb-c-lid" src="img/hero/box-closed.webp" alt="" width="1312" height="1199">
-          </div>
-          <div class="hb-flash" aria-hidden="true"></div>
-          <span class="hb-spark" style="left:8%;top:38%;--d:0s" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M10 0l2.4 7.6L20 10l-7.6 2.4L10 20l-2.4-7.6L0 10l7.6-2.4z" fill="currentColor"/></svg></span>
-          <span class="hb-spark" style="left:88%;top:44%;--d:.5s;color:var(--sky)" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M10 0l2.4 7.6L20 10l-7.6 2.4L10 20l-2.4-7.6L0 10l7.6-2.4z" fill="currentColor"/></svg></span>
-          <span class="hb-spark" style="left:20%;top:90%;--d:1s;color:var(--pink)" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M10 0l2.4 7.6L20 10l-7.6 2.4L10 20l-2.4-7.6L0 10l7.6-2.4z" fill="currentColor"/></svg></span>
-          <span class="hb-spark" style="left:78%;top:92%;--d:1.4s" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M10 0l2.4 7.6L20 10l-7.6 2.4L10 20l-2.4-7.6L0 10l7.6-2.4z" fill="currentColor"/></svg></span>
-          <span class="hb-spark" style="left:50%;top:30%;--d:.8s;color:var(--pink)" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M10 0l2.4 7.6L20 10l-7.6 2.4L10 20l-2.4-7.6L0 10l7.6-2.4z" fill="currentColor"/></svg></span>
         </div>
       </div>
     </section>
@@ -168,7 +175,7 @@
     </div>
 
     <!-- ================= Display case (donut-first) ================= -->
-    <section class="case-section" aria-labelledby="case-title">
+    <section class="case-section" aria-labelledby="case-title" data-balloons="2,30" data-swirls="6%,8%,#f4b3c2;80%,4%,#a9dff6">
       <div class="deco" aria-hidden="true" style="inset:0">
         <span class="sprinkle" style="top:8%;left:12%;--c:var(--pink);--r:40deg"></span>
         <span class="sprinkle" style="top:14%;right:10%;--c:var(--sky);--r:-30deg;--d:-3s"></span>
@@ -194,7 +201,7 @@
     </section>
 
     <!-- ================= Beyond the donut ================= -->
-    <section class="beyond" aria-labelledby="beyond-title">
+    <section class="beyond" aria-labelledby="beyond-title" data-balloons="93,6" data-swirls="4%,6%,#ffd9a8;78%,90%,#cbb9ff">
       <div class="deco" aria-hidden="true" style="inset:0">
         <span class="cloud" style="top:6%;right:-30px;transform:scale(.8)"></span>
         <span class="sprinkle" style="bottom:10%;left:4%;--c:var(--tangerine);--r:60deg"></span>
@@ -206,16 +213,16 @@
           <p>Sweet, savory, sippable. Tap a category to jump right into the menu.</p>
         </div>
         <div class="tiles">
-          <a class="tile reveal" data-cat="pizza-donuts" href="menu.html#pizza-donuts">
-            <div class="tile-text"><span class="badge-savory">Savory</span><h3>Pizza Donuts</h3><p>Cheesy, golden and donut-shaped.</p><span class="go">See pizza donuts <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <a class="tile tile--savory reveal" data-cat="pizza-donuts" href="menu.html#pizza-donuts">
+            <span class="ribbon-savory" aria-hidden="true"><span>Savory</span></span><div class="tile-text"><h3>Pizza Donuts</h3><p>Cheesy, golden and donut-shaped.</p><span class="go">See pizza donuts <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
             <div class="tile-pics"><img src="img/pizza/Pepperoni-Cheese-Hot-Honey-Pizza-Donut.webp" alt=""><img src="img/pizza/Jalapeno-Cheddar-Ranch-Pizza-Donut.webp" alt=""></div>
           </a>
           <a class="tile reveal" data-cat="bunz" href="menu.html#bunz" style="--rd:.08s">
             <div class="tile-text"><h3>BUNZ</h3><p>Big, swirly cinnamon buns with all the toppings.</p><span class="go">See BUNZ <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
             <div class="tile-pics"><img src="img/bunz/BUNZ-Caramel-Pecan.webp" alt=""><img src="img/bunz/BUNZ-Pistachio-Raspberry.webp" alt=""></div>
           </a>
-          <a class="tile reveal" data-cat="beignewiches" href="menu.html#beignewiches">
-            <div class="tile-text"><span class="badge-savory">Savory</span><h3>BEIGNEwiches</h3><p>Stacked sandwiches on a glazed bun.</p><span class="go">See BEIGNEwiches <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <a class="tile tile--savory reveal" data-cat="beignewiches" href="menu.html#beignewiches">
+            <span class="ribbon-savory" aria-hidden="true"><span>Savory</span></span><div class="tile-text"><h3>BEIGNEwiches</h3><p>Stacked sandwiches on a glazed bun.</p><span class="go">See BEIGNEwiches <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
             <div class="tile-pics"><img src="img/beignewiches/Savory-Donuts-Cheeseburger.webp" alt=""><img src="img/beignewiches/Savory-Donuts-Egg-and-Cheese.webp" alt=""></div>
           </a>
           <a class="tile reveal" data-cat="desserts" href="menu.html#desserts" style="--rd:.08s">
@@ -235,7 +242,7 @@
     </section>
 
     <!-- ================= Peek inside ================= -->
-    <section class="peek" aria-labelledby="peek-title">
+    <section class="peek" aria-labelledby="peek-title" data-balloons="3,8" data-swirls="70%,6%,#ffffff">
       <svg class="drip deco" style="top:-1px;left:0;right:0;position:absolute" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0h1440v22c-30 0-34 26-60 26s-26-22-58-22-30 34-62 34-30-30-60-30-40 14-70 14-30-18-62-18-36 30-68 30-28-24-60-24-40 12-72 12-30-20-62-20-34 28-66 28-30-26-62-26-38 16-70 16-32-22-64-22-30 30-62 30-32-28-64-28-36 14-68 14-30-20-62-20-34 26-66 26-28-24-58-24-40 10-72 10-30-22-60-22-36 18-68 18-30-18-62-18V0z" fill="#fdf0f1"/></svg>
       <div class="wrap">
         <div class="section-head reveal">
@@ -246,7 +253,7 @@
         <div class="peek-grid">
           <figure class="reel reveal">
             <div class="reel-phone">
-              <video data-reel muted loop playsinline preload="none" poster="media/homies-halalfoodjunky-poster.webp" aria-label="Video: HalalFoodJunky visits Homie's Dearborn">
+              <video data-reel muted loop playsinline preload="none" poster="media/homies-halalfoodjunky-poster.webp" aria-label="Video: Halal Food Junkie visits Homie's Dearborn">
                 <source src="media/homies-halalfoodjunky.mp4" type="video/mp4">
               </video>
               <button class="reel-sound" type="button" data-reel-sound aria-pressed="false">
@@ -254,7 +261,7 @@
                 <span data-reel-label>Tap for sound</span>
               </button>
             </div>
-            <figcaption><span class="fun">On camera</span> Video by <a href="https://www.instagram.com/halalfoodjunky/" target="_blank" rel="noopener">@HalalFoodJunky</a></figcaption>
+            <figcaption><span class="fun">On camera</span> Video by Halal Food Junkie<br><a href="https://www.instagram.com/halalfoodjunkie/" target="_blank" rel="noopener">@halalfoodjunkie</a> · about 125K Instagram followers</figcaption>
           </figure>
           <div class="polaroids">
             <figure class="polaroid reveal" style="--rot:-3deg"><img src="img/shop/display-case.webp" alt="Donut display case with Lemon Crumble, Biscoff, Reese's and Dulce de Leche trays" loading="lazy"><figcaption>Fresh trays</figcaption></figure>
@@ -270,7 +277,7 @@
     </section>
 
     <!-- ================= Visit Us ================= -->
-    <section class="visit" id="visit" aria-labelledby="visit-title">
+    <section class="visit" id="visit" aria-labelledby="visit-title" data-balloons="92,4" data-swirls="5%,10%,#f4b3c2">
       <div class="deco" aria-hidden="true" style="inset:0">
         <span class="sprinkle" style="top:10%;left:6%;--c:var(--sky);--r:-40deg"></span>
         <span class="sprinkle" style="top:18%;right:8%;--c:var(--pink);--r:20deg;--d:-2s"></span>
@@ -324,7 +331,7 @@
             <span class="eyebrow">Catering</span>
             <h2 id="catering-title">Feeding a whole crew?</h2>
             <p>Birthdays, office mornings, family get-togethers. Give the shop a ring to talk big orders and what works for your day.</p>
-            <a class="btn btn--lemon" href="tel:+13137224477">Call to plan an order</a>
+            <a class="btn btn--lemon" href="tel:+13137224477" data-burst><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 3.5l2.6.4 1.3 4-1.9 1.4a12 12 0 0 0 6.1 6.1l1.4-1.9 4 1.3.4 2.6c.1 1-.7 1.9-1.7 1.9A16.8 16.8 0 0 1 4.7 5.2c0-1 .9-1.8 1.9-1.7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg> Plan an order: (313) 722-4477</a>
           </div>
           <div class="cater-art">
             <figure class="cater-photo"><img src="img/shop/catering-spread.webp" alt="Pink Homie's boxes of donuts, mini donuts and macarons with two pink coffee cups" loading="lazy"></figure>
@@ -334,12 +341,13 @@
               <span class="road"></span>
             </div>
           </div>
+          <span class="truck-trigger" data-truck-trigger aria-hidden="true"></span>
         </div>
       </div>
     </section>
 
     <!-- ================= Closing ================= -->
-    <section class="closing" aria-labelledby="closing-title">
+    <section class="closing" aria-labelledby="closing-title" data-balloons="8,30" data-swirls="70%,18%,#ffffff">
       <div class="deco" aria-hidden="true" style="inset:0">
         <span class="cloud" style="top:12%;left:-20px;transform:scale(.8)"></span>
         <span class="cloud" style="top:24%;right:-30px;transform:scale(.6)"></span>
@@ -413,5 +421,8 @@
 
   <script src="js/menu-data.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/hero-box.js"></script>
+  <script src="js/product-view.js"></script>
+  <script src="js/effects.js"></script>
 </body>
 </html>

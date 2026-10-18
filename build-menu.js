@@ -9,7 +9,7 @@ const head = idx.slice(0, idx.indexOf('<main id="main">'))
   .replace('data-mega-toggle>', 'data-mega-toggle aria-current="page">');
 const foot = idx.slice(idx.indexOf('  <!-- ================= Footer'));
 const body = `<main id="main">
-    <section class="menu-hero" aria-labelledby="menu-title">
+    <section class="menu-hero" aria-labelledby="menu-title" data-balloons="88,22">
       <div class="deco" aria-hidden="true" style="inset:0">
         <span class="cloud" style="top:30%;left:-30px;transform:scale(.8)"></span>
         <span class="cloud" style="top:16%;right:-20px;transform:scale(.6)"></span>
