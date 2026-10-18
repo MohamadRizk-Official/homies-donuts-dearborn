@@ -331,7 +331,9 @@ body.no-scroll { overflow: hidden; }
 @media (min-width: 960px) {
   .hero { padding-bottom: 64px; }
   .hero-grid { grid-template-columns: 1fr 1.08fr; gap: 24px; min-height: min(78vh, 720px); }
-  .hero-copy { text-align: left; }
+  .hero-copy { text-align: left; position: relative; z-index: 2; }
+  /* size the box to its column so it never slides under the headline */
+  .box-stage { --u: calc(min(48vw - 50px, 580px) / 600); }
   .hero-lede { margin-left: 0; }
   .hero-ctas { justify-content: flex-start; }
 }
