@@ -3,7 +3,7 @@
  * The base and donuts are the real product photo (img/hero/box-base.webp + donut layers).
  * The lid is drawn on top as textured faces projected through the same camera as the photo
  * (recovered from the box rim), so it hinges on the real back edge and can close over the
- * whole box. Sequence: closed box drops in → wiggle → lid hinges back to ~135° → glow + shine.
+ * whole box. Every fresh load starts closed; the falling 3D donut (js/donut-drop.js) knocks it open.
  */
 (function () {
   'use strict';
@@ -107,7 +107,7 @@
     });
     // a closed (or nearly closed) lid sits in front of the box; an open one is behind it
     box.classList.toggle('lid-behind', deg > 88);
-    if (dim) dim.style.opacity = String(Math.max(0, 1 - deg / 70) * 0.55);
+    if (dim) dim.style.opacity = String(Math.min(1, Math.max(0, 1 - deg / 70)) * 0.55);
   }
 
   // smooth, controlled swing: ease in and out, no overshoot, the box itself never moves
@@ -124,25 +124,43 @@
 
   window.addEventListener('resize', function () { render(current); });
 
-  // the opening plays once per visit; refreshing shows the open box straight away
-  var played = false;
-  try { played = sessionStorage.getItem('homiesBoxOpened') === '1'; } catch (e) {}
+  /* Opening. On every fresh load the box starts closed and a 3D pistachio donut (js/donut-drop.js) falls onto
+   * the lid; its impact is what swings the lid open, and that module drives render() frame by frame.
+   * If the donut can't run (no WebGL, the 3D library didn't load), the lid opens on its own after a pause. */
+  var state = 'closed';                 // closed -> (claimed by the donut) -> open
+  var fallbackTimer = 0;
   function finish() {
+    clearTimeout(fallbackTimer);
+    state = 'open';
     render(LID.open);
     box.classList.add('is-in', 'is-opening', 'is-open');
-    try { sessionStorage.setItem('homiesBoxOpened', '1'); } catch (e) {}
+  }
+  function fallbackOpen() {
+    if (state !== 'closed') return;
+    state = 'claimed';
+    box.classList.add('is-opening');
+    tween(current, LID.open, 1700, easeIO, finish);
   }
 
   render(0);
-  window.HomiesHeroBox = { render: render };   // handy for checking angles from the console
-  if (reduce || played) { finish(); return; }
-  var imgs = Array.prototype.slice.call(box.querySelectorAll('img'));
-  var ready = Promise.all(imgs.map(function (im) { return im.decode ? im.decode().catch(function () {}) : Promise.resolve(); }));
-  Promise.race([ready, new Promise(function (r) { setTimeout(r, 1500); })]).then(function () {
-    box.classList.add('is-in');
-    setTimeout(function () {
-      box.classList.add('is-opening');
-      tween(0, LID.open, 1700, easeIO, finish);
-    }, 450);
+  var revealed = new Promise(function (resolve) {
+    if (reduce) { finish(); resolve(); return; }
+    var imgs = Array.prototype.slice.call(box.querySelectorAll('img'));
+    var ready = Promise.all(imgs.map(function (im) { return im.decode ? im.decode().catch(function () {}) : Promise.resolve(); }));
+    Promise.race([ready, new Promise(function (r) { setTimeout(r, 1500); })]).then(function () {
+      box.classList.add('is-in');
+      fallbackTimer = setTimeout(fallbackOpen, 7000);
+      resolve();
+    });
   });
+  window.HomiesHeroBox = {
+    el: box, stage: stage, cam: CAM, lid: LID, reduced: reduce,
+    render: render,                     // lid angle in degrees (also handy from the console)
+    revealed: revealed,                 // resolves once the closed box is on screen
+    // the donut takes over the opening; false if the lid already opened without it
+    claim: function () { if (state !== 'closed') return false; state = 'claimed'; clearTimeout(fallbackTimer); return true; },
+    opening: function () { box.classList.add('is-opening'); },
+    finish: finish,
+    fallback: fallbackOpen
+  };
 })();

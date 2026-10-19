@@ -26,7 +26,8 @@ brief's filename (e.g. `img/donuts/Donut-Menu-Choco-Glazed.webp`). The zip had n
   The box now holds the six favourites. Cookie Monster, Homers and Elmo come from the supplied box photo; the
   photo's other three donuts (not favourites) were replaced with the real Biscoff, Mille-Feuille and PB&J photos
   (img/hero/donut-biscoff|mille-feuille|pbj.webp), foreshortened to the box angle with a fried-dough side.
-  Each donut is a button that opens its detail view. The opening plays once per visit (sessionStorage).
+  Each donut is a button that opens its detail view. The box starts closed on every page load; the falling
+  pistachio donut below is what opens it.
 - Catering: truck illustration (img/brand/truck.webp) + the catering spread photo.
 - Photo wall: display case, Choco Dubai trays, ghost latte, interior, three-donut box, neon sign, cereal donuts.
 - Menu page: pizza donut box photo as the Pizza Donuts banner.
@@ -83,3 +84,22 @@ Left out until confirmed:
   place ID ChIJ_73tSwBLO4gRcI0Y92rwg_Q, fetched 18 Oct 2026. Rating 4.5 from 311 reviews at that date.
 - Leave a Review: https://search.google.com/local/writereview?placeid=ChIJ_73tSwBLO4gRcI0Y92rwg_Q (opens Google sign-in).
 - Read all: https://www.google.com/maps?cid=17619190509406293360
+
+## Hero pistachio donut drop
+- Every fresh load / refresh: the box starts closed, a 3D pistachio donut falls onto the lid, the hit flexes the
+  lid and it springs open to 135°, the donut bounces off to the right, lands beside the box, and settles glaze-up.
+  It starts once the box is on screen, plays once per page load, and the box donuts become clickable when the
+  lid comes to rest. Reduced motion: the box is shown open with the donut already resting beside it.
+- Model: img/hero/pistachio-donut.glb, custom-built by tools/make_pistachio_donut.py from the shop's pistachio
+  donut photo (chocolate glaze, pistachio drizzle and chopped pistachios). The ring outline is traced from the
+  photo, the drizzle and nuts are raised from a height map, with normal/roughness/clear-coat maps; the sides and
+  base are fried dough with the pale fry line. Usage: py -3.12 -I tools/make_pistachio_donut.py photo.webp out.glb
+- Motion: js/donut-physics.js is a small rigid-body simulation (gravity, impulses with restitution and friction,
+  rolling resistance, sleep; hinged lid with inertia, gravity torque, a springy rim and a stop at 135°).
+  build-donut-track.mjs runs it and bakes js/donut-track.js, which the page plays, so every browser shows the
+  same fall (re-run `node build-donut-track.mjs` after changing the start or the physics).
+- Rendering: js/donut-drop.js uses three.js 0.160.0 (jsDelivr, loaded only on the home page) with the camera
+  recovered from the box photo. Invisible stand-ins for the box and lid hide the donut where they are in front
+  and catch its shadow. If WebGL or the library is unavailable, the lid opens on its own after a short wait.
+- Debug: index.html?dropslow=1000 then HomiesDonutDrop.seek(frame) shows any moment (impact is frame 24).
+- On a 375px phone the bounce brushes past the right screen edge for about 0.2s; the resting donut fits.
