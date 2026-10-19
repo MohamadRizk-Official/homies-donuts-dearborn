@@ -1,11 +1,12 @@
-"""Build a custom 3D pistachio donut (GLB) from the reference photo (top-down shot, transparent background).
+"""Build a custom 3D donut (GLB) from a top-down product photo with a transparent background
+(made for the chocolate-sprinkle donut in the hero).
 
 Geometry : a ring whose outer and hole outlines are traced from the photo, with a domed top and a flatter fried
            bottom (superellipse cross-section), low-frequency lumps, and the glaze / drizzle / chopped pistachios
-           raised out of the surface from a height map derived from the photo.
-Top      : planar UV straight from the photo (the real glaze, drizzle and nuts), plus a normal map, roughness and a
-           clear-coat mask so the chocolate reads glossy and the nuts matte.
-Bottom   : a procedural fried-dough texture (golden sides, pale fry band, browner flat base) with pores.
+           sprinkles raised out of the surface from a height map derived from the photo.
+Top      : the photo (real glaze and sprinkles) mapped over the glazed cap, plus a normal map, roughness and a
+           light clear-coat mask so the chocolate reads satin-glossy and the sprinkles a little softer.
+Bottom   : a procedural fried-dough texture: golden sides, the pale fry line, an evenly golden-brown rounded base.
 Output   : KHR_mesh_quantization GLB (int16 positions, int8 normals, uint16 uvs) + JPEG textures.
 usage    : py -3.12 -I make_donut.py photo.webp out.glb [preview_dir]
 """
@@ -26,7 +27,8 @@ alpha = A[..., 3] / 255.0
 rgb = A[..., :3]
 
 # ---------------- outlines ----------------
-cx, cy = 377.1, 371.0                     # hole centre (refined below)
+_hy, _hx = np.where((alpha < 0.5) & (np.abs(np.mgrid[0:S, 0:S][1] - PW / 2) < PW * 0.2) & (np.abs(np.mgrid[0:S, 0:S][0] - PH / 2) < PH * 0.2))
+cx, cy = float(_hx.mean()), float(_hy.mean())       # hole centre (refined below)
 def trace(cx, cy, n=720):
     ri = np.zeros(n); ro = np.zeros(n)
     for k in range(n):
@@ -74,25 +76,26 @@ rr = np.hypot(xx - cx, yy - cy)
 rn = (rr - ri[kk]) / np.maximum(ro[kk] - ri[kk], 1)    # 0 at hole edge, 1 at outer edge
 hsv = np.asarray(Image.fromarray(base.astype(np.uint8)).convert('HSV')).astype(np.float32)
 hue = hsv[..., 0] * 360 / 255; sat = hsv[..., 1] / 255; val = hsv[..., 2] / 255
-shine = (sat < 0.4) & (val >= 0.47) & solid           # white gloss highlights on the chocolate, not toppings
-choc = ((val < 0.47) & solid) | shine
-bright = (val >= 0.47) & solid & ~shine
-# dough shows only as a thin ring at the outer and hole edges, and is orange rather than olive
-edge = (rn > 0.9) | (rn < 0.07)
-dough = bright & edge & (hue < 46) & ~(np.asarray(Image.fromarray((choc * 255).astype(np.uint8)).filter(ImageFilter.MaxFilter(5))) > 0)
-dough = dough | (~solid)
-top = bright & ~dough
 def blurf(a, r): return np.asarray(Image.fromarray(np.clip(a * 255, 0, 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(r))).astype(np.float32) / 255
-glaze = blurf((choc | top).astype(np.float32), 1.2)
-topf = blurf(top.astype(np.float32), 1.0)
+# dough: the golden ring at the outer edge and round the hole (orange-tan, bright)
+edge = (rn > 0.84) | (rn < 0.12)
+dough = solid & edge & (hue > 18) & (hue < 48) & (val > 0.5) & (sat > 0.25) & (sat < 0.8)
+dough = np.asarray(Image.fromarray((dough * 255).astype(np.uint8)).filter(ImageFilter.MedianFilter(5))) > 0
+dough = dough | (~solid)
+# sprinkles: clearly brighter or more colourful than the chocolate (white ones are bright and unsaturated)
+hilite = ((hue < 28) | (hue > 338)) & (sat > 0.22) & (sat < 0.72) & (val < 0.88)   # gloss on the chocolate
+spr = solid & ~dough & ~hilite & ((val > 0.66) | ((sat > 0.45) & (val > 0.42) & ((hue > 30) & (hue < 330))))
+spr = np.asarray(Image.fromarray((spr * 255).astype(np.uint8)).filter(ImageFilter.MedianFilter(3))) > 0
+choc = solid & ~dough & ~spr
+glaze = blurf((choc | spr).astype(np.float32), 1.5)
+sprf = blurf(spr.astype(np.float32), 0.8)
+# rounded sprinkle profile: a blurred mask, square-rooted, reads as little rods
+rod = np.sqrt(np.clip(blurf(spr.astype(np.float32), 1.6) * 1.6, 0, 1)) * spr
 luma = (0.3 * base[..., 0] + 0.59 * base[..., 1] + 0.11 * base[..., 2]) / 255
-detail = np.clip((luma - blurf(luma, 6)) * 3, -1, 1)          # nut facets / drizzle edges
-# pistachio chunks: greener or pinker than the olive drizzle, plus small bright blobs
-green = (hue > 58) & top
-pink = (hue < 30) & top
-chunk = blurf((green | pink).astype(np.float32), 1.5)
-height = 0.30 * glaze + 0.55 * topf + 0.45 * chunk * topf + 0.12 * detail * topf
+detail = np.clip((luma - blurf(luma, 5)) * 2, -1, 1)
+height = 0.42 * glaze + 0.55 * rod + 0.08 * detail * glaze
 height = np.clip(height, 0, 1.4)
+topf = sprf; chunk = np.zeros_like(sprf)
 height_s = blurf(height / 1.4, 2.0) * 1.4                     # what the mesh follows; the fine part goes in the normal map
 
 # ---------------- textures ----------------
@@ -109,14 +112,14 @@ def normal_map(h, strength):
     nx, ny, nz = -gx, gy, np.ones_like(h)
     l = np.sqrt(nx * nx + ny * ny + nz * nz)
     return np.dstack([nx / l, ny / l, nz / l]) * 127.5 + 127.5
-top_nrm = to_img(normal_map(hh, 9.0))
+top_nrm = to_img(normal_map(hh, 7.0))
 cm = np.asarray(to_img(choc * 255.0).resize((TS, TS), Image.BILINEAR)).astype(np.float32) / 255
 tm = np.asarray(to_img(topf * 255).resize((TS, TS), Image.BILINEAR)).astype(np.float32) / 255
 chm = np.asarray(to_img(chunk * topf * 255).resize((TS, TS), Image.BILINEAR)).astype(np.float32) / 255
-rough = 0.86 * (1 - cm - tm).clip(0, 1) + 0.30 * cm + 0.52 * tm
+rough = 0.86 * (1 - cm - tm).clip(0, 1) + 0.38 * cm + 0.5 * tm
 rough = rough * (1 - chm) + 0.74 * chm
 rough = rough + rng.normal(0, 0.02, rough.shape)
-clear = np.clip(cm * 1.0 + tm * 0.35 - chm * 0.35, 0, 1)
+clear = np.clip(cm * 1.0, 0, 1)
 # glTF metallicRoughness: G = roughness, B = metalness; clearcoat factor read from R
 top_mr = to_img(np.dstack([clear * 255, rough * 255, np.zeros_like(rough)]))
 
@@ -129,7 +132,7 @@ print('edge colours', edge_out.round(), edge_in.round())
 PSA, PSB = 0.5, 0.55
 def bot_psi(t): return (math.pi - PSB) + t * (math.pi + PSA + PSB)
 v = np.linspace(0, 1, BH)[:, None]
-pale = np.array([246, 226, 182.0]); deep = np.array([196, 120, 52.0]); mid = np.array([222, 156, 72.0])
+pale = np.array([240, 214, 160.0]); deep = np.array([201, 136, 70.0]); mid = np.array([216, 158, 88.0])
 def lerp(a, b, t): return a + (b - a) * min(1, max(0, t))
 col = np.zeros((BH, 1, 3))
 for i, t in enumerate(v[:, 0]):
@@ -142,25 +145,26 @@ for i, t in enumerate(v[:, 0]):
     else: c = lerp(pale, edge_out, (ps - 2 * math.pi - 0.1) / (PSA - 0.1))
     col[i, 0] = c
 def tile_noise(w, h, scale, seed):
-    r = np.random.default_rng(seed).normal(0, 1, (h // scale + 1, w // scale))
+    # the texture is stretched ~4x round the ring, so the noise cells are 4x wider to stay round on the dough
+    r = np.random.default_rng(seed).normal(0, 1, (h // scale + 1, max(2, w // (scale * 4))))
     img = Image.fromarray(((r - r.min()) / (np.ptp(r) + 1e-6) * 255).astype(np.uint8)).resize((w, h + scale), Image.BICUBIC)
     return np.asarray(img).astype(np.float32)[:h] / 255 - 0.5
 n1 = tile_noise(BW, BH, 32, 1); n2 = tile_noise(BW, BH, 8, 2); n3 = tile_noise(BW, BH, 2, 3)
 # pores: small dark specks
-pores = (np.random.default_rng(4).random((BH, BW)) > 0.985).astype(np.float32)
+pores = (np.random.default_rng(4).random((BH, BW)) > 0.993).astype(np.float32)
 pores = blurf(pores, 0.8)
-shade = 1 + 0.10 * n1 + 0.06 * n2 + 0.035 * n3 - 0.35 * pores
+shade = 1 + 0.05 * n1 + 0.035 * n2 + 0.02 * n3 - 0.12 * pores
 bot_col = to_img(col * shade[..., None])
-bh = 0.5 + 0.6 * n1 + 0.35 * n2 + 0.2 * n3 - 0.8 * pores
+bh = 0.5 + 0.5 * n1 + 0.3 * n2 + 0.15 * n3 - 0.4 * pores
 # keep the wrap seam continuous
 bh = np.concatenate([bh, bh[:, :1]], 1)[:, :BW]
-bot_nrm = to_img(normal_map(bh, 2.2))
-bot_mr = to_img(np.dstack([np.zeros((BH, BW)), np.full((BH, BW), 0.88 * 255) + n2 * 20, np.zeros((BH, BW))]))
+bot_nrm = to_img(normal_map(bh, 1.4))
+bot_mr = to_img(np.dstack([np.zeros((BH, BW)), np.full((BH, BW), 0.8 * 255) + n2 * 12, np.zeros((BH, BW))]))
 
 # ---------------- geometry ----------------
-NU, NT, NB = 300, 64, 40                        # around, over the top (outer->hole), under the bottom (hole->outer)
-BT, BB = 0.315, 0.235                           # half-heights above / below the widest line
-PT, PB = 2.25, 3.3                              # superellipse exponents: rounded dome, flatter fried base
+NU, NT, NB = 400, 84, 44                        # around, over the top (outer->hole), under the bottom (hole->outer)
+BT, BB = 0.30, 0.22                           # half-heights above / below the widest line
+PT, PB = 2.2, 2.6                              # superellipse exponents: rounded dome, flatter fried base
 def sx(c, p): return np.sign(c) * np.abs(c) ** (2 / p)
 ro_u = np.interp(np.linspace(0, len(ro), NU + 1) % len(ro), np.arange(len(ro) + 1), np.concatenate([ro, ro[:1]])) / Rs
 ri_u = np.interp(np.linspace(0, len(ri), NU + 1) % len(ri), np.arange(len(ri) + 1), np.concatenate([ri, ri[:1]])) / Rs
@@ -197,7 +201,7 @@ for j, ps in enumerate(psi):
     u_, v_ = pxp / S, pyp / S
     if up:
         w = max(0.0, s) ** 0.6
-        y = y + bilinear(height_s, u_, v_) * 0.034 * w
+        y = y + bilinear(height_s, u_, v_) * 0.03 * w
     P[:, j, 0] = r * np.cos(phi); P[:, j, 2] = -r * np.sin(phi); P[:, j, 1] = y
     UVt[:, j, 0] = u_; UVt[:, j, 1] = v_
 # shared seam: make last phi column identical to the first
@@ -278,12 +282,12 @@ for k, (pos, nrm, uv, idx, mode) in enumerate(prims):
     mesh_prims.append(prim)
 # bottom uv is stored 0..1 and scaled 3x round the ring by a texture transform-free trick: we bake the 3x into the sampler via KHR_texture_transform
 gltf = {
-    'asset': {'version': '2.0', 'generator': "Homie's Donuts pistachio donut builder"},
+    'asset': {'version': '2.0', 'generator': "Homie's Donuts donut builder"},
     'extensionsUsed': ['KHR_mesh_quantization', 'KHR_materials_clearcoat', 'KHR_texture_transform'],
     'extensionsRequired': ['KHR_mesh_quantization'],
     'scene': 0, 'scenes': [{'nodes': [0]}],
-    'nodes': [{'name': 'PistachioDonut', 'mesh': 0, 'scale': [1 / QS] * 3}],
-    'meshes': [{'name': 'PistachioDonut', 'primitives': mesh_prims}],
+    'nodes': [{'name': 'Donut', 'mesh': 0, 'scale': [1 / QS] * 3}],
+    'meshes': [{'name': 'Donut', 'primitives': mesh_prims}],
     'samplers': [{'magFilter': 9729, 'minFilter': 9987, 'wrapS': 33071, 'wrapT': 33071},
                  {'magFilter': 9729, 'minFilter': 9987, 'wrapS': 10497, 'wrapT': 33071}],
     'images': images,
@@ -294,8 +298,8 @@ gltf = {
          'pbrMetallicRoughness': {'baseColorTexture': {'index': 0}, 'metallicFactor': 0.0, 'roughnessFactor': 1.0,
                                   'metallicRoughnessTexture': {'index': 2}},
          'normalTexture': {'index': 1, 'scale': 1.0},
-         'extensions': {'KHR_materials_clearcoat': {'clearcoatFactor': 0.55, 'clearcoatTexture': {'index': 2},
-                                                    'clearcoatRoughnessFactor': 0.22}}},
+         'extensions': {'KHR_materials_clearcoat': {'clearcoatFactor': 0.25, 'clearcoatTexture': {'index': 2},
+                                                    'clearcoatRoughnessFactor': 0.35}}},
         {'name': 'FriedDough',
          'pbrMetallicRoughness': {'baseColorTexture': {'index': 3, 'extensions': {'KHR_texture_transform': {'scale': [3, 1]}}},
                                   'metallicFactor': 0.0, 'roughnessFactor': 1.0,

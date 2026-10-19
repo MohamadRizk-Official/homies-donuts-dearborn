@@ -1410,7 +1410,14 @@ html.bo-open .rate-tab { display: none; }
 }
 footer p.hrs-credit{margin:22px 0 0;text-align:center;font-size:11px;line-height:1.4;letter-spacing:.06em;color:#cdb1a8;opacity:.75}footer p.hrs-credit a{color:inherit;font-size:inherit;line-height:inherit;text-decoration:none;border-bottom:1px solid transparent;padding-bottom:1px;transition:opacity .25s,border-color .25s}footer p.hrs-credit a:hover,footer p.hrs-credit a:focus-visible{border-color:currentColor}
 
-/* ---------- hero: the falling 3D pistachio donut (js/donut-drop.js) ---------- */
+/* ---------- hero: the 3D scene (js/hero-scene.js): cardboard lid, falling donut, mascot ---------- */
+.hb-lid3d { position: absolute; left: -4%; top: -16%; width: 108%; height: 122%; pointer-events: none; }
+.hero-box.has-3d-lid .lf { display: none; }
+/* phones: the donut lands in front of the box's right corner and the mascot runs along there, so leave it room */
+@media (max-width: 959px) { .hero-box { margin-bottom: calc(min(100vw - 32px, 600px) * 0.4); } }
+/* mid-size desktops: the donut lands in front of the box, so give the hero a floor to play on (wide screens use the space beside it) */
+@media (min-width: 960px) and (max-width: 1699px) { .hero { padding-bottom: 215px; } }
+.hb-scene-area { position: absolute; pointer-events: none; visibility: hidden; }
 .hb-drop { position: absolute; z-index: 3; pointer-events: none;
   -webkit-mask-image: linear-gradient(to bottom, transparent 0, rgba(0, 0, 0, 0.35) calc(var(--fade, 40px) * 0.45), #000 var(--fade, 40px));
   mask-image: linear-gradient(to bottom, transparent 0, rgba(0, 0, 0, 0.35) calc(var(--fade, 40px) * 0.45), #000 var(--fade, 40px)); }

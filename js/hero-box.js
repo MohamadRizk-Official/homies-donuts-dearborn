@@ -3,7 +3,8 @@
  * The base and donuts are the real product photo (img/hero/box-base.webp + donut layers).
  * The lid is drawn on top as textured faces projected through the same camera as the photo
  * (recovered from the box rim), so it hinges on the real back edge and can close over the
- * whole box. Every fresh load starts closed; the falling 3D donut (js/donut-drop.js) knocks it open.
+ * whole box. Every fresh load starts closed; the falling 3D donut (js/hero-scene.js) knocks it open.
+ * When WebGL is available that module also draws the lid as real 3D cardboard; these CSS faces are the fallback.
  */
 (function () {
   'use strict';
@@ -83,8 +84,13 @@
   }
 
   var current = 0;
+  var lidHook = null;                    // set when the 3D cardboard lid (js/hero-scene.js) takes over drawing
   function render(deg) {
     current = deg;
+    // a closed (or nearly closed) lid sits in front of the box; an open one is behind it
+    box.classList.toggle('lid-behind', deg > 88);
+    if (dim) dim.style.opacity = String(Math.min(1, Math.max(0, 1 - deg / 70)) * 0.55);
+    if (lidHook) { lidHook(deg); return; }
     var k = stage.clientWidth / IMG_W;
     var g = geometry(deg);
     Object.keys(F).forEach(function (name) {
@@ -105,9 +111,6 @@
       show.style.zIndex = String(100 - Math.round(Math.hypot(toCam[0], toCam[1], toCam[2]) * 10));
       show.style.visibility = 'visible'; hide.style.visibility = 'hidden';
     });
-    // a closed (or nearly closed) lid sits in front of the box; an open one is behind it
-    box.classList.toggle('lid-behind', deg > 88);
-    if (dim) dim.style.opacity = String(Math.min(1, Math.max(0, 1 - deg / 70)) * 0.55);
   }
 
   // smooth, controlled swing: ease in and out, no overshoot, the box itself never moves
@@ -124,8 +127,8 @@
 
   window.addEventListener('resize', function () { render(current); });
 
-  /* Opening. On every fresh load the box starts closed and a 3D pistachio donut (js/donut-drop.js) falls onto
-   * the lid; its impact is what swings the lid open, and that module drives render() frame by frame.
+  /* Opening. On every fresh load the box starts closed and a 3D donut (js/hero-scene.js) falls onto
+   * the lid; its impact is what swings the lid open, and js/hero-scene.js drives render() frame by frame.
    * If the donut can't run (no WebGL, the 3D library didn't load), the lid opens on its own after a pause. */
   var state = 'closed';                 // closed -> (claimed by the donut) -> open
   var fallbackTimer = 0;
@@ -161,6 +164,9 @@
     claim: function () { if (state !== 'closed') return false; state = 'claimed'; clearTimeout(fallbackTimer); return true; },
     opening: function () { box.classList.add('is-opening'); },
     finish: finish,
+    current: function () { return current; },
+    // hand lid drawing to a 3D renderer; the flat CSS faces stay as the fallback
+    useLid: function (fn) { lidHook = fn; box.classList.add('has-3d-lid'); render(current); },
     fallback: fallbackOpen
   };
 })();
