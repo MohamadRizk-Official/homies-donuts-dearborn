@@ -99,11 +99,13 @@ Left out until confirmed:
 - Donut: img/hero/sprinkle-donut.glb, built by tools/make_donut.py from the chocolate-sprinkle product photo
   (traced outline, raised sprinkles, satin glaze, an evenly golden fried underside with the pale fry line).
   Usage: py -3.12 -I tools/make_donut.py photo.webp out.glb
-- Mascot: a small, flat 2D gray silhouette (about the donut's size): rounded body fuller at the lower belly, slim
-  legs, smooth featureless head. Drawn on a 2D canvas above the 3D layer (the donut's outline is cut out of it
-  wherever the donut is in front). A little skeleton underneath walks on the real ground: legs and arms use
-  two-bone IK, feet are planted on footprints laid along its path, and the turn foreshortens it gradually like a
-  cut-out instead of flipping.
+- Mascot: a small white cartoon kid (big round head, rounded body, very short legs, charcoal shoes, thin dark
+  outline), drawn flat in 2D in screen space at one fixed scale, so it runs in a straight horizontal line at the
+  donut's level and never changes size. Arms and legs use two-bone IK, feet are planted while the body passes over
+  them, it picks the donut up with both hands (arms behind it, hands on its rims), turns gradually, and runs off.
+- Donut shadow: a soft ring-shaped contact shadow directly under the donut (no cast shadow on the open ground).
+- Lid on load: the box stays hidden until the 3D lid has drawn its first frame, so only that lid is ever seen;
+  if 3D can't run, the box appears after a short wait with the flat fallback lid.
 - Where it happens adapts to the screen: beside the box on wide screens, in front of the box's right corner on
   laptops, tablets and phones (the hero and the phone layout have extra floor below the box for this). If that
   patch of ground is below the fold, the donut waits there and the mascot runs in once it scrolls into view.

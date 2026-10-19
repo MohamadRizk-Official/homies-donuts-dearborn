@@ -146,11 +146,16 @@
   }
 
   render(0);
+  // the box stays hidden until the 3D lid (js/hero-scene.js) has drawn its first frame, so the flat fallback lid is
+  // never shown and then swapped; if the 3D lid can't run, the box appears with the fallback lid instead
+  var lidReady;
+  var lidReadyP = new Promise(function (r) { lidReady = r; });
+  setTimeout(function () { lidReady(); }, 5000);
   var revealed = new Promise(function (resolve) {
-    if (reduce) { finish(); resolve(); return; }
     var imgs = Array.prototype.slice.call(box.querySelectorAll('img'));
     var ready = Promise.all(imgs.map(function (im) { return im.decode ? im.decode().catch(function () {}) : Promise.resolve(); }));
-    Promise.race([ready, new Promise(function (r) { setTimeout(r, 1500); })]).then(function () {
+    Promise.race([ready, new Promise(function (r) { setTimeout(r, 1500); })]).then(function () { return lidReadyP; }).then(function () {
+      if (reduce) { finish(); resolve(); return; }
       box.classList.add('is-in');
       fallbackTimer = setTimeout(fallbackOpen, 7000);
       resolve();
@@ -166,7 +171,8 @@
     finish: finish,
     current: function () { return current; },
     // hand lid drawing to a 3D renderer; the flat CSS faces stay as the fallback
-    useLid: function (fn) { lidHook = fn; box.classList.add('has-3d-lid'); render(current); },
+    useLid: function (fn) { lidHook = fn; box.classList.add('has-3d-lid'); render(current); lidReady(); },
+    lidFailed: function () { lidReady(); },
     fallback: fallbackOpen
   };
 })();
