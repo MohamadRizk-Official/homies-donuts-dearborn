@@ -103,25 +103,26 @@ Left out until confirmed:
   outline), drawn flat in 2D in screen space at one fixed scale, so it runs in a straight horizontal line at the
   donut's level and never changes size. Arms and legs use two-bone IK, feet are planted while the body passes over
   them, knees point forward and elbows back so it clearly runs the way it travels; the arms hang almost straight
-  and swing in a gentle arc (no stiff right-angle elbows). It picks the donut up in mitten hands joined to its arms,
-  swings it up past its chest and lifts it over its head (arms raised behind its head, stretching a little, cartoon
-  style, since they are short), turns round fairly quickly (tTurn 0.45 s), and runs off carrying it overhead.
+  and swing in a gentle arc (no stiff right-angle elbows). It picks the donut up in mitten hands joined to its arms
+  (behind the donut, peeking out at its sides), carries it in front of its chest, turns round fairly quickly
+  (tTurn 0.45 s), and runs off.
 - Donut shadow: a soft ring-shaped contact shadow directly under the donut (no cast shadow on the open ground).
 - Lid on load: the box stays hidden until the 3D lid has drawn its first frame, so only that lid is ever seen;
   if 3D can't run, the box appears after a short wait with the flat fallback lid.
 - Where it happens adapts to the screen: beside the box on wide screens, in front of the box's right corner on
   laptops, tablets and phones (the hero and the phone layout have extra floor below the box for this). If that
   patch of ground is below the fold, the donut waits there and the mascot runs in once it scrolls into view.
-- Reduced motion: the box is shown open with the mascot standing beside it holding the donut over its head. No WebGL / library
+- Reduced motion: the box is shown open with the mascot standing beside it holding the donut up. No WebGL / library
   unavailable: the lid opens on its own (CSS lid) after a short wait.
 - Debug: index.html?dropslow=1000 then HomiesDonutDrop.seek(seconds) or .frame(seconds); .times has the key moments.
 
 ## Catering truck
 - About 1 s after the whole catering card (its bottom edge) is on screen, the truck drops in quickly from above
   (lands ~0.45 s later; js/effects.js checks the card's bottom edge on scroll, since the card is tilted), lands with a
-  little squash and settle, a
-  puff of dust rises behind its rear wheel (the truck faces right, so the dust is on its left). Before that the
+  little squash and settle, and the landing hits hard: outlined cartoon dust clouds billow back from its rear wheel
+  (the truck faces right, so the dust is on its left), slam lines flash on the ground at both ends, steam puffs out of
+  the hood, a few sprinkles get knocked off the roof donut, and its shadow thumps out underneath. Before that the
   card sits tilted up on its right side (CSS `rotate: var(--tilt)`, -2deg on desktop pivoting on the bottom-left
   corner, -2.8deg on phones pivoting mid left edge); the truck lands on the raised side and knocks it level with
   one small overshoot (`cardsettle`). The section has extra top padding so the tilted corner stays clear of the
-  section above. Reduced motion: the card is level and the truck is simply there.
+  section above. Reduced motion: the card is level, the truck is simply there, and none of the landing effects play.

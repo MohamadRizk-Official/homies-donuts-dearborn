@@ -1440,14 +1440,56 @@ footer p.hrs-credit{margin:22px 0 0;text-align:center;font-size:11px;line-height
 }
 /* dust only behind the truck, at its rear wheel (the truck faces right), drifting back and up */
 .cater-card .puff, .cater-card.drive .puff, .cater-card.drive:hover .puff { animation: none; opacity: 0; right: auto; bottom: 4%; background: #fffdf9; box-shadow: 0 3px 8px -4px rgba(80, 40, 60, 0.35); }
-.cater-card .puff.p1 { left: 16%; width: 30px; height: 30px; }
-.cater-card .puff.p2 { left: 8%; width: 22px; height: 22px; }
-.cater-card .puff.p3 { left: 22%; width: 17px; height: 17px; }
 .cater-card.drive .puff { animation: dust 0.95s ease-out 0.44s 1 both; }
 .cater-card.drive .puff.p2 { animation-delay: 0.48s; }
 .cater-card.drive .puff.p3 { animation: dust-near 0.8s ease-out 0.46s 1 both; }
-@keyframes dust { 0% { opacity: 0; transform: translate(0, 0) scale(0.4); } 25% { opacity: 0.95; } 100% { opacity: 0; transform: translate(-36px, -16px) scale(1.5); } }
-@keyframes dust-near { 0% { opacity: 0; transform: translate(0, 0) scale(0.4); } 25% { opacity: 0.9; } 100% { opacity: 0; transform: translate(-22px, -20px) scale(1.3); } }
+/* the landing hits hard: cartoon dust clouds (outlined like the truck art) billowing back from the rear wheel,
+   slam lines on the ground at both ends, steam puffing out of the hood, sprinkles knocked off the roof donut,
+   and the shadow thumping out under it */
+.cater-card .puff, .cater-card.drive .puff, .cater-card.drive:hover .puff { background: #fbf4ea; border: 2px solid rgba(59, 33, 29, 0.55); box-shadow: inset -3px -4px 0 rgba(160, 120, 100, 0.18); }
+.cater-card .puff.p1 { left: 14%; width: 46px; height: 46px; }
+.cater-card .puff.p2 { left: 6%; width: 34px; height: 34px; }
+.cater-card .puff.p3 { left: 22%; width: 26px; height: 26px; }
+.cater-card .puff.p4 { left: 0%; width: 30px; height: 30px; }
+.cater-card .puff.p5 { left: 11%; bottom: 12%; width: 28px; height: 28px; }
+.cater-card.drive .puff.p4 { animation: dust-far 1.15s ease-out 0.45s 1 both; }
+.cater-card.drive .puff.p5 { animation: dust-up 1.05s ease-out 0.47s 1 both; }
+@keyframes dust { 0% { opacity: 0; transform: translate(0, 0) scale(0.35); } 18% { opacity: 1; } 70% { opacity: 0.9; } 100% { opacity: 0; transform: translate(-48px, -18px) scale(1.45); } }
+@keyframes dust-near { 0% { opacity: 0; transform: translate(0, 0) scale(0.35); } 18% { opacity: 1; } 70% { opacity: 0.9; } 100% { opacity: 0; transform: translate(-26px, -30px) scale(1.35); } }
+@keyframes dust-far { 0% { opacity: 0; transform: translate(0, 0) scale(0.35); } 18% { opacity: 1; } 70% { opacity: 0.9; } 100% { opacity: 0; transform: translate(-70px, -4px) scale(1.5); } }
+@keyframes dust-up { 0% { opacity: 0; transform: translate(0, 0) scale(0.35); } 20% { opacity: 1; } 70% { opacity: 0.9; } 100% { opacity: 0; transform: translate(-34px, -54px) scale(1.5); } }
+.thud { position: absolute; z-index: 1; left: 9%; right: 6%; bottom: 1%; height: 9%; border-radius: 50%; background: radial-gradient(closest-side, rgba(59, 33, 29, 0.34), rgba(59, 33, 29, 0)); opacity: 0; pointer-events: none; }
+.cater-card.drive .thud { animation: thud 0.85s both; }
+@keyframes thud { 0% { opacity: 0; transform: scale(0.45, 0.6); } 53% { opacity: 1; transform: scale(1.15, 1.45); } 72% { opacity: 0.75; transform: scale(0.98, 0.95); } 100% { opacity: 0.8; transform: none; } }
+.slam { position: absolute; z-index: 1; bottom: 0; width: 15%; aspect-ratio: 44 / 28; opacity: 0; pointer-events: none; }
+.slam svg { display: block; width: 100%; height: 100%; fill: none; stroke: #3b211d; stroke-width: 3.4; stroke-linecap: round; overflow: visible; }
+.slam-l { left: -9%; transform-origin: 100% 100%; }
+.slam-r { right: -10%; transform-origin: 0% 100%; }
+.slam-r svg { scale: -1 1; }
+.cater-card.drive .slam { animation: slam 0.5s cubic-bezier(0.2, 0.8, 0.4, 1) 0.45s 1 both; }
+@keyframes slam { 0% { opacity: 0; transform: scale(0.3); } 20% { opacity: 1; } 65% { opacity: 1; } 100% { opacity: 0; transform: scale(1.12); } }
+.steam { position: absolute; z-index: 3; left: 84%; bottom: 44%; width: 24px; height: 24px; border-radius: 50%; background: #fff; border: 2px solid rgba(59, 33, 29, 0.5); box-shadow: inset -3px -3px 0 rgba(150, 170, 190, 0.25); opacity: 0; pointer-events: none; --sx: 22px; }
+.steam.st2 { left: 80%; bottom: 47%; width: 19px; height: 19px; --sx: 8px; }
+.steam.st3 { left: 88%; bottom: 41%; width: 16px; height: 16px; --sx: 34px; }
+.cater-card.drive .steam { animation: steam 1.1s ease-out 0.48s 1 both; }
+.cater-card.drive .steam.st2 { animation-delay: 0.58s; }
+.cater-card.drive .steam.st3 { animation-delay: 0.68s; }
+@keyframes steam { 0% { opacity: 0; transform: translate(0, 0) scale(0.3); } 18% { opacity: 1; } 65% { opacity: 0.95; } 100% { opacity: 0; transform: translate(var(--sx), -62px) scale(1.7); } }
+.bit { position: absolute; z-index: 3; left: 61%; top: 12%; width: 6px; height: 15px; border-radius: 4px; border: 1.5px solid rgba(59, 33, 29, 0.7); opacity: 0; pointer-events: none; }
+.bit.b1 { background: #f05a9a; --x: -58px; --y: -38px; --r: -220deg; }
+.bit.b2 { background: #5ec3f0; --x: 52px; --y: -46px; --r: 250deg; }
+.bit.b3 { background: #ffc93c; --x: -22px; --y: -58px; --r: 170deg; }
+.bit.b4 { background: #8bd36b; --x: 72px; --y: -26px; --r: -280deg; }
+.bit.b5 { background: #b48cf0; --x: 18px; --y: -64px; --r: 320deg; }
+.cater-card.drive .bit { animation: bit 1.05s linear 0.46s 1 both; }
+.cater-card.drive .bit.b2, .cater-card.drive .bit.b4 { animation-delay: 0.5s; }
+@keyframes bit {
+  0% { opacity: 0; transform: translate(0, 0) rotate(0deg); animation-timing-function: cubic-bezier(0.2, 0.7, 0.4, 1); }
+  6% { opacity: 1; }
+  40% { transform: translate(calc(var(--x) * 0.55), var(--y)) rotate(calc(var(--r) * 0.5)); animation-timing-function: cubic-bezier(0.5, 0, 0.9, 0.6); }
+  82% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--x), 46px) rotate(var(--r)); }
+}
 /* the card waits tilted up on its right side; the truck lands on that side and presses it back down level
    (rotate + translate properties, so the card's own reveal/hover transforms and its text are untouched) */
 .catering { --tilt: -2.8deg; --tilt-origin: 0% 50%; padding-top: 50px; }   /* phones: a tall card, so pivot mid-edge */
@@ -1462,6 +1504,7 @@ footer p.hrs-credit{margin:22px 0 0;text-align:center;font-size:11px;line-height
 }
 @media (prefers-reduced-motion: reduce) {
   .cater-card .truck, .cater-card.drive .truck { animation: none; transform: none; opacity: 1; }
-  .cater-card.drive, .cater-card.drive .puff { animation: none; }
+  .cater-card.drive, .cater-card.drive .puff, .cater-card.drive .slam, .cater-card.drive .steam, .cater-card.drive .bit { animation: none; opacity: 0; }
+  .cater-card.drive .thud { animation: none; opacity: 0.8; }
   .cater-card { rotate: none; }
 }
