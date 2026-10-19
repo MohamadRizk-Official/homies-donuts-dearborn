@@ -325,7 +325,7 @@ async function start() {
   const fctx = figCanvas.getContext('2d');
   // proportions in box units (scaled to screen once): big round head, rounded body, very short legs, charcoal shoes
   const MS = {
-    headR: 0.155, hip: 0.1, hipW: 0.042, thigh: 0.034, shin: 0.031, legW: 0.062, shoeL: 0.1, shoeH: 0.054,
+    headR: 0.155, hip: 0.112, hipW: 0.042, thigh: 0.05, shin: 0.048, legW: 0.062, shoeL: 0.1, shoeH: 0.054,
     shoulderUp: 0.165, shoulderW: 0.1, upper: 0.1, fore: 0.096, armW: 0.05, handR: 0.037, line: 0.009
   };
   const FIG_H = 0.6;
@@ -379,7 +379,7 @@ async function start() {
       const side = i ? -1 : 1, ft = q.feet[i];
       const hip = [H[0] + loc(0, side * MS.hipW) * S, H[1] + 0.008 * S];
       const ankle = [X0 + loc(ft.a, side * MS.hipW) * S, Y0 - (ft.c + MS.shoeH * 0.8) * S];
-      const [knee, end] = ik2(hip, ankle, MS.thigh * S, MS.shin * S, sg);
+      const [knee, end] = ik2(hip, ankle, MS.thigh * S, MS.shin * S, -sg);       // knees point forward
       return { pts: [hip, knee, end], end, pitch: ft.pitch || 0 };
     };
     const shoe = (end, pitch) => {
@@ -395,15 +395,30 @@ async function start() {
       const side = i ? -1 : 1;
       const s0 = B(loc(-0.004, side * MS.shoulderW), MS.shoulderUp);
       const tg = q.hands[i];
-      const [el, hand] = ik2(s0, tg, MS.upper * S, MS.fore * S, -sg || 1);
+      const [el, hand] = ik2(s0, tg, MS.upper * S, MS.fore * S, sg);             // elbows point back
       return { pts: [s0, el, hand], hand };
     };
     // which side is further from the viewer (its left side faces away when it faces right)
     const farI = f > 0 ? 0 : 1, nearI = 1 - farI;
     const legs = [leg(0), leg(1)], arms = [arm(0), arm(1)];
     const drawLeg = (i) => { limb(legs[i].pts, MS.legW); shoe(legs[i].end, legs[i].pitch); };
-    const drawArm = (i) => { limb(arms[i].pts, MS.armW); blobFill(arms[i].hand[0], arms[i].hand[1], MS.handR * S); };
-    const drawHand = (i) => blobFill(arms[i].hand[0], arms[i].hand[1], MS.handR * S);
+    // arm + mitten hand as one shape: an outline pass, then a fill pass, so the hand joins the arm seamlessly
+    const mitten = (a, grow) => {
+      const [e, h] = [a.pts[1], a.hand], ang = Math.atan2(h[1] - e[1], h[0] - e[0]);
+      const r = MS.handR * S, cx = h[0] + Math.cos(ang) * r * 0.35, cy = h[1] + Math.sin(ang) * r * 0.35;
+      fctx.beginPath(); fctx.ellipse(cx, cy, r * 1.22 + grow, r * 0.98 + grow, ang, 0, Math.PI * 2); fctx.fill();
+      // a little thumb on the upper side
+      const ta = ang - sg * Math.PI / 2, tx = cx + Math.cos(ta) * r * 0.75 - Math.cos(ang) * r * 0.25, ty = cy + Math.sin(ta) * r * 0.75 - Math.sin(ang) * r * 0.25;
+      fctx.beginPath(); fctx.ellipse(tx, ty, r * 0.5 + grow, r * 0.42 + grow, ang, 0, Math.PI * 2); fctx.fill();
+    };
+    const drawArm = (i) => {
+      const a = arms[i];
+      fctx.lineCap = 'round'; fctx.lineJoin = 'round';
+      path(a.pts); fctx.strokeStyle = INK; fctx.lineWidth = MS.armW * S + 2 * ow; fctx.stroke();
+      fctx.fillStyle = INK; mitten(a, ow);
+      path(a.pts); fctx.strokeStyle = WHITE; fctx.lineWidth = MS.armW * S; fctx.stroke();
+      fctx.fillStyle = WHITE; mitten(a, 0);
+    };
     drawLeg(farI);
     if (!q.holding) drawArm(farI);
     // body: rounded, a little fuller low in front (the belly), seen at whatever angle it is turned to
@@ -420,8 +435,8 @@ async function start() {
     const hc = B(sg * 0.012 * af, 0.215 + MS.headR * 0.78);
     blobFill(hc[0], hc[1], MS.headR * S);
     drawLeg(nearI);
-    // holding the donut: the arms go behind it and only the hands show on its rim
-    if (q.holding) { limb(arms[farI].pts, MS.armW); limb(arms[nearI].pts, MS.armW); }
+    // holding the donut: arms and mitten hands go behind it, so its edge overlaps the hands on either side
+    if (q.holding) { drawArm(farI); drawArm(nearI); }
     // the donut in front of it (on the ground before it, or held up): cut its outline out of the body
     if (donut.visible) {
       donut.updateMatrixWorld();
@@ -438,7 +453,7 @@ async function start() {
       }
       fctx.globalCompositeOperation = 'source-over';
     }
-    if (q.holding) { drawHand(farI); drawHand(nearI); } else drawArm(nearI);
+    if (!q.holding) drawArm(nearI);
   }
 
   // ================================================================================================================
@@ -596,7 +611,7 @@ async function start() {
     XOFF = CR.width + 0.35 * SM;                       // completely off the right edge
   }
   placeMascot(); planned = true;
-  const VRUN = 1.6, STRIDE = 0.36, STANCE = 0.34, REACH = STRIDE * STANCE / 2, DEC = 0.2;
+  const VRUN = 1.6, STRIDE = 0.46, STANCE = 0.34, REACH = STRIDE * STANCE / 2, DEC = 0.2;
   const dRun = Math.max(0.5, (XOFF - XS) / SM);       // run length in box units
   const tRunIn = tRest + 0.15;
   const tCruise = Math.max(0, (dRun - DEC) / VRUN), tDec = 2 * DEC / VRUN;
@@ -635,7 +650,7 @@ async function start() {
       if (fr < STANCE) return { a: plant(k - off) - p, c: 0, pitch: 0 };
       const s = (fr - STANCE) / (1 - STANCE), e = smoother(s);
       const a0 = plant(k - off), a1 = plant(k + 1 - off);
-      return { a: lerp(a0, a1, e) - p, c: Math.sin(Math.PI * s) * 0.05 * (0.4 + 0.6 * v), pitch: Math.sin(Math.PI * s) * 0.4 * v };
+      return { a: lerp(a0, a1, e) - p, c: Math.sin(Math.PI * s) * 0.06 * (0.4 + 0.6 * v), pitch: Math.sin(Math.PI * s) * 0.4 * v };
     };
   }
   const gaitIn = gait(runIn, tRunIn, tStop), gaitOut = gait(runOut, tOut, tEnd);
@@ -676,7 +691,7 @@ async function start() {
     const bend = reduced ? 0 : sstep(0.04, 0.36, pk) * (1 - sstep(0.55, 0.92, pk));
     const bounce = 0.024 * spd * (1 - Math.cos(Math.PI * 4 * (ph - STANCE / 2))) / 2;
     const q = {
-      x, y: GY, theta, hip: MS.hip + bounce - bend * 0.035, lean: 0.26 * spd + bend * 0.85, feet,
+      x, y: GY, theta, hip: MS.hip + bounce - bend * 0.04, lean: 0.34 * spd + bend * 0.85, feet,
       visible: reduced || (tt > tRunIn - 0.01 && tt < tEnd), holding: false
     };
     // the donut: on the ground, being lifted, or held in front of the chest (in screen space, at one depth)
@@ -700,10 +715,10 @@ async function start() {
       return [shx + fwdPx, shy + (0.11 - 0.02 * Math.abs(a)) * SM];
     };
     const g0 = toCanvas([groundC.x, groundC.y, -BOXH + REST]), rx = SIZE * SM;
-    const reach = [[g0[0] + rx * 0.92, g0[1] - rx * 0.18], [g0[0] + rx * 0.72, g0[1] + rx * 0.22]];
+    const reach = [[g0[0] + rx * 0.98, g0[1] - rx * 0.12], [g0[0] + rx * 0.8, g0[1] + rx * 0.3]];
     const dcs = toCanvas([dc.x, dc.y, dc.z]);
     // both hands on the donut's left and right rims (its left hand on the screen-right rim), all the way round the turn
-    const hold = [[dcs[0] + rx * 0.94, dcs[1] + rx * 0.12], [dcs[0] - rx * 0.94, dcs[1] + rx * 0.12]];
+    const hold = [[dcs[0] + rx * 1.02, dcs[1] + rx * 0.1], [dcs[0] - rx * 1.02, dcs[1] + rx * 0.1]];
     const holdW = reduced ? 1 : (tt < tStop ? 0 : sstep(0.05, 0.3, pk));
     q.hands = [0, 1].map((i) => {
       const g = [lerp(reach[i][0], hold[i][0], liftE), lerp(reach[i][1], hold[i][1], liftE)], s = swing(i);

@@ -1425,3 +1425,33 @@ footer p.hrs-credit{margin:22px 0 0;text-align:center;font-size:11px;line-height
 .hb-drop.is-late, .hb-fig.is-late { animation: hbDropIn 0.6s ease both; }
 @keyframes hbDropIn { from { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .hb-drop.is-late, .hb-fig.is-late { animation: none; } }
+
+/* ---------- catering truck: drops in from above, lands with a puff of dust behind it, and the card gives under it ---------- */
+.truck-box { position: relative; max-width: 480px; margin: 0 auto; }
+.cater-card .truck { transform: translateY(-170%) rotate(-5deg); opacity: 0; }
+.cater-card.drive .truck { opacity: 1; transform: none; animation: truckdrop 1.25s both, truckidle 2.4s ease-in-out 1.6s infinite; }
+@keyframes truckdrop {
+  0% { transform: translateY(-170%) rotate(-5deg); opacity: 0; animation-timing-function: cubic-bezier(0.45, 0, 0.85, 0.5); }
+  10% { opacity: 1; }
+  62% { transform: translateY(0) rotate(0deg) scale(1.04, 0.93); animation-timing-function: cubic-bezier(0.2, 0.7, 0.4, 1); }
+  78% { transform: translateY(-4%) rotate(0.6deg) scale(0.99, 1.02); animation-timing-function: cubic-bezier(0.5, 0, 0.6, 1); }
+  90% { transform: translateY(0) scale(1.01, 0.99); }
+  100% { transform: none; opacity: 1; }
+}
+/* dust only behind the truck, at its rear wheel (the truck faces right), drifting back and up */
+.cater-card .puff, .cater-card.drive .puff, .cater-card.drive:hover .puff { animation: none; opacity: 0; right: auto; bottom: 4%; background: #fffdf9; box-shadow: 0 3px 8px -4px rgba(80, 40, 60, 0.35); }
+.cater-card .puff.p1 { left: 16%; width: 30px; height: 30px; }
+.cater-card .puff.p2 { left: 8%; width: 22px; height: 22px; }
+.cater-card .puff.p3 { left: 22%; width: 17px; height: 17px; }
+.cater-card.drive .puff { animation: dust 0.95s ease-out 0.76s 1 both; }
+.cater-card.drive .puff.p2 { animation-delay: 0.8s; }
+.cater-card.drive .puff.p3 { animation: dust-near 0.8s ease-out 0.78s 1 both; }
+@keyframes dust { 0% { opacity: 0; transform: translate(0, 0) scale(0.4); } 25% { opacity: 0.95; } 100% { opacity: 0; transform: translate(-36px, -16px) scale(1.5); } }
+@keyframes dust-near { 0% { opacity: 0; transform: translate(0, 0) scale(0.4); } 25% { opacity: 0.9; } 100% { opacity: 0; transform: translate(-22px, -20px) scale(1.3); } }
+/* the card dips under the landing and springs back once (translate, so its own transforms are untouched) */
+.cater-card.drive { animation: carddip 0.6s cubic-bezier(0.3, 0.7, 0.4, 1) 0.77s 1 both; }
+@keyframes carddip { 0% { translate: 0 0; } 35% { translate: 0 7px; } 70% { translate: 0 -2px; } 100% { translate: 0 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .cater-card .truck, .cater-card.drive .truck { animation: none; transform: none; opacity: 1; }
+  .cater-card.drive, .cater-card.drive .puff { animation: none; }
+}

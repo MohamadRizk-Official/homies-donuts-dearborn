@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Paytone+One&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=12">
+  <link rel="stylesheet" href="css/styles.css?v=13">
   <script>document.documentElement.classList.remove('no-js');</script>
 </head>
 <body>
@@ -383,8 +383,10 @@
           <div class="cater-art">
             <figure class="cater-photo"><img src="img/shop/catering-spread.webp" alt="Pink Homie's boxes of donuts, mini donuts and macarons with two pink coffee cups" loading="lazy"></figure>
             <div class="truck-scene" aria-hidden="true">
-              <span class="puff p1"></span><span class="puff p2"></span><span class="puff p3"></span>
-              <img class="truck" src="img/brand/truck.webp" alt="" loading="lazy" width="1100" height="687">
+              <div class="truck-box">
+                <span class="puff p1"></span><span class="puff p2"></span><span class="puff p3"></span>
+                <img class="truck" src="img/brand/truck.webp" alt="" loading="lazy" width="1100" height="687">
+              </div>
               <span class="road"></span>
             </div>
           </div>
@@ -420,15 +422,6 @@
           <!-- lollipop trees -->
           <g><rect x="196" y="58" width="5" height="60" rx="2" fill="#fff"/><circle cx="198.5" cy="52" r="20" fill="#ef4f93"/><path d="M198.5 52m-12 0a12 12 0 1 0 24 0a8 8 0 1 0-16 0a4 4 0 1 0 8 0" fill="none" stroke="#fff" stroke-width="3"/></g>
           <g><rect x="986" y="60" width="5" height="60" rx="2" fill="#fff"/><circle cx="988.5" cy="54" r="18" fill="#5fc2ef"/><path d="M988.5 54m-11 0a11 11 0 1 0 22 0a7 7 0 1 0-14 0a3.5 3.5 0 1 0 7 0" fill="none" stroke="#fff" stroke-width="3"/></g>
-          <!-- tiny donut shop -->
-          <g transform="translate(560 40)">
-            <rect x="0" y="34" width="84" height="56" rx="6" fill="#fff8f0"/>
-            <path d="M-6 36h96l-8-18H2z" fill="#ef4f93"/>
-            <path d="M2 18h10l-4 18H-6zM22 18h10l2 18H18zM42 18h10l6 18H40zM62 18h10l10 18H62z" fill="#fff"/>
-            <circle cx="42" cy="6" r="14" fill="#5fc2ef"/><circle cx="42" cy="6" r="5" fill="#f9cfd7"/>
-            <rect x="12" y="52" width="22" height="38" rx="4" fill="#f9cfd7"/>
-            <rect x="44" y="50" width="30" height="20" rx="4" fill="#dcf1fb"/>
-          </g>
         </svg>
       </div>
     </section>
@@ -474,6 +467,6 @@
   <script src="js/box-overlay.js?v=9"></script>
   <script src="js/effects.js?v=9"></script>
   <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }</script>
-  <script type="module" src="js/hero-scene.js?v=3"></script>
+  <script type="module" src="js/hero-scene.js?v=4"></script>
 </body>
 </html>
