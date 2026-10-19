@@ -247,6 +247,7 @@
 
   function finishClose() {
     if (!state) return;
+    clearTimeout(state.closeTimer);
     state.anims.forEach(function (a) { a.cancel(); });
     if (state.sourceImg) state.sourceImg.style.visibility = '';
     fromImg.style.opacity = ''; flyer.style.opacity = '';
@@ -268,9 +269,11 @@
       state.anims.push(fromImg.animate([{ opacity: 0 }, { opacity: 0, offset: 0.3 }, { opacity: 1, offset: 0.75 }, { opacity: 1 }], { duration: dur, fill: 'both' }));
       state.anims.push(toImg.animate([{ opacity: 1 }, { opacity: 1, offset: 0.3 }, { opacity: 0, offset: 0.75 }, { opacity: 0 }], { duration: dur, fill: 'both' }));
       state.anims[0].onfinish = finishClose;
+      state.closeTimer = setTimeout(finishClose, dur + 200);   // also completes if the tab is hidden mid-close
     } else {
       state.anims.push(flyer.animate([{ opacity: 1 }, { opacity: 0 }], { duration: reduce ? 1 : 260, fill: 'both' }));
       state.anims[0].onfinish = finishClose;
+      state.closeTimer = setTimeout(finishClose, 400);
     }
   }
 
