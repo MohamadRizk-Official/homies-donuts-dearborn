@@ -63,11 +63,13 @@ Left out until confirmed:
   A commercial licence (contact dennis@sharkshock.net, see sharkshock.net/license) is needed before launch.
   The demo has limited punctuation; missing characters fall back to Paytone One.
 
-## Favourite detail views (v5)
-- The six supplied mockups arrived as unnamed attachments; matched by content to 01-Elmo-Donut … 06-Mille-Feuille-Donut.
-  img/fav-detail/<name>-donut.webp is each mockup's donut artwork; <name>-bg.webp is the mockup background with its
-  baked-in text, header, X and donut painted out, so real, working elements sit on top.
-- Clicking a donut in the hero box flies it (one eased path) into the view; closing flies it back into its slot.
+## Favourite detail views
+- The six mockups (img/fav-detail/01-Elmo-Donut.webp … 06-Mille-Feuille-Donut.webp) are the supplied files, unchanged.
+  They arrived as unnamed .webp attachments and were matched to names by content.
+- Wide screens show the whole mockup (object-fit: contain, never cropped or enlarged, no filters). Real links/buttons sit
+  exactly over its drawn Order Now, Back to favourites and X. Narrow/portrait screens rebuild the layout in HTML with the
+  mockup's own donut artwork (*-donut.webp, an unfiltered crop) and the mockup's wording.
+- Clicking a donut in the hero box flies it into its spot in the mockup; closing flies it back.
 
 ## Reviews
 - Three verbatim Google reviews (Moses, Lola D, Diana Gray) from Google's place data for Homie's Donuts,

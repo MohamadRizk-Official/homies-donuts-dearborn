@@ -71,41 +71,57 @@
     return null;
   }
 
-  // The six supplied detail mockups (01-06): themed background + the mockup's donut artwork.
-  // box = the donut's position inside the 1672 x 940 mockup, so the artwork lands exactly where it was drawn.
+  /* The six supplied detail mockups. On wide screens the whole mockup is shown, uncropped and unfiltered;
+     real controls sit exactly over its drawn Order Now / Back / X. All boxes are in mockup pixels. */
   var MOCK = {
-    'Elmo': { file: '01-Elmo-Donut', box: [742, 132, 1471, 878], title: ['Elmo', 'Donut'], accent: 1, ink: '#ef4f93' },
-    'Peanut Butter & Jelly': { file: '02-Peanut-Butter-and-Jelly-Donut', box: [766, 116, 1498, 864], title: ['Peanut', 'Butter & Jelly', 'Donut'], accent: -1, ink: '#c2414f' },
-    'Homers': { file: '03-Homers-Donut', box: [772, 162, 1481, 836], title: ['Homers', 'Donut'], accent: 1, ink: '#ef4f93' },
-    'Cookie Monster': { file: '04-Cookie-Monster-Donut', box: [794, 159, 1566, 878], title: ['Cookie', 'Monster', 'Donut'], accent: 1, ink: '#1f86e0' },
-    'Biscoff': { file: '05-Biscoff-Donut', box: [749, 194, 1511, 868], title: ['Biscoff', 'Donut'], accent: 1, ink: '#b8641f' },
-    'Mille-Feuille': { file: '06-Mille-Feuille-Donut', box: [756, 129, 1556, 856], title: ['Mille-Feuille', 'Donut'], accent: -1, ink: '#9b4a2c' }
+    'Elmo': { file: '01-Elmo-Donut', box: [742, 132, 1471, 878], order: [188, 666, 528, 740], back: [188, 784, 448, 820], x: [1610, 65, 40],
+      edges: ['#fde9de', '#fd9682'], ink: '#ef4f93', title: ['Elmo', 'Donut'], accent: 1,
+      desc: 'A playful classic that brings big smiles.' },
+    'Peanut Butter & Jelly': { file: '02-Peanut-Butter-and-Jelly-Donut', box: [766, 116, 1498, 864], order: [110, 636, 420, 708], back: [110, 736, 340, 772], x: [1611, 89, 40],
+      edges: ['#f8ccc8', '#e89e8a'], ink: '#c2414f', title: ['Peanut', 'Butter & Jelly', 'Donut'], accent: -1,
+      desc: 'A golden donut topped with rich, creamy peanut butter, a center of sweet strawberry jelly, and a crunchy peanut topping.' },
+    'Homers': { file: '03-Homers-Donut', box: [772, 162, 1481, 836], order: [164, 640, 548, 720], back: [168, 752, 414, 792], x: [1580, 146, 42],
+      edges: ['#fce2de', '#f4ddd5'], ink: '#ef4f93', title: ['Homers', 'Donut'], accent: 1,
+      desc: 'A classic done right. Fluffy, golden dough with sweet pink icing and a generous sprinkle of colourful joy.' },
+    'Cookie Monster': { file: '04-Cookie-Monster-Donut', box: [794, 159, 1566, 878], order: [120, 674, 550, 758], back: [124, 794, 400, 838], x: [1604, 62, 40],
+      edges: ['#7acff5', '#e7d2bf'], ink: '#1f86e0', title: ['Cookie', 'Monster', 'Donut'], accent: 1,
+      desc: 'Soft, fluffy donut topped with smooth blue vanilla icing and a generous layer of cookie crumbles.' },
+    'Biscoff': { file: '05-Biscoff-Donut', box: [749, 194, 1511, 868], order: [116, 660, 472, 732], back: [124, 752, 376, 792], x: [1596, 72, 40],
+      edges: ['#c69674', '#cea484'], ink: '#b8641f', title: ['Biscoff', 'Donut'], accent: 1,
+      desc: 'A golden donut topped with creamy Biscoff icing, crushed Biscoff cookies and a hint of cookie crunch in every bite.' },
+    'Mille-Feuille': { file: '06-Mille-Feuille-Donut', box: [756, 129, 1556, 856], order: [112, 618, 432, 690], back: [114, 726, 354, 762], x: [1592, 58, 40],
+      edges: ['#fadbd4', '#facebc'], ink: '#9b4a2c', title: ['Mille-Feuille', 'Donut'], accent: -1,
+      desc: 'Light, flaky layers of golden pastry, filled with silky cream and topped with a smooth fondant finish.' }
   };
   var MW = 1672, MH = 940;
+  var ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
   // ---- build the view once
   var view = document.createElement('div');
   view.className = 'pv'; view.hidden = true;
   view.setAttribute('role', 'dialog'); view.setAttribute('aria-modal', 'true'); view.setAttribute('aria-labelledby', 'pv-title');
   view.innerHTML =
-    '<div class="pv-bg" aria-hidden="true"><img class="pv-bgimg" alt=""></div>' +
+    '<div class="pv-bg" aria-hidden="true"><img class="pv-mock" alt="" decoding="async"></div>' +
     '<div class="pv-accents" aria-hidden="true"></div>' +
     '<div class="pv-flyer" aria-hidden="true"><img class="pv-from" alt=""><img class="pv-to" alt=""></div>' +
-    '<button class="pv-close" type="button" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></button>' +
+    '<a class="pv-hot pv-hot-order" target="_blank" rel="noopener"><span class="sr-only">Order Now</span></a>' +
+    '<button class="pv-hot pv-hot-back" type="button"><span class="sr-only">Back to favourites</span></button>' +
+    '<button class="pv-close" type="button" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/></svg></button>' +
     '<div class="pv-copy">' +
       '<p class="pv-kicker"></p>' +
       '<h2 class="pv-title" id="pv-title"></h2>' +
       '<svg class="pv-squiggle" viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true"><path d="M3 14 Q 40 2 78 12 T 152 12 T 226 12 T 297 8" fill="none" stroke="#ffc83d" stroke-width="6" stroke-linecap="round"/></svg>' +
       '<p class="pv-desc"></p>' +
       '<div class="pv-actions">' +
-        '<a class="btn btn--lg pv-order" target="_blank" rel="noopener" data-burst>Order Now <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>' +
+        '<a class="btn btn--lg pv-order" target="_blank" rel="noopener" data-burst>Order Now ' + ARROW + '</a>' +
         '<button class="pv-back" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span></span></button>' +
       '</div>' +
     '</div>';
   document.body.appendChild(view);
   var $ = function (s) { return view.querySelector(s); };
-  var flyer = $('.pv-flyer'), fromImg = $('.pv-from'), toImg = $('.pv-to'), bgImg = $('.pv-bgimg'), copy = $('.pv-copy');
-  var state = null;   // { trigger, sourceImg, mock, aspect, anims }
+  var flyer = $('.pv-flyer'), fromImg = $('.pv-from'), toImg = $('.pv-to'), mockImg = $('.pv-mock'), copy = $('.pv-copy');
+  var hotOrder = $('.pv-hot-order'), hotBack = $('.pv-hot-back'), closeBtn = $('.pv-close');
+  var state = null;
 
   function accents(spec, n) {
     var host = $('.pv-accents'); host.innerHTML = '';
@@ -113,7 +129,7 @@
       var s = document.createElement('span');
       s.className = 'pv-acc pv-acc--' + spec.kind;
       s.style.setProperty('--c', spec.colors[i % spec.colors.length]);
-      s.style.setProperty('--x', (i % 2 ? 52 + Math.random() * 46 : 2 + Math.random() * 30).toFixed(1) + '%');
+      s.style.setProperty('--x', (i % 2 ? 60 + Math.random() * 38 : 2 + Math.random() * 22).toFixed(1) + '%');
       s.style.setProperty('--y', (Math.random() * 100).toFixed(1) + '%');
       s.style.setProperty('--r', Math.round(Math.random() * 360) + 'deg');
       s.style.setProperty('--s', (0.6 + Math.random() * 0.8).toFixed(2));
@@ -123,47 +139,50 @@
       host.appendChild(s);
     }
   }
-
   function headerBottom() { var b = document.querySelector('.site-header .bar'); return b ? b.getBoundingClientRect().bottom : 70; }
+  function place(el, l, t, w, h) { el.style.left = l + 'px'; el.style.top = t + 'px'; el.style.width = w + 'px'; el.style.height = h + 'px'; }
 
-  /* Where the donut sits in the view, plus where the copy goes. Wide screens line the artwork up with its
-     own background (as in the mockups); narrow/portrait screens stack donut over text. */
+  /* Wide screens: the whole mockup, contained (never cropped or enlarged past the space), top-aligned so its drawn
+     header sits under the real one. Narrow/portrait screens: the same layout rebuilt in HTML with the mockup's donut. */
   function layout() {
-    var W = window.innerWidth, H = window.innerHeight, top = headerBottom();
-    var wide = W >= 1080 && W / H >= 1.25;
-    var m = state.mock, target, copyBox;
-    view.classList.toggle('pv--wide', wide);
-    if (m && wide) {
-      var s = Math.max(W / MW, H / MH);
-      var iw = MW * s, ih = MH * s;
-      var bw = (m.box[2] - m.box[0]) * s, bh = (m.box[3] - m.box[1]) * s;
-      // keep the donut fully on screen, under the header
-      var ox = Math.min((W - iw) / 2, W - 28 - m.box[2] * s);
-      var oy = (H - ih) / 2;
-      oy = Math.max(oy, top + 12 - m.box[1] * s); oy = Math.min(oy, H - 16 - m.box[3] * s); oy = Math.max(oy, H - ih);
-      bgImg.style.cssText = 'left:' + ox + 'px;top:' + oy + 'px;width:' + iw + 'px;height:' + ih + 'px';
-      target = { left: ox + m.box[0] * s, top: oy + m.box[1] * s, width: bw, height: bh };
-      var cl = Math.max(28, ox + 110 * s);
-      copyBox = { left: cl, width: Math.max(320, target.left - cl - 24), top: null };
+    var W = document.documentElement.clientWidth, H = window.innerHeight;
+    var m = state.mock, full = !!m && W >= 760 && W / H >= 1.15, target;
+    view.classList.toggle('pv--full', full);
+    view.classList.toggle('pv--stacked', !full);
+    if (full) {
+      var s = Math.min((W - 64) / MW, H / MH);
+      var iw = MW * s, ih = MH * s, ox = (W - iw) / 2, oy = 0;
+      place(mockImg, ox, oy, iw, ih);
+      var P = function (b) { return [ox + b[0] * s, oy + b[1] * s, (b[2] - b[0]) * s, (b[3] - b[1]) * s]; };
+      var d = P(m.box); target = { left: d[0], top: d[1], width: d[2], height: d[3] };
+      var o = P(m.order); place(hotOrder, o[0] - 4, o[1] - 4, o[2] + 8, o[3] + 8);
+      var bk = P(m.back); place(hotBack, bk[0] - 6, bk[1] - 6, bk[2] + 12, bk[3] + 12);
+      var size = Math.max(54, m.x[2] * 2 * s + 10);
+      place(closeBtn, ox + m.x[0] * s - size / 2, oy + m.x[1] * s - size / 2, size, size);
+      // keep the real header clear of the close button (it stays centred, just a little narrower)
+      var xl = ox + m.x[0] * s - size / 2;
+      document.documentElement.style.setProperty('--pv-hdr-w', Math.max(700, Math.min(1240, 2 * (xl - 14 - W / 2))) + 'px');
+      copy.style.cssText = '';
     } else {
-      if (m) bgImg.style.cssText = 'left:0;top:0;width:100%;height:100%;object-fit:cover;object-position:' + ((m.box[0] + m.box[2]) / 2 / MW * 100).toFixed(1) + '% 45%';
+      var top = headerBottom();
       var a = state.aspect || 1;
-      if (wide) {
+      var maxH = (H - top) * (state.drink ? 0.46 : 0.4);
+      var w = Math.min(W * 0.78, 460, maxH * a);
+      target = { width: w, height: w / a, left: (W - w) / 2, top: top + 14 };
+      if (W / H >= 1.15 && !m) {   // wide, non-favourite: product on the right, copy on the left
         var hgt = Math.min(H - top - 70, W * 0.36 / a);
         target = { width: hgt * a, height: hgt, left: W * 0.71 - hgt * a / 2, top: top + (H - top - hgt) / 2 + 10 };
-        copyBox = { left: Math.max(28, (W - 1200) / 2 + 24), width: Math.min(560, target.left - Math.max(28, (W - 1200) / 2 + 24) - 30), top: null };
+        var cl = Math.max(28, (W - 1200) / 2 + 24);
+        copy.style.cssText = 'left:' + cl + 'px;width:' + Math.min(560, target.left - cl - 30) + 'px';
+        view.classList.remove('pv--stacked'); view.classList.add('pv--side');
       } else {
-        var maxH = (H - top) * (state.drink ? 0.46 : 0.4);
-        var w = Math.min(W * 0.78, 460, maxH * a);
-        target = { width: w, height: w / a, left: (W - w) / 2, top: top + 14 };
-        copyBox = { left: 0, width: W, top: target.top + target.height + 10 };
+        view.classList.remove('pv--side');
+        copy.style.cssText = 'left:0;width:' + W + 'px;top:' + (target.top + target.height + 10) + 'px';
       }
+      closeBtn.style.cssText = '';
+      document.documentElement.style.removeProperty('--pv-hdr-w');
     }
-    flyer.style.left = target.left + 'px'; flyer.style.top = target.top + 'px';
-    flyer.style.width = target.width + 'px'; flyer.style.height = target.height + 'px';
-    copy.style.left = copyBox.left + 'px'; copy.style.width = copyBox.width + 'px';
-    copy.style.top = copyBox.top == null ? '' : copyBox.top + 'px';
-    view.classList.toggle('pv--stacked', copyBox.top != null);
+    place(flyer, target.left, target.top, target.width, target.height);
     return target;
   }
 
@@ -189,7 +208,7 @@
     var srcImg = trigger.closest('.dz') ? trigger.closest('.dz').querySelector('.dn img') : (trigger.querySelector('img') || null);
     state = { trigger: trigger, sourceImg: srcImg, mock: mock, drink: found.cat.id === 'drinks', anims: [] };
 
-    view.style.setProperty('--pv-bg1', mood.bg1); view.style.setProperty('--pv-bg2', mood.bg2);
+    view.style.setProperty('--pv-bg1', mock ? mock.edges[0] : mood.bg1); view.style.setProperty('--pv-bg2', mock ? mock.edges[1] : mood.bg2);
     view.style.setProperty('--pv-ink', mock ? mock.ink : mood.ink); view.style.setProperty('--pv-glow', mood.glow);
     view.classList.toggle('pv--mock', !!mock);
     view.classList.toggle('pv--drink', state.drink);
@@ -202,40 +221,46 @@
       if (i === accentIdx && title.length > 1) span.className = 'pv-accent-word';
       h.appendChild(span);
     });
-    $('.pv-desc').textContent = fav ? fav.desc : defaultCopy(found);
-    var order = $('.pv-order'); order.href = SITE.orderHref || '#';
-    if (!SITE.orderUrl) order.removeAttribute('target'); else order.target = '_blank';
+    $('.pv-desc').textContent = mock ? mock.desc : fav ? fav.desc : defaultCopy(found);
+    [$('.pv-order'), hotOrder].forEach(function (a) {
+      a.href = SITE.orderHref || '#';
+      if (SITE.orderUrl) a.target = '_blank'; else a.removeAttribute('target');
+    });
     $('.pv-back span').textContent = isFavGroup ? 'Back to favourites' : (document.querySelector('[data-menu]') ? 'Back to the menu' : 'Back');
     accents(fav ? fav.accents : cat.accents, mock ? 8 : 14);
 
     var toSrc = mock ? 'img/fav-detail/' + mock.file + '-donut.webp' : (fav ? fav.img : found.item.img);
-    var bgSrc = mock ? 'img/fav-detail/' + mock.file + '-bg.webp' : '';
-    if (bgSrc) bgImg.src = bgSrc; else bgImg.removeAttribute('src');
+    if (mock) mockImg.src = 'img/fav-detail/' + mock.file + '.webp'; else mockImg.removeAttribute('src');
+    mockImg.alt = mock ? (title.join(' ') + ': ' + mock.desc) : '';
     fromImg.src = srcImg ? srcImg.currentSrc || srcImg.src : toSrc;
     toImg.src = toSrc; toImg.alt = found.item.name;
 
     // wait for the new artwork so nothing old or half-loaded ever shows
-    var ready = [toImg, bgSrc ? bgImg : null].filter(Boolean).map(function (im) { return im.decode ? im.decode().catch(function () {}) : null; });
-    Promise.race([Promise.all(ready), new Promise(function (r) { setTimeout(r, 900); })]).then(function () {
+    var ready = [toImg, mock ? mockImg : null].filter(Boolean).map(function (im) { return im.decode ? im.decode().catch(function () {}) : null; });
+    Promise.race([Promise.all(ready), new Promise(function (r) { setTimeout(r, 1200); })]).then(function () {
+      if (!state) return;
       state.aspect = toImg.naturalWidth && toImg.naturalHeight ? toImg.naturalWidth / toImg.naturalHeight : 1;
       document.documentElement.classList.add('pv-open');
       view.hidden = false;
-      view.classList.remove('is-in', 'is-closing');
+      view.classList.remove('is-in', 'is-closing', 'is-landed');
       var t = layout();
       void view.offsetWidth;
       view.classList.add('is-in');
-      var r = sourceRect();
+      var r = sourceRect(), dur = 780;
+      flyer.style.opacity = 1;
       if (!reduce && r) {
         if (state.sourceImg) state.sourceImg.style.visibility = 'hidden';
-        flyer.style.opacity = 1;
-        state.anims.push(flyer.animate([{ transform: deltaFrom(r, t) }, { transform: 'none' }], { duration: 760, easing: 'cubic-bezier(.22,.8,.26,1)', fill: 'both' }));
-        state.anims.push(fromImg.animate([{ opacity: 1 }, { opacity: 1, offset: 0.25 }, { opacity: 0, offset: 0.7 }, { opacity: 0 }], { duration: 760, fill: 'both' }));
-        state.anims.push(toImg.animate([{ opacity: 0 }, { opacity: 0, offset: 0.25 }, { opacity: 1, offset: 0.7 }, { opacity: 1 }], { duration: 760, fill: 'both' }));
+        state.anims.push(flyer.animate([{ transform: deltaFrom(r, t) }, { transform: 'none' }], { duration: dur, easing: 'cubic-bezier(.22,.8,.26,1)', fill: 'both' }));
+        state.anims.push(fromImg.animate([{ opacity: 1 }, { opacity: 1, offset: 0.25 }, { opacity: 0, offset: 0.7 }, { opacity: 0 }], { duration: dur, fill: 'both' }));
+        state.anims.push(toImg.animate([{ opacity: 0 }, { opacity: 0, offset: 0.25 }, { opacity: 1, offset: 0.7 }, { opacity: 1 }], { duration: dur, fill: 'both' }));
       } else {
+        dur = reduce ? 1 : 420;
         fromImg.style.opacity = 0;
-        state.anims.push(flyer.animate([{ opacity: 0, transform: 'scale(.94)' }, { opacity: 1, transform: 'none' }], { duration: reduce ? 1 : 420, easing: 'ease-out', fill: 'both' }));
+        state.anims.push(flyer.animate([{ opacity: 0, transform: 'scale(.94)' }, { opacity: 1, transform: 'none' }], { duration: dur, easing: 'ease-out', fill: 'both' }));
       }
-      setTimeout(function () { $('.pv-close').focus({ preventScroll: true }); }, reduce ? 0 : 80);
+      // once landed over the mockup's own donut, hand over to the untouched mockup
+      state.landTimer = setTimeout(function () { if (state && !view.classList.contains('is-closing')) view.classList.add('is-landed'); }, dur + 40);
+      setTimeout(function () { closeBtn.focus({ preventScroll: true }); }, reduce ? 0 : 80);
     });
   }
 
@@ -247,50 +272,54 @@
 
   function finishClose() {
     if (!state) return;
-    clearTimeout(state.closeTimer);
+    clearTimeout(state.closeTimer); clearTimeout(state.landTimer);
     state.anims.forEach(function (a) { a.cancel(); });
     if (state.sourceImg) state.sourceImg.style.visibility = '';
     fromImg.style.opacity = ''; flyer.style.opacity = '';
     view.hidden = true;
-    view.classList.remove('is-in', 'is-closing');
+    view.classList.remove('is-in', 'is-closing', 'is-landed');
     document.documentElement.classList.remove('pv-open');
+    document.documentElement.style.removeProperty('--pv-hdr-w');
     var trig = state.trigger; state = null;
     if (trig && document.contains(trig)) trig.focus({ preventScroll: true });
   }
   function close() {
     if (!state || view.classList.contains('is-closing')) return;
+    clearTimeout(state.landTimer);
+    view.classList.remove('is-landed');   // the flyer takes over from the mockup's donut (same pixels, same place)
     view.classList.add('is-closing'); view.classList.remove('is-in');
     var t = flyer.getBoundingClientRect(), r = sourceRect();
     state.anims.forEach(function (a) { a.cancel(); });
     state.anims = [];
+    var dur = 640;
     if (!reduce && r && t.width) {
-      var dur = 620, opts = { duration: dur, easing: 'cubic-bezier(.45,0,.25,1)', fill: 'both' };
+      var opts = { duration: dur, easing: 'cubic-bezier(.45,0,.25,1)', fill: 'both' };
       state.anims.push(flyer.animate([{ transform: 'none' }, { transform: deltaFrom(r, t) }], opts));
       state.anims.push(fromImg.animate([{ opacity: 0 }, { opacity: 0, offset: 0.3 }, { opacity: 1, offset: 0.75 }, { opacity: 1 }], { duration: dur, fill: 'both' }));
       state.anims.push(toImg.animate([{ opacity: 1 }, { opacity: 1, offset: 0.3 }, { opacity: 0, offset: 0.75 }, { opacity: 0 }], { duration: dur, fill: 'both' }));
-      state.anims[0].onfinish = finishClose;
-      state.closeTimer = setTimeout(finishClose, dur + 200);   // also completes if the tab is hidden mid-close
     } else {
-      state.anims.push(flyer.animate([{ opacity: 1 }, { opacity: 0 }], { duration: reduce ? 1 : 260, fill: 'both' }));
-      state.anims[0].onfinish = finishClose;
-      state.closeTimer = setTimeout(finishClose, 400);
+      dur = reduce ? 1 : 260;
+      state.anims.push(flyer.animate([{ opacity: 1 }, { opacity: 0 }], { duration: dur, fill: 'both' }));
     }
+    state.anims[0].onfinish = finishClose;
+    state.closeTimer = setTimeout(finishClose, dur + 200);   // also completes if the tab is hidden mid-close
   }
 
-  $('.pv-close').addEventListener('click', close);
+  closeBtn.addEventListener('click', close);
   $('.pv-back').addEventListener('click', close);
+  hotBack.addEventListener('click', close);
   view.addEventListener('click', function (e) { if (e.target === view || e.target.closest('.pv-bg')) close(); });
   document.addEventListener('keydown', function (e) {
     if (view.hidden) return;
     if (e.key === 'Escape') { e.preventDefault(); close(); }
-    if (e.key === 'Tab') {   // keep keyboard focus inside the view
-      var f = view.querySelectorAll('button, a[href]'); var first = f[0], last = f[f.length - 1];
+    if (e.key === 'Tab') {   // keep keyboard focus inside the view (only the controls that are showing)
+      var f = Array.prototype.filter.call(view.querySelectorAll('button, a[href]'), function (el) { return el.offsetParent !== null && getComputedStyle(el).visibility !== 'hidden'; });
+      var first = f[0], last = f[f.length - 1];
       if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
       else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
     }
   });
   window.addEventListener('resize', function () { if (state && !view.hidden) layout(); });
-  // the header stays usable: following one of its links closes the view first
   var header = document.querySelector('.site-header');
   if (header) header.addEventListener('click', function (e) { if (e.target.closest('a') && state) finishClose(); });
 
@@ -301,7 +330,7 @@
       if (el.tagName !== 'BUTTON' && el.getAttribute('role') !== 'listitem') el.setAttribute('role', 'button');
       el.setAttribute('aria-haspopup', 'dialog');
       if (!el.hasAttribute('aria-label')) el.setAttribute('aria-label', 'View ' + el.getAttribute('data-product'));
-      el.addEventListener('click', function () { open(el); });
+      el.addEventListener('click', function () { el.blur(); open(el); });
       if (el.tagName !== 'BUTTON') el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(el); } });
     });
   }
@@ -311,8 +340,8 @@
   if (document.querySelector('[data-hero-box]')) {
     window.addEventListener('load', function () {
       setTimeout(function () {
-        Object.keys(MOCK).forEach(function (k) { ['-donut', '-bg'].forEach(function (s) { var i = new Image(); i.src = 'img/fav-detail/' + MOCK[k].file + s + '.webp'; }); });
-      }, 1500);
+        Object.keys(MOCK).forEach(function (k) { ['', '-donut'].forEach(function (s) { var i = new Image(); i.src = 'img/fav-detail/' + MOCK[k].file + s + '.webp'; }); });
+      }, 1200);
     });
   }
 })();

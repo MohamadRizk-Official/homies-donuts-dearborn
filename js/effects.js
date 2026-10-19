@@ -290,4 +290,8 @@
     ['pointerleave', 'focusout'].forEach(function (ev) { track.parentElement.addEventListener(ev, function () { paused = false; }); });
     if (!reduce) timer = setInterval(function () { if (!paused && track.scrollWidth > track.clientWidth + 10 && !document.hidden) step(1); }, 7000);
   }
+
+  /* ---------- 10. keyboard-only focus styling (no stray rings after mouse clicks) ---------- */
+  document.addEventListener('keydown', function (ev) { if (ev.key === 'Tab' || ev.key === 'Enter' || ev.key === ' ') document.documentElement.classList.add('kbd'); });
+  document.addEventListener('pointerdown', function () { document.documentElement.classList.remove('kbd'); }, true);
 })();

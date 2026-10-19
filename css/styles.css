@@ -1228,3 +1228,75 @@ html.pv-open { overflow: hidden; }
 .tile:hover > .led-glow, .tile:focus-visible > .led-glow { opacity: 1; filter: blur(16px); }
 .cater-card { --led-w: 4px; --led-g: 14px; --led-o: 0.95; --led-go: 0.6; }
 @media (min-width: 1000px) { .reviews-nav { display: none; } }
+
+/* ==========================================================================
+   v6 — full mockups, clean donut hover, clear close, Rate Us
+   ========================================================================== */
+/* the detail view: the supplied mockup, whole and sharp */
+.pv-bg { background: linear-gradient(180deg, var(--pv-bg1), var(--pv-bg2)); }
+.pv:not(.pv--mock) .pv-bg { background:
+    radial-gradient(ellipse 50% 60% at 72% 52%, var(--pv-glow), transparent 70%),
+    radial-gradient(ellipse 80% 70% at 20% 0%, rgba(255, 255, 255, 0.85), transparent 60%),
+    linear-gradient(160deg, var(--pv-bg1) 0%, var(--pv-bg2) 100%); }
+.pv-mock { position: absolute; display: none; max-width: none; object-fit: contain; image-rendering: auto; filter: none; transform: none; }
+.pv--full .pv-mock { display: block; }
+.pv--full .pv-bg { transition: opacity 0.45s ease 0.22s; }
+.pv--full .pv-accents { display: none; }
+.pv-bgimg { display: none; }
+/* the flyer covers the mockup's own donut while flying, then hands over to the untouched mockup */
+.pv-flyer { transition: opacity 0.18s ease; }
+.pv--full.is-landed .pv-flyer { opacity: 0 !important; }
+.pv:not(.pv--full) .pv-to { filter: drop-shadow(0 22px 26px rgba(60, 20, 20, 0.28)); }
+/* in full view the mockup itself shows the title, text and buttons; the real copy stays for screen readers */
+.pv--full .pv-copy { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.pv--full .pv-actions { display: none; }
+.pv-hot { position: absolute; z-index: 5; display: none; border: 0; background: transparent; border-radius: 999px; cursor: pointer; padding: 0;
+  transition: box-shadow 0.25s ease, background 0.25s ease; }
+.pv--full .pv-hot { display: block; }
+.pv-hot-order:hover { background: rgba(255, 255, 255, 0.14); box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.85), 0 12px 24px -10px rgba(201, 47, 115, 0.6); }
+.pv-hot-back:hover { background: rgba(255, 255, 255, 0.35); }
+.pv-hot:focus-visible { outline: 3px solid #2f9fd8; outline-offset: 3px; }
+/* the close button: big, high contrast, sits on the mockup's own X with room from the edge */
+.pv-close { width: 58px; height: 58px; background: #fff; color: var(--cocoa); border: 3px solid var(--pv-ink, #ef4f93);
+  box-shadow: 0 10px 24px -8px rgba(60, 20, 30, 0.55); right: 22px; top: calc(var(--header-h) + 16px); }
+.pv--full .pv-close { right: auto; }
+.pv-close svg { width: 46%; height: 46%; }
+.pv-close:hover { transform: scale(1.06); background: #fff5f8; }
+.pv-close:focus-visible { outline: 3px solid #2f9fd8; outline-offset: 3px; }
+/* while open, the real header covers the mockup's drawn one completely */
+html.pv-open .site-header .bar { background: #fffaf4; -webkit-backdrop-filter: none; backdrop-filter: none; }
+
+/* ---------- hero box donuts: rise only; no ring, nothing left behind ---------- */
+.dz .hit, .dz .hit:focus, .dz .hit:focus-visible { outline: none; box-shadow: none; }
+.dz .dn { transform: none; filter: none; transition: transform 0.32s cubic-bezier(0.2, 0.8, 0.3, 1); }
+.dz .hit:hover + .dn, .dz.is-pop .dn, html.kbd .dz .hit:focus-visible + .dn { transform: translateY(-6%); filter: none; }
+.hero-box:not(.is-open) .dz .dn { transform: none !important; }
+
+/* ---------- steady hero: columns never resize while fonts load ---------- */
+@media (min-width: 960px) { .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); } }
+.hero-box { margin-top: 18px; }
+
+/* ---------- Rate Us side tab ---------- */
+.rate-tab { position: fixed; right: 0; top: 50%; z-index: 80; transform: translateY(-50%); display: none;
+  writing-mode: vertical-rl; align-items: center; gap: 10px; padding: 16px 10px; border-radius: 16px 0 0 16px;
+  background: #fff; color: var(--cocoa); text-decoration: none; font: 700 0.92rem/1 var(--font-body); letter-spacing: 0.04em;
+  box-shadow: -6px 10px 26px -12px rgba(66, 133, 244, 0.6), inset 3px 0 0 #4285F4; transition: padding 0.25s ease, box-shadow 0.25s ease; }
+.rate-tab .g-logo { position: static; width: 20px; height: 20px; }
+.rate-tab .rt-stars { color: #fbbc05; letter-spacing: 1px; }
+.rate-tab:hover, .rate-tab:focus-visible { padding-right: 16px; box-shadow: -8px 12px 30px -10px rgba(66, 133, 244, 0.8), inset 3px 0 0 #34A853; }
+@media (min-width: 1100px) { .rate-tab { display: flex; } }
+html.pv-open .rate-tab { display: none; }
+
+/* ---------- review rating with a gentle shine ---------- */
+.rating { display: inline-flex; align-items: center; gap: 12px; margin-top: 14px; padding: 10px 18px; border-radius: 999px; background: #fff; box-shadow: 0 10px 24px -16px rgba(66, 133, 244, 0.7); }
+.rating .score { font: 400 1.7rem/1 var(--font-head); color: var(--cocoa); }
+.shine-stars { position: relative; font-size: 1.4rem; letter-spacing: 3px; line-height: 1; color: #e7dccf; }
+.shine-stars::before { content: "★★★★★"; position: absolute; inset: 0; width: var(--pct, 90%); overflow: hidden; white-space: nowrap;
+  background: linear-gradient(100deg, #f9a825 0 40%, #fff6c8 50%, #f9a825 60% 100%) 0 0 / 250% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent; animation: starshine 4.5s ease-in-out infinite; }
+@keyframes starshine { 0%, 55% { background-position: 100% 0; } 100% { background-position: -50% 0; } }
+.rating small { color: var(--cocoa-3); font-size: 0.82rem; }
+@media (prefers-reduced-motion: reduce) { .shine-stars::before { animation: none; } }
+html.pv-open .site-header .bar { max-width: var(--pv-hdr-w, 1240px); transition: max-width 0.3s ease; }
+/* the band below a mockup on taller screens: a soft continuation of the mockup's lower edge */
+.pv--full .pv-bg { background: linear-gradient(180deg, var(--pv-bg1) 0, var(--pv-bg2) 70%, color-mix(in srgb, var(--pv-bg2) 70%, #fff) 100%); }
