@@ -1409,3 +1409,4 @@ html.bo-open .rate-tab { display: none; }
   .bo-p { animation: none; top: 40%; }
   .dz .hit:hover + .dn { transform: translateY(-4%); }
 }
+footer p.hrs-credit{margin:22px 0 0;text-align:center;font-size:11px;line-height:1.4;letter-spacing:.06em;color:#cdb1a8;opacity:.75}footer p.hrs-credit a{color:inherit;font-size:inherit;line-height:inherit;text-decoration:none;border-bottom:1px solid transparent;padding-bottom:1px;transition:opacity .25s,border-color .25s}footer p.hrs-credit a:hover,footer p.hrs-credit a:focus-visible{border-color:currentColor}
