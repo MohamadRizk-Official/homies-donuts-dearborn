@@ -101,25 +101,28 @@
     });
   }
 
-  /* ---------- 5. the truck rolls in ~1s after the bottom of the blue catering card is in view ---------- */
+  /* ---------- 5. the truck drops in ~1s after the whole blue catering card is in view ---------- */
+  // (a plain geometry check: the card sits tilted until the truck lands, so an observer on its bottom edge is unreliable)
   var sentinel = document.querySelector('[data-truck-trigger]');
   var cater = document.querySelector('.cater-card');
   if (sentinel && cater) {
-    if (reduce || !('IntersectionObserver' in window)) { cater.classList.add('drive'); }
+    if (reduce) { cater.classList.add('drive'); }
     else {
-      var tTimer = null, scrolled = false;
-      window.addEventListener('scroll', function () { scrolled = true; }, { passive: true, once: true });
-      var truckIO = new IntersectionObserver(function (entries) {
-        entries.forEach(function (en) {
-          if (en.isIntersecting && !tTimer && scrolled) {
-            tTimer = setTimeout(function () { cater.classList.add('drive'); truckIO.disconnect(); }, 1000);
-          } else if (!en.isIntersecting && tTimer && !cater.classList.contains('drive')) {
-            clearTimeout(tTimer); tTimer = null;   // scrolled away before the second passed
-          }
-        });
-      }, { threshold: 1 });
-      truckIO.observe(sentinel);
-      window.addEventListener('scroll', function () { truckIO.unobserve(sentinel); truckIO.observe(sentinel); }, { passive: true, once: true });
+      var tTimer = null, queued = false;
+      var check = function () {
+        queued = false;
+        if (cater.classList.contains('drive')) return;
+        var b = sentinel.getBoundingClientRect().bottom, inView = b > 0 && b <= window.innerHeight;
+        if (inView && !tTimer) {
+          tTimer = setTimeout(function () {
+            cater.classList.add('drive');
+            window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onScroll);
+          }, 1000);
+        } else if (!inView && tTimer) { clearTimeout(tTimer); tTimer = null; }   // scrolled away before the second passed
+      };
+      var onScroll = function () { if (!queued) { queued = true; requestAnimationFrame(check); } };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
     }
   }
 

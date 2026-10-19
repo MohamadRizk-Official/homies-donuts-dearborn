@@ -395,7 +395,9 @@ async function start() {
       const side = i ? -1 : 1;
       const s0 = B(loc(-0.004, side * MS.shoulderW), MS.shoulderUp);
       const tg = q.hands[i];
-      const [el, hand] = ik2(s0, tg, MS.upper * S, MS.fore * S, sg);             // elbows point back
+      // its arms are short, so raised overhead they stretch a little (cartoon style) to keep hold of the donut
+      const k = Math.max(1, Math.hypot(tg[0] - s0[0], tg[1] - s0[1]) / ((MS.upper + MS.fore) * 0.97 * S));
+      const [el, hand] = ik2(s0, tg, MS.upper * S * k, MS.fore * S * k, sg);     // elbows point back
       return { pts: [s0, el, hand], hand };
     };
     // which side is further from the viewer (its left side faces away when it faces right)
@@ -431,12 +433,14 @@ async function start() {
     }
     path(front.concat(back.reverse()), true);
     fctx.fillStyle = WHITE; fctx.fill(); fctx.lineWidth = ow; fctx.strokeStyle = INK; fctx.stroke();
+    // overhead, both arms come up from the shoulders behind its head (the head hides where they cross it)
+    if (q.holding && q.overhead) { drawArm(farI); drawArm(nearI); }
     // head: big, round and featureless, sitting just forward of the body
     const hc = B(sg * 0.012 * af, 0.215 + MS.headR * 0.78);
     blobFill(hc[0], hc[1], MS.headR * S);
     drawLeg(nearI);
     // holding the donut: arms and mitten hands go behind it, so its edge overlaps the hands on either side
-    if (q.holding) { drawArm(farI); drawArm(nearI); }
+    if (q.holding && !q.overhead) { drawArm(farI); drawArm(nearI); }
     // the donut in front of it (on the ground before it, or held up): cut its outline out of the body
     if (donut.visible) {
       donut.updateMatrixWorld();
@@ -616,7 +620,7 @@ async function start() {
   const tRunIn = tRest + 0.15;
   const tCruise = Math.max(0, (dRun - DEC) / VRUN), tDec = 2 * DEC / VRUN;
   const tStop = tRunIn + tCruise + tDec;
-  const tPick = 1.1, tTurn = 0.45;
+  const tPick = 1.4, tTurn = 0.45;
   const tTurnAt = tStop + tPick, tOut = tTurnAt + tTurn;
   const ACC = 0.12, tAcc = ACC / (VRUN / 2);
   const tEnd = Math.max(tLidRest, tOut + tAcc + (dRun - ACC) / VRUN + 0.1);
@@ -663,7 +667,7 @@ async function start() {
     const n = camBack.clone().addScaledVector(Z, 0.5).normalize(), x = camR.clone(), y = n.clone().cross(x).normalize();
     return new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(x, y, n));
   })();
-  let carryDepth = 0;
+  let carryDepth = 0, carryRV = SIZE;
   function figureAt(tt, reduced) {
     // where it is (canvas px), which way it faces (theta: pi = left, pi/2 = the viewer, 0 = right) and how fast
     let x, theta, spd, feet, path = 0;
@@ -688,23 +692,38 @@ async function start() {
     const ph = path / STRIDE;
     // pickup: bend down, take hold, straighten up with it
     const pk = reduced ? 1 : clamp((tt - tStop) / tPick, 0, 1);
-    const bend = reduced ? 0 : sstep(0.04, 0.36, pk) * (1 - sstep(0.55, 0.92, pk));
+    const bend = reduced ? 0 : sstep(0.03, 0.28, pk) * (1 - sstep(0.43, 0.72, pk));
     const bounce = 0.024 * spd * (1 - Math.cos(Math.PI * 4 * (ph - STANCE / 2))) / 2;
     const q = {
       x, y: GY, theta, hip: MS.hip + bounce - bend * 0.04, lean: 0.34 * spd + bend * 0.85, feet,
       visible: reduced || (tt > tRunIn - 0.01 && tt < tEnd), holding: false
     };
-    // the donut: on the ground, being lifted, or held in front of the chest (in screen space, at one depth)
-    const f = Math.cos(theta), sg = f >= 0 ? 1 : -1;
-    const holdC = [x + 0.12 * f * SM, GY - (q.hip + 0.12) * SM];
-    if (!carryDepth) carryDepth = project([Lx, Ly, -BOXH + 0.2])[2] - 0.12;
+    // the donut: on the ground, or swung up past its chest to over its head and carried there (screen space, one depth)
+    const f = Math.cos(theta), sg = f >= 0 ? 1 : -1, af = Math.abs(f);
+    if (!carryDepth) {
+      carryDepth = project([Lx, Ly, -BOXH + 0.2])[2] - 0.12;
+      // how tall the held donut looks on screen (box units), so it can sit just clear of the top of its head
+      const c0 = fromCanvas(GX, GY - 0.6 * SM, carryDepth), m = new THREE.Matrix4().compose(c0, carryQuat, V3(1, 1, 1));
+      let lo = Infinity, hi = -Infinity;
+      for (const hz of [-REST, REST]) for (let k = 0; k < 24; k++) {
+        const a = k / 24 * Math.PI * 2, w = V3(Math.cos(a) * SIZE, Math.sin(a) * SIZE, hz).applyMatrix4(m), y = toCanvas([w.x, w.y, w.z])[1];
+        lo = Math.min(lo, y); hi = Math.max(hi, y);
+      }
+      carryRV = (hi - lo) / 2 / SM;
+    }
+    const ln = q.lean * sg * Math.sqrt(af), hy0 = 0.215 + MS.headR * 0.78;
+    const headX = x + (sg * 0.012 * af * Math.cos(ln) + hy0 * Math.sin(ln)) * SM;
+    const headTop = GY - (q.hip + hy0 * Math.cos(ln) + MS.headR) * SM;
+    const chestC = [x + 0.2 * f * SM, GY - (q.hip + 0.14) * SM];
+    const overC = [headX + 0.02 * f * SM, headTop - (carryRV + 0.025) * SM];
     let dc, dq, carried = false, liftE = 0;
     if (reduced || tt >= tStop + tPick * 0.9) { liftE = 1; }
-    else if (tt >= tStop + tPick * 0.46) liftE = smoother((pk - 0.46) / 0.44);
+    else if (tt >= tStop + tPick * 0.36) liftE = smoother((pk - 0.36) / 0.54);
     if (liftE > 0) {
-      const lifted = fromCanvas(holdC[0], holdC[1], carryDepth);
-      dc = groundC.clone().lerp(lifted, liftE); dc.z += Math.sin(Math.PI * liftE) * 0.03;
-      dq = groundQuat.clone().slerp(carryQuat, liftE); carried = true;
+      // one smooth swing: up from the ground, out in front of its chest, then over its head
+      const A = fromCanvas(chestC[0], chestC[1], carryDepth), O = fromCanvas(overC[0], overC[1], carryDepth), e = liftE;
+      dc = groundC.clone().multiplyScalar((1 - e) * (1 - e)).addScaledVector(A, 2 * e * (1 - e)).addScaledVector(O, e * e);
+      dq = groundQuat.clone().slerp(carryQuat, Math.min(1, e * 1.4)); carried = true;
     } else { dc = groundC.clone(); dq = groundQuat.clone(); }
     // hands: swinging while it runs, reaching to the donut's near rim, then gripping both sides of it
     const cl = Math.cos(q.lean * sg), sl = Math.sin(q.lean * sg);
@@ -719,14 +738,16 @@ async function start() {
     const g0 = toCanvas([groundC.x, groundC.y, -BOXH + REST]), rx = SIZE * SM;
     const reach = [[g0[0] + rx * 0.98, g0[1] - rx * 0.12], [g0[0] + rx * 0.8, g0[1] + rx * 0.3]];
     const dcs = toCanvas([dc.x, dc.y, dc.z]);
-    // both hands on the donut's left and right rims (its left hand on the screen-right rim), all the way round the turn
-    const hold = [[dcs[0] + rx * 1.02, dcs[1] + rx * 0.1], [dcs[0] - rx * 1.02, dcs[1] + rx * 0.1]];
-    const holdW = reduced ? 1 : (tt < tStop ? 0 : sstep(0.05, 0.3, pk));
+    // both hands on the donut's left and right rims (its left hand on the screen-right rim) while it comes up, then
+    // underneath its lower rim on either side once it is over its head, all the way round the turn and the run
+    const up = sstep(0.45, 1, liftE), rv = carryRV * SM;
+    const hold = [1, -1].map((s) => [dcs[0] + s * rx * lerp(1.02, 0.66, up), dcs[1] + lerp(rx * 0.1, rv * 0.78, up)]);
+    const holdW = reduced ? 1 : (tt < tStop ? 0 : sstep(0.04, 0.24, pk));
     q.hands = [0, 1].map((i) => {
-      const g = [lerp(reach[i][0], hold[i][0], liftE), lerp(reach[i][1], hold[i][1], liftE)], s = swing(i);
+      const e = Math.min(1, liftE * 3), g = [lerp(reach[i][0], hold[i][0], e), lerp(reach[i][1], hold[i][1], e)], s = swing(i);
       return [lerp(s[0], g[0], holdW), lerp(s[1], g[1], holdW)];
     });
-    q.holding = holdW > 0.5;
+    q.holding = holdW > 0.5; q.overhead = up > 0.5;
     return { q, dc, dq, carried };
   }
 
