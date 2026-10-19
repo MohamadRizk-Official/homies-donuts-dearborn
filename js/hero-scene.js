@@ -325,7 +325,7 @@ async function start() {
   const fctx = figCanvas.getContext('2d');
   // proportions in box units (scaled to screen once): big round head, rounded body, very short legs, charcoal shoes
   const MS = {
-    headR: 0.155, hip: 0.112, hipW: 0.042, thigh: 0.05, shin: 0.048, legW: 0.062, shoeL: 0.1, shoeH: 0.054,
+    headR: 0.155, hip: 0.138, hipW: 0.042, thigh: 0.047, shin: 0.045, legW: 0.062, shoeL: 0.1, shoeH: 0.054,
     shoulderUp: 0.165, shoulderW: 0.1, upper: 0.1, fore: 0.096, armW: 0.05, handR: 0.037, line: 0.009
   };
   const FIG_H = 0.6;
@@ -616,7 +616,7 @@ async function start() {
   const tRunIn = tRest + 0.15;
   const tCruise = Math.max(0, (dRun - DEC) / VRUN), tDec = 2 * DEC / VRUN;
   const tStop = tRunIn + tCruise + tDec;
-  const tPick = 1.1, tTurn = 0.75;
+  const tPick = 1.1, tTurn = 0.45;
   const tTurnAt = tStop + tPick, tOut = tTurnAt + tTurn;
   const ACC = 0.12, tAcc = ACC / (VRUN / 2);
   const tEnd = Math.max(tLidRest, tOut + tAcc + (dRun - ACC) / VRUN + 0.1);
@@ -710,9 +710,11 @@ async function start() {
     const cl = Math.cos(q.lean * sg), sl = Math.sin(q.lean * sg);
     const swing = (i) => {
       const s = i ? -1 : 1, a = Math.sin(Math.PI * 2 * ph + (i ? Math.PI : 0)) * spd;
-      const fwdPx = (0.03 + 0.085 * a) * f * SM, bx = s * MS.shoulderW * Math.sin(theta) * SM;
+      const bx = s * MS.shoulderW * Math.sin(theta) * SM;
       const shx = x + bx + MS.shoulderUp * sl * SM, shy = GY - (q.hip + MS.shoulderUp * cl) * SM;
-      return [shx + fwdPx, shy + (0.11 - 0.02 * Math.abs(a)) * SM];
+      // relaxed arms: nearly straight, hanging from the shoulder and swinging through a gentle arc
+      const ang = 0.1 + 0.5 * a, len = (MS.upper + MS.fore) * 0.985 * SM;   // only a soft bend at the elbow
+      return [shx + Math.sin(ang) * len * f, shy + Math.cos(ang) * len];
     };
     const g0 = toCanvas([groundC.x, groundC.y, -BOXH + REST]), rx = SIZE * SM;
     const reach = [[g0[0] + rx * 0.98, g0[1] - rx * 0.12], [g0[0] + rx * 0.8, g0[1] + rx * 0.3]];

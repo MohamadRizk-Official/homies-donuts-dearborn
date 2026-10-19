@@ -102,8 +102,9 @@ Left out until confirmed:
 - Mascot: a small white cartoon kid (big round head, rounded body, very short legs, charcoal shoes, thin dark
   outline), drawn flat in 2D in screen space at one fixed scale, so it runs in a straight horizontal line at the
   donut's level and never changes size. Arms and legs use two-bone IK, feet are planted while the body passes over
-  them, knees point forward and elbows back so it clearly runs the way it travels, and it picks the donut up in
-  mitten hands joined to its arms (behind the donut, peeking out at its sides), turns gradually, and runs off.
+  them, knees point forward and elbows back so it clearly runs the way it travels; the arms hang almost straight
+  and swing in a gentle arc (no stiff right-angle elbows). It picks the donut up in mitten hands joined to its arms
+  (behind the donut, peeking out at its sides), turns round fairly quickly (tTurn 0.45 s), and runs off.
 - Donut shadow: a soft ring-shaped contact shadow directly under the donut (no cast shadow on the open ground).
 - Lid on load: the box stays hidden until the 3D lid has drawn its first frame, so only that lid is ever seen;
   if 3D can't run, the box appears after a short wait with the flat fallback lid.
@@ -116,6 +117,8 @@ Left out until confirmed:
 
 ## Catering truck
 - When the catering card scrolls into view the truck drops in from above, lands with a little squash and settle, a
-  puff of dust rises behind its rear wheel (the truck faces right, so the dust is on its left), and the card dips a
-  few pixels and springs back once (CSS `translate`, so the card's own transforms and text are untouched).
-  Reduced motion: the truck is simply there.
+  puff of dust rises behind its rear wheel (the truck faces right, so the dust is on its left). Before that the
+  card sits tilted up on its right side (CSS `rotate: var(--tilt)`, -2deg on desktop pivoting on the bottom-left
+  corner, -2.8deg on phones pivoting mid left edge); the truck lands on the raised side and knocks it level with
+  one small overshoot (`cardsettle`). The section has extra top padding so the tilted corner stays clear of the
+  section above. Reduced motion: the card is level and the truck is simply there.
