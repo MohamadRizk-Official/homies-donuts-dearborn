@@ -63,7 +63,14 @@ Left out until confirmed:
   A commercial licence (contact dennis@sharkshock.net, see sharkshock.net/license) is needed before launch.
   The demo has limited punctuation; missing characters fall back to Paytone One.
 
-## Favourite detail views
+## Hero box donut overlay
+- js/box-overlay.js: only the six donuts in the hero box ([data-donut]) open it. Centred panel with the real favourite
+  photo (img/fav/*.webp), name, a short description of what's visible, Order Now, and an X. Each donut has its own
+  colour mood, surface pattern and flavour particles (Cookie Monster: blue sprinkles; Elmo: red sprinkles; Homers:
+  rainbow sprinkles; Biscoff: falling crumbs; Mille-Feuille: swaying pastry flakes; PB&J: rising jelly drops), kept to
+  the backdrop and the panel's outer edges. Close with X, Escape or a click outside.
+
+## Favourite detail views (menu and shelf cards)
 - The six mockups (img/fav-detail/01-Elmo-Donut.webp … 06-Mille-Feuille-Donut.webp) are the supplied files, unchanged.
   They arrived as unnamed .webp attachments and were matched to names by content.
 - Wide screens show the whole mockup (object-fit: contain, never cropped or enlarged, no filters). Real links/buttons sit
