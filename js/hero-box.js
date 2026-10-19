@@ -20,7 +20,7 @@
     R: [[0.917431, 0.390856, -0.07451], [0.179916, -0.574521, -0.798471], [-0.354895, 0.719136, -0.597405]],
     t: [-0.860662, 0.347017, 3.425569]
   };
-  var LID = { len: 1.02, lip: 0.06, over: 0.015, open: 135 };
+  var LID = { len: 1.02, lip: 0.085, taper: 0.25, over: 0.015, open: 135 };
   var IMG_W = 1312;
   // camera position in box space: C = -R^T t
   var CPOS = [0, 1, 2].map(function (i) { return -(CAM.R[0][i] * CAM.t[0] + CAM.R[1][i] * CAM.t[1] + CAM.R[2][i] * CAM.t[2]); });
@@ -55,11 +55,12 @@
     el.className = 'lf ' + cls; el.style.width = w + 'px'; el.style.height = h + 'px';
     lidEl.appendChild(el); return el;
   }
+  // the side and front panels are cardboard: cream inside, box-pink outside, with a fold line and a cut edge
   var F = {
-    panel: { w: 700, h: 506, out: makeFace('lf-out', 700, 506, 'img/hero/lid-outer.webp'), inn: makeFace('lf-in', 700, 506, 'img/hero/lid-inner.webp') },
-    front: { w: 700, h: 55, out: makeFace('lf-out', 700, 55, 'img/hero/lip-front.webp'), inn: makeFace('lf-in lf-paper', 700, 55) },
-    left: { w: 506, h: 55, out: makeFace('lf-out', 506, 55, 'img/hero/lip-front.webp'), inn: makeFace('lf-in lf-paper', 506, 55) },
-    right: { w: 506, h: 55, out: makeFace('lf-out', 506, 55, 'img/hero/lip-front.webp'), inn: makeFace('lf-in lf-paper', 506, 55) }
+    panel: { w: 700, h: 506, out: makeFace('lf-out', 700, 506, 'img/hero/lid-outer.webp'), inn: makeFace('lf-in', 700, 506, 'img/hero/lid-inner.webp?v=2') },
+    front: { w: 700, h: 60, out: makeFace('lf-out', 700, 60, 'img/hero/lip-out-front.webp'), inn: makeFace('lf-in', 700, 60, 'img/hero/lip-in.webp') },
+    left: { w: 506, h: 60, out: makeFace('lf-out', 506, 60, 'img/hero/lip-out-side.webp'), inn: makeFace('lf-in', 506, 60, 'img/hero/lip-in.webp') },
+    right: { w: 506, h: 60, out: makeFace('lf-out', 506, 60, 'img/hero/lip-out-side.webp'), inn: makeFace('lf-in', 506, 60, 'img/hero/lip-in.webp') }
   };
 
   function geometry(deg) {
@@ -68,13 +69,16 @@
     var n = [0, -Math.sin(th), -Math.cos(th)];         // inner normal (lips fold this way)
     var hL = [-o, 1, 0], hR = [W + o, 1, 0];
     var fL = add(hL, d, LID.len), fR = add(hR, d, LID.len);
-    var lp = LID.lip;
+    var lp = LID.lip, lh = LID.lip * LID.taper;        // side panels taper toward the hinge, like a real lid
+    // fold edges start a hair behind the main panel so the joins never show a gap
+    var e = -0.002;
+    var fLe = add(fL, n, e), fRe = add(fR, n, e), hLe = add(hL, n, e), hRe = add(hR, n, e);
     return {
       // corners in element order TL, TR, BR, BL; outward normal for the outer skin
       panel: { q: [fL, fR, hR, hL], nOut: [-n[0], -n[1], -n[2]] },
-      front: { q: [fL, fR, add(fR, n, lp), add(fL, n, lp)], nOut: d },
-      left: { q: [fL, hL, add(hL, n, lp), add(fL, n, lp)], nOut: [-1, 0, 0] },
-      right: { q: [hR, fR, add(fR, n, lp), add(hR, n, lp)], nOut: [1, 0, 0] }
+      front: { q: [fLe, fRe, add(fR, n, lp), add(fL, n, lp)], nOut: d },
+      left: { q: [fLe, hLe, add(hL, n, lh), add(fL, n, lp)], nOut: [-1, 0, 0] },
+      right: { q: [hRe, fRe, add(fR, n, lp), add(hR, n, lh)], nOut: [1, 0, 0] }
     };
   }
 
@@ -94,8 +98,10 @@
       if (!outerVisible && name !== 'panel') q = [q[1], q[0], q[3], q[2]];
       show.style.transform = quadMatrix(face.w, face.h, q);
       var nVis = outerVisible ? geo.nOut : [-geo.nOut[0], -geo.nOut[1], -geo.nOut[2]];
-      var light = (name === 'panel' ? 0.62 : 0.8) + 0.4 * Math.max(0, dot(nVis, LIGHT));
-      show.style.filter = 'brightness(' + Math.min(light, 1.08).toFixed(3) + ')';
+      // soft, consistent light: a strong ambient term so faces turned from the light read as shade, not grime
+      var ln = dot(nVis, LIGHT);
+      var light = name === 'panel' ? 0.62 + 0.4 * Math.max(0, ln) : 0.93 + 0.1 * ln;
+      show.style.filter = 'brightness(' + Math.max(0.86, Math.min(light, 1.02)).toFixed(3) + ')';
       show.style.zIndex = String(100 - Math.round(Math.hypot(toCam[0], toCam[1], toCam[2]) * 10));
       show.style.visibility = 'visible'; hide.style.visibility = 'hidden';
     });

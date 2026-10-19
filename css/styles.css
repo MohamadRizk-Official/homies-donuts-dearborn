@@ -369,7 +369,6 @@ html.no-scroll { overflow: hidden; }
 .hb-lid { position: absolute; inset: 0; z-index: 6; pointer-events: none; }
 .hero-box.lid-behind .hb-lid { z-index: 2; }
 .lf { position: absolute; left: 0; top: 0; max-width: none; max-height: none; transform-origin: 0 0; visibility: hidden; backface-visibility: hidden; outline: 1px solid transparent; }
-.lf-paper { background: linear-gradient(180deg, #fbf3ee, #f1e4dc); }
 .lf-out { box-shadow: inset 0 0 0 1px rgba(160, 40, 90, 0.18); }
 
 /* the shine underneath, once open */
