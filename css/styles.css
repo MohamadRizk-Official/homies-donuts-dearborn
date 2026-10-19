@@ -949,3 +949,125 @@ html.pv-open { overflow: hidden; }
 .tile--savory .tile-text { padding-top: 30px; }
 .tile[data-cat="beignewiches"] .tile-pics img:nth-child(1) { width: 104%; height: auto; right: -8%; top: 2%; }
 .tile[data-cat="beignewiches"] .tile-pics img:nth-child(2) { width: 70%; height: auto; left: -10%; bottom: -2%; }
+
+/* ==========================================================================
+   v4 — steadier motion, clickable box donuts, outlines, drinks, blends
+   ========================================================================== */
+
+/* ---------- hero box: steady box, only the lid moves ---------- */
+.hero-box { margin-top: 8px; }
+.hb-stage { transform: none; transition: opacity 0.6s ease; }
+.hero-box.is-in .hb-stage { transform: none; }
+.hero-box.is-wiggle .hb-stage, .hero-box.is-wiggle:not(.is-opening) .hb-stage { animation: none; }
+.dz .hit { border: 0; padding: 0; margin: 0; background: transparent; font: inherit; color: inherit; appearance: none; }
+.dz .hit:focus-visible { outline: 3px solid #fff; outline-offset: 2px; box-shadow: 0 0 0 6px rgba(239, 79, 147, 0.55); }
+.dz:has(.hit:focus-visible) { z-index: 5; }
+.dz .hit:hover + .dn, .dz .hit:focus-visible + .dn, .dz.is-pop .dn {
+  transform: translateY(-6%) scale(1.08);
+  filter: drop-shadow(0 14px 12px rgba(90, 30, 30, 0.32)) saturate(1.06) brightness(1.03);
+}
+
+/* ---------- calmer card motion: lift and settle, nothing rocks ---------- */
+.card, .shelf-item { transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.3, 1), box-shadow 0.35s ease; }
+.card:hover { transform: translateY(-6px); box-shadow: 0 24px 34px -22px rgba(120, 40, 60, 0.5); }
+.card:hover img { transform: scale(1.04) rotate(-2deg); }
+.card--wide:hover img { transform: scale(1.08) rotate(-2deg); }
+.shelf-item:hover { transform: translateY(-5px); }
+.shelf-item:hover img { transform: scale(1.04); }
+.sec-sprinkle { animation: none; }
+.balloon-fly .bob { animation-duration: 8.5s; }
+
+/* ---------- animated outline: header navigation (all items share one rhythm) ---------- */
+.primary-nav .nav-link { position: relative; }
+.primary-nav .nav-link::before {
+  content: ""; position: absolute; inset: 0; border-radius: 999px; padding: 2px; pointer-events: none;
+  background: linear-gradient(90deg, #ef4f93, #ffc83d, #5fc2ef, #7ad36b, #cbb9ff, #ef4f93);
+  background-size: 300% 100%;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  opacity: 0.45; transition: opacity 0.25s ease, filter 0.25s ease;
+  animation: rainbowflow 6s linear infinite;
+}
+.primary-nav .nav-link:hover::before, .primary-nav .nav-link:focus-visible::before, .primary-nav .nav-link[aria-expanded="true"]::before {
+  opacity: 1; filter: drop-shadow(0 0 6px rgba(239, 79, 147, 0.55)) drop-shadow(0 0 4px rgba(95, 194, 239, 0.45));
+}
+@keyframes rainbowflow { to { background-position: 300% 0; } }
+
+/* ---------- "Whole Box of Tricks" cards: soft outline in each card's own colour ---------- */
+.tile { border-color: transparent; }
+.tile::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  border: 2px solid var(--edge); opacity: 0.45;
+  box-shadow: 0 0 14px -4px var(--edge), inset 0 0 12px -8px var(--edge);
+  animation: tileglow 4s ease-in-out infinite;
+  transition: opacity 0.3s ease, box-shadow 0.3s ease;
+}
+.tile:hover::after, .tile:focus-visible::after { opacity: 1; animation-play-state: paused; box-shadow: 0 0 22px -2px var(--edge), inset 0 0 14px -6px var(--edge); }
+@keyframes tileglow { 0%, 100% { opacity: 0.38; } 50% { opacity: 0.75; } }
+
+/* ---------- drinks tile: no circle, cups centred, all three respond ---------- */
+.tile[data-cat="drinks"]::before { display: none; }
+.tile[data-cat="drinks"] .tile-pics.cups { display: flex; align-items: center; justify-content: center; gap: 2%; height: 170px; align-self: center; }
+.tile[data-cat="drinks"] .tile-pics.cups img:nth-child(n) { position: static; width: 31%; height: auto; max-height: 100%; object-fit: contain; transform: none; transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.3, 1); }
+.tile[data-cat="drinks"]:hover .tile-pics.cups img:nth-child(n) { transform: translateY(-8px); }
+.tile[data-cat="drinks"]:hover .tile-pics.cups img:nth-child(2) { transition-delay: 0.05s; }
+.tile[data-cat="drinks"]:hover .tile-pics.cups img:nth-child(3) { transition-delay: 0.1s; }
+
+/* ---------- drinks on the menu page: no puddle, cups centred ---------- */
+.grid--drinks .plate { background: none; align-items: center; padding-bottom: 0; }
+.grid--drinks img { height: 90%; width: auto; max-width: 100%; object-position: 50% 50%; }
+
+/* ---------- peek inside: lift toward the viewer, lower edge rises, settle ---------- */
+.polaroid { transform-origin: 50% 0; transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.3, 1), box-shadow 0.5s ease; }
+.polaroid:hover { transform: perspective(800px) rotate(var(--rot, -2deg)) translateY(-8px) rotateX(7deg) scale(1.03); box-shadow: 0 34px 40px -26px rgba(120, 40, 60, 0.6); }
+.reel { width: min(100%, 340px); }
+.reel-phone { overflow: visible; transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.3, 1); }
+.reel-phone::after {
+  content: ""; position: absolute; inset: -14px; border-radius: 44px; padding: 3px; pointer-events: none;
+  background: linear-gradient(90deg, #ef4f93, #ffc83d, #5fc2ef, #7ad36b, #cbb9ff, #ef4f93); background-size: 300% 100%;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  opacity: 0.35; transition: opacity 0.3s ease, filter 0.3s ease; animation: rainbowflow 6s linear infinite;
+}
+.reel:hover .reel-phone { transform: translateY(-8px) scale(1.02); }
+.reel:hover .reel-phone::after { opacity: 1; filter: drop-shadow(0 0 10px rgba(239, 79, 147, 0.5)); }
+@media (min-width: 900px) { .peek-grid { grid-template-columns: 340px 1fr; } }
+
+/* ---------- sprinkles drifting down (side gutters only, behind content) ---------- */
+.fall { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.fall i { position: absolute; top: -3%; width: 10px; height: 4px; border-radius: 3px; background: var(--c); opacity: 0.7; animation: sprinklefall var(--dur, 20s) linear infinite; animation-delay: var(--delay, 0s); }
+@keyframes sprinklefall {
+  0% { top: -3%; transform: translateX(0) rotate(var(--r)); }
+  50% { transform: translateX(var(--sway)) rotate(calc(var(--r) + 140deg)); }
+  100% { top: 103%; transform: translateX(0) rotate(calc(var(--r) + 280deg)); }
+}
+.catering { overflow: hidden; }
+
+/* ---------- soft blends where section colours meet ---------- */
+.visit { background: linear-gradient(180deg, var(--blush) 0, #fdeeea 150px, var(--cream) 320px, var(--cream-2) 100%); }
+.closing { background: linear-gradient(180deg, var(--cream-2) 0, #fde8e3 140px, var(--blush) 300px); }
+
+/* ---------- lower sections: glide in, lift on hover ---------- */
+.visit-card.reveal, .cater-card.reveal { transition: opacity 0.9s ease, transform 1s cubic-bezier(0.2, 0.8, 0.3, 1), box-shadow 0.4s ease; transition-delay: var(--rd, 0s); }
+.visit-card.reveal.is-in:hover { transform: translateY(-6px); box-shadow: 0 0 0 3px rgba(239, 79, 147, 0.18), 0 26px 44px -26px rgba(239, 79, 147, 0.55); transition-delay: 0s; }
+.cater-card.reveal.is-in:hover { transform: translateY(-6px); box-shadow: 0 0 0 3px #9fd8f3, 0 0 24px -4px rgba(95, 194, 239, 0.7), 0 28px 44px -26px rgba(60, 120, 180, 0.5); transition-delay: 0s; }
+
+/* ---------- clearer lower-section buttons ---------- */
+.btn--lg { min-height: 56px; padding: 0.85em 1.6em; font-size: 1.05rem; }
+.btn--call { --bg: #2f9fd8; --fg: #fff; --edge: #1d6f9c; }
+.visit-actions { flex-direction: column; align-items: flex-start; gap: 14px; }
+.action-row { display: flex; flex-wrap: nowrap; gap: 12px; }
+@media (max-width: 440px) {
+  .action-row { flex-direction: column; width: 100%; }
+  .action-row .btn { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fall { display: none; }
+  .primary-nav .nav-link::before, .reel-phone::after, .tile::after { animation: none; }
+  .polaroid:hover, .card:hover, .visit-card.reveal.is-in:hover, .cater-card.reveal.is-in:hover { transform: none; }
+}
+/* tiles: lift only, no tilting or spinning */
+.tile:hover, .tile:focus-visible { transform: translateY(-5px); border-color: transparent; }
+.tile:hover .tile-pics img:nth-child(1) { transform: translateY(-6px) scale(1.04); }
+.tile:hover .tile-pics img:nth-child(2) { transform: translateY(-4px); }

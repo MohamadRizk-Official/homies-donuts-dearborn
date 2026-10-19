@@ -77,28 +77,27 @@
     });
   });
 
-  /* ---------- 4. card hover: lift forward, tilt left→right, lower edge rises, settle ---------- */
-  if (!reduce && fine && Element.prototype.animate) {
-    var HOVER = [
-      { transform: 'perspective(800px) translateY(0) rotateX(0deg) rotateY(0deg) scale(1)' },
-      { transform: 'perspective(800px) translateY(-8px) rotateX(9deg) rotateY(-7deg) scale(1.035)', offset: 0.35 },
-      { transform: 'perspective(800px) translateY(-9px) rotateX(5deg) rotateY(5deg) scale(1.04)', offset: 0.7 },
-      { transform: 'perspective(800px) translateY(-7px) rotateX(3deg) rotateY(0deg) scale(1.035)' }
-    ];
-    document.addEventListener('pointerover', function (e) {
-      var card = e.target.closest && e.target.closest('.card, .shelf-item');
-      if (!card || card._hovering || (e.relatedTarget && card.contains(e.relatedTarget))) return;
-      card._hovering = true;
-      if (card._anim) card._anim.cancel();
-      card._anim = card.animate(HOVER, { duration: 900, easing: 'cubic-bezier(.3,.7,.3,1)', fill: 'forwards' });
-    });
-    document.addEventListener('pointerout', function (e) {
-      var card = e.target.closest && e.target.closest('.card, .shelf-item');
-      if (!card || (e.relatedTarget && card.contains(e.relatedTarget))) return;
-      card._hovering = false;
-      var from = getComputedStyle(card).transform;
-      if (card._anim) card._anim.cancel();
-      card._anim = card.animate([{ transform: from === 'none' ? 'none' : from }, { transform: 'perspective(800px) translateY(0) rotateX(0deg) rotateY(0deg) scale(1)' }], { duration: 450, easing: 'cubic-bezier(.34,1.4,.64,1)' });
+  /* ---------- 4. sprinkles drifting down each section, kept to the side gutters ---------- */
+  if (!reduce) {
+    var FALL_COLORS = ['#ef4f93', '#ffc83d', '#5fc2ef', '#7ad36b', '#cbb9ff', '#ff8a3d'];
+    document.querySelectorAll('main > section, .hero').forEach(function (sec, si) {
+      var gutter = (window.innerWidth - 1200) / 2;
+      var n = gutter > 90 ? 6 : (window.innerWidth >= 700 ? 3 : 2);
+      var layer = document.createElement('div'); layer.className = 'fall'; layer.setAttribute('aria-hidden', 'true');
+      for (var i = 0; i < n; i++) {
+        var s = document.createElement('i');
+        var left = i % 2 === 0;
+        // inside the gutters on wide screens; hugging the very edge on small ones
+        var x = gutter > 90 ? (left ? 1 + Math.random() * (gutter / window.innerWidth * 100 - 3) : 99 - Math.random() * (gutter / window.innerWidth * 100 - 3)) : (left ? 0.5 + Math.random() * 2 : 97.5 + Math.random() * 2);
+        s.style.left = x.toFixed(2) + '%';
+        s.style.setProperty('--c', FALL_COLORS[(i + si) % FALL_COLORS.length]);
+        s.style.setProperty('--dur', (16 + Math.random() * 10).toFixed(1) + 's');
+        s.style.setProperty('--delay', (-Math.random() * 26).toFixed(1) + 's');
+        s.style.setProperty('--sway', ((Math.random() - 0.5) * 30).toFixed(0) + 'px');
+        s.style.setProperty('--r', Math.round(Math.random() * 180) + 'deg');
+        layer.appendChild(s);
+      }
+      sec.insertBefore(layer, sec.firstChild);
     });
   }
 
@@ -108,10 +107,11 @@
   if (sentinel && cater) {
     if (reduce || !('IntersectionObserver' in window)) { cater.classList.add('drive'); }
     else {
-      var tTimer = null;
+      var tTimer = null, scrolled = false;
+      window.addEventListener('scroll', function () { scrolled = true; }, { passive: true, once: true });
       var truckIO = new IntersectionObserver(function (entries) {
         entries.forEach(function (en) {
-          if (en.isIntersecting && !tTimer) {
+          if (en.isIntersecting && !tTimer && scrolled) {
             tTimer = setTimeout(function () { cater.classList.add('drive'); truckIO.disconnect(); }, 1000);
           } else if (!en.isIntersecting && tTimer && !cater.classList.contains('drive')) {
             clearTimeout(tTimer); tTimer = null;   // scrolled away before the second passed
@@ -119,6 +119,7 @@
         });
       }, { threshold: 1 });
       truckIO.observe(sentinel);
+      window.addEventListener('scroll', function () { truckIO.unobserve(sentinel); truckIO.observe(sentinel); }, { passive: true, once: true });
     }
   }
 

@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Paytone+One&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/styles.css?v=4">
   <script>document.documentElement.classList.remove('no-js');</script>
 </head>
 <body>
@@ -42,8 +42,8 @@
               <div class="mega-foot"><span>Fresh picks on Michigan Ave, Dearborn</span><a href="menu.html">See the full menu →</a></div>
             </div>
           </li>
-          <li><a class="nav-link" href="index.html#catering">Catering</a></li>
           <li><a class="nav-link" href="index.html#visit">Visit Us</a></li>
+          <li><a class="nav-link" href="index.html#catering">Catering</a></li>
         </ul>
       </nav>
 
@@ -84,8 +84,8 @@
         <li><a data-cat="drinks" href="menu.html#drinks"><img src="img/drinks/Milkshakes-Strawberry.webp" alt="">Drinks</a></li>
       </ul>
       <ul>
-        <li><a class="drawer-link" href="index.html#catering">Catering <span aria-hidden="true">→</span></a></li>
         <li><a class="drawer-link" href="index.html#visit">Visit Us <span aria-hidden="true">→</span></a></li>
+        <li><a class="drawer-link" href="index.html#catering">Catering <span aria-hidden="true">→</span></a></li>
       </ul>
     </nav>
     <div class="drawer-actions">
@@ -130,7 +130,7 @@
         </div>
 
         <!-- The pink box: real photo for the base + donuts; the lid is projected through the photo's camera (js/hero-box.js) -->
-        <div class="hero-box" data-hero-box role="img" aria-label="A pink Homie's donut box whose lid swings open to show six colourful donuts">
+        <div class="hero-box" data-hero-box role="group" aria-label="A pink Homie's donut box holding six favourites: Cookie Monster, Homers, Biscoff, Mille-Feuille, Elmo and Peanut Butter &amp; Jelly. Select a donut to see it up close.">
           <div class="hb-stage">
             <svg class="hb-shadow" viewBox="0 0 1312 1199" preserveAspectRatio="none" aria-hidden="true">
               <defs>
@@ -146,12 +146,12 @@
             <div class="hb-open" aria-hidden="true">
               <img class="hb-base" src="img/hero/box-base.webp" alt="" width="1312" height="1199" fetchpriority="high">
               <div class="hb-donuts">
-                <div class="dz" style="left:25.457%;top:43.62%;width:19.512%;height:19.016%;--i:0"><span class="hit"></span><span class="dn" style="--m:url(/img/hero/donut-cookie.webp)"><img src="img/hero/donut-cookie.webp" alt=""></span></div>
-                <div class="dz" style="left:43.14%;top:46.872%;width:20.732%;height:19.516%;--i:1"><span class="hit"></span><span class="dn" style="--m:url(/img/hero/donut-pink.webp)"><img src="img/hero/donut-pink.webp" alt=""></span></div>
-                <div class="dz" style="left:61.89%;top:49.625%;width:21.494%;height:21.184%;--i:2"><span class="hit"></span><span class="dn" style="--m:url(/img/hero/donut-pistachio.webp)"><img src="img/hero/donut-pistachio.webp" alt=""></span></div>
-                <div class="dz" style="left:15.777%;top:57.882%;width:21.799%;height:19.016%;--i:3"><span class="hit"></span><span class="dn" style="--m:url(/img/hero/donut-white.webp)"><img src="img/hero/donut-white.webp" alt=""></span></div>
-                <div class="dz" style="left:35.518%;top:63.053%;width:21.646%;height:19.516%;--i:4"><span class="hit"></span><span class="dn" style="--m:url(/img/hero/donut-elmo.webp)"><img src="img/hero/donut-elmo.webp" alt=""></span></div>
-                <div class="dz" style="left:55.793%;top:67.223%;width:23.171%;height:20.851%;--i:5"><span class="hit"></span><span class="dn" style="--m:url(/img/hero/donut-choco.webp)"><img src="img/hero/donut-choco.webp" alt=""></span></div>
+                <div class="dz" style="left:25.457%;top:43.62%;width:19.512%;height:19.016%;--i:0"><button class="hit" type="button" data-product="Cookie Monster" data-cat-id="donuts" aria-label="See the Cookie Monster donut"></button><span class="dn" style="--m:url(/img/hero/donut-cookie.webp)"><img src="img/hero/donut-cookie.webp" alt=""></span></div>
+                <div class="dz" style="left:43.14%;top:46.872%;width:20.732%;height:19.516%;--i:1"><button class="hit" type="button" data-product="Homers" data-cat-id="donuts" aria-label="See the Homers donut"></button><span class="dn" style="--m:url(/img/hero/donut-pink.webp)"><img src="img/hero/donut-pink.webp" alt=""></span></div>
+                <div class="dz" style="left:61.28%;top:48.874%;width:22.713%;height:22.269%;--i:2"><button class="hit" type="button" data-product="Biscoff" data-cat-id="donuts" aria-label="See the Biscoff donut"></button><span class="dn" style="--m:url(/img/hero/donut-biscoff.webp)"><img src="img/hero/donut-biscoff.webp" alt=""></span></div>
+                <div class="dz" style="left:15.168%;top:57.298%;width:23.018%;height:19.933%;--i:3"><button class="hit" type="button" data-product="Mille-Feuille" data-cat-id="donuts" aria-label="See the Mille-Feuille donut"></button><span class="dn" style="--m:url(/img/hero/donut-mille-feuille.webp)"><img src="img/hero/donut-mille-feuille.webp" alt=""></span></div>
+                <div class="dz" style="left:35.518%;top:63.053%;width:21.646%;height:19.516%;--i:4"><button class="hit" type="button" data-product="Elmo" data-cat-id="donuts" aria-label="See the Elmo donut"></button><span class="dn" style="--m:url(/img/hero/donut-elmo.webp)"><img src="img/hero/donut-elmo.webp" alt=""></span></div>
+                <div class="dz" style="left:55.145%;top:66.472%;width:24.466%;height:21.935%;--i:5"><button class="hit" type="button" data-product="Peanut Butter &amp; Jelly" data-cat-id="donuts" aria-label="See the Peanut Butter &amp; Jelly donut"></button><span class="dn" style="--m:url(/img/hero/donut-pbj.webp)"><img src="img/hero/donut-pbj.webp" alt=""></span></div>
               </div>
               <img class="hb-walls" src="img/hero/box-walls.webp" alt="" style="left:6.784%;top:51.71%;width:82.317%">
               <div class="hb-dim" aria-hidden="true"></div>
@@ -307,12 +307,14 @@
               </li>
             </ul>
             <div class="visit-actions">
-              <a class="btn" href="https://www.google.com/maps/dir/?api=1&amp;destination=23780+Michigan+Ave%2C+Dearborn%2C+MI+48124" target="_blank" rel="noopener">
+              <div class="action-row">
+                <a class="btn btn--lg" href="#" data-order-cta data-burst><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1.2 12H6.2L5 8z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg> Order Now</a>
+                <a class="btn btn--lg btn--call" href="tel:+13137224477" data-burst><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 3.5l2.6.4 1.3 4-1.9 1.4a12 12 0 0 0 6.1 6.1l1.4-1.9 4 1.3.4 2.6c.1 1-.7 1.9-1.7 1.9A16.8 16.8 0 0 1 4.7 5.2c0-1 .9-1.8 1.9-1.7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg> Call the Shop</a>
+              </div>
+              <a class="btn btn--sm btn--ghost" href="https://www.google.com/maps/dir/?api=1&amp;destination=23780+Michigan+Ave%2C+Dearborn%2C+MI+48124" target="_blank" rel="noopener" data-burst>
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l18-8-8 18-2-8-8-2z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg>
                 Get directions
               </a>
-              <a class="btn btn--cream" href="tel:+13137224477">Call the shop</a>
-              <a class="btn btn--sky" href="#" data-order-cta hidden>Order online</a>
             </div>
           </div>
           <div class="map-frame reveal" style="--rd:.1s">
@@ -359,8 +361,8 @@
         <h2 id="closing-title">See you on Michigan Ave.</h2>
         <p>Bring the kids, bring the crew, bring an appetite. The case is waiting.</p>
         <div class="hero-ctas" style="justify-content:center">
-          <a class="btn" href="menu.html">Browse the menu</a>
-          <a class="btn btn--cream" href="https://www.google.com/maps/dir/?api=1&amp;destination=23780+Michigan+Ave%2C+Dearborn%2C+MI+48124" target="_blank" rel="noopener">Get directions</a>
+          <a class="btn btn--lg" href="menu.html" data-burst>Browse the menu</a>
+          <a class="btn btn--lg btn--call" href="https://www.google.com/maps/dir/?api=1&amp;destination=23780+Michigan+Ave%2C+Dearborn%2C+MI+48124" target="_blank" rel="noopener" data-burst>Get directions</a>
         </div>
       </div>
       <div class="hills" aria-hidden="true">
@@ -419,10 +421,10 @@
     </div>
   </footer>
 
-  <script src="js/menu-data.js"></script>
-  <script src="js/main.js"></script>
-  <script src="js/hero-box.js"></script>
-  <script src="js/product-view.js"></script>
-  <script src="js/effects.js"></script>
+  <script src="js/menu-data.js?v=4"></script>
+  <script src="js/main.js?v=4"></script>
+  <script src="js/hero-box.js?v=4"></script>
+  <script src="js/product-view.js?v=4"></script>
+  <script src="js/effects.js?v=4"></script>
 </body>
 </html>

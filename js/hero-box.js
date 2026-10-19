@@ -104,8 +104,8 @@
     if (dim) dim.style.opacity = String(Math.max(0, 1 - deg / 70) * 0.55);
   }
 
-  function ease(p) { return 1 - Math.pow(1 - p, 3); }
-  function easeIO(p) { return p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2; }
+  // smooth, controlled swing: ease in and out, no overshoot, the box itself never moves
+  function easeIO(p) { return p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2; }
   function tween(from, to, ms, fn, done) {
     var start = performance.now();
     function step(now) {
@@ -115,43 +115,28 @@
     }
     requestAnimationFrame(step);
   }
-  function wait(ms, cb) { setTimeout(cb, ms); }
 
   window.addEventListener('resize', function () { render(current); });
 
-  function openSequence() {
-    box.classList.add('is-in');
-    wait(650, function () {
-      box.classList.add('is-wiggle');
-      wait(560, function () {
-        // a little anticipation, then the lid swings back on its hinge
-        tween(0, 9, 170, ease, function () {
-          tween(9, 3, 140, easeIO, function () {
-            box.classList.add('is-opening');
-            tween(3, LID.open + 6, 1150, ease, function () {
-              tween(LID.open + 6, LID.open, 380, easeIO, function () { box.classList.add('is-open'); });
-            });
-          });
-        });
-      });
-    });
+  // the opening plays once per visit; refreshing shows the open box straight away
+  var played = false;
+  try { played = sessionStorage.getItem('homiesBoxOpened') === '1'; } catch (e) {}
+  function finish() {
+    render(LID.open);
+    box.classList.add('is-in', 'is-opening', 'is-open');
+    try { sessionStorage.setItem('homiesBoxOpened', '1'); } catch (e) {}
   }
 
   render(0);
   window.HomiesHeroBox = { render: render };   // handy for checking angles from the console
-  if (reduce) { render(LID.open); box.classList.add('is-in', 'is-open'); return; }
+  if (reduce || played) { finish(); return; }
   var imgs = Array.prototype.slice.call(box.querySelectorAll('img'));
   var ready = Promise.all(imgs.map(function (im) { return im.decode ? im.decode().catch(function () {}) : Promise.resolve(); }));
-  Promise.race([ready, new Promise(function (r) { setTimeout(r, 1500); })]).then(openSequence);
-
-  // phones: tap a donut to make it pop for a moment
-  box.querySelectorAll('.dz .hit').forEach(function (hit) {
-    hit.addEventListener('click', function () {
-      var dz = hit.parentElement;
-      box.querySelectorAll('.dz.is-pop').forEach(function (d) { if (d !== dz) d.classList.remove('is-pop'); });
-      dz.classList.add('is-pop');
-      clearTimeout(dz._popT);
-      dz._popT = setTimeout(function () { dz.classList.remove('is-pop'); }, 1100);
-    });
+  Promise.race([ready, new Promise(function (r) { setTimeout(r, 1500); })]).then(function () {
+    box.classList.add('is-in');
+    setTimeout(function () {
+      box.classList.add('is-opening');
+      tween(0, LID.open, 1700, easeIO, finish);
+    }, 450);
   });
 })();

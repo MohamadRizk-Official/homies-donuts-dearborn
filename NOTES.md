@@ -14,7 +14,8 @@ brief's filename (e.g. `img/donuts/Donut-Menu-Choco-Glazed.webp`). The zip had n
 - Oreo: used `Oreo.png` (sharper) over `Half-and-half Oreo ring donut-4.png`.
 - Egg & Cheese: used `-8` over `-7`.
 - Dubai donut: used `Dubai donut front view.png` over `Chocolate pistachio kataifi donut-3.png`.
-- Drinks: every cup scaled to the same cup-body width on a shared canvas, so cups match in size.
+- Drinks: shorter cups scaled up so every cup matches the coffee milkshake cup (about 550px on a shared 480x960
+  canvas); cups that were already that tall were left alone.
 - Extra "favorite" donut photos not in the brief's map were added under Homie's Favourites:
   Homers, Cookie Monster, Biscoff, Mille-Feuille, Mousse Cake, Maple, Pecan (names need confirming).
 - Hero box (js/hero-box.js): the base + donuts are the supplied open-box photo, cut cleanly (img/hero/box-base.webp)
@@ -22,7 +23,10 @@ brief's filename (e.g. `img/donuts/Donut-Menu-Choco-Glazed.webp`). The zip had n
   (focal ~2240px, box ratio 1.41:1), and the lid is drawn as textured faces projected through that camera, so it
   hinges on the real back edge, closes over the whole box, and opens to 135°. Lid textures were flattened from
   the photos: inside (logo + MADE IN THE NEIGHBOURHOOD) from the open box, outside rings from the closed box.
-  Each donut is still its own layer (hover/tap lifts it, tucked behind the box walls).
+  The box now holds the six favourites. Cookie Monster, Homers and Elmo come from the supplied box photo; the
+  photo's other three donuts (not favourites) were replaced with the real Biscoff, Mille-Feuille and PB&J photos
+  (img/hero/donut-biscoff|mille-feuille|pbj.webp), foreshortened to the box angle with a fried-dough side.
+  Each donut is a button that opens its detail view. The opening plays once per visit (sessionStorage).
 - Catering: truck illustration (img/brand/truck.webp) + the catering spread photo.
 - Photo wall: display case, Choco Dubai trays, ghost latte, interior, three-donut box, neon sign, cereal donuts.
 - Menu page: pizza donut box photo as the Pizza Donuts banner.

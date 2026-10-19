@@ -141,7 +141,7 @@
     view.classList.toggle('pv--drink', found.cat.id === 'drinks');
     var order = $('.pv-order'); order.href = SITE.orderHref || '#';
     if (!SITE.orderUrl) { order.removeAttribute('target'); }
-    var backLabel = fav ? 'Back to favourites' : (document.querySelector('[data-menu]') ? 'Back to the menu' : 'Back to the case');
+    var backLabel = trigger.closest('[data-hero-box]') ? 'Back to the box' : fav ? 'Back to favourites' : (document.querySelector('[data-menu]') ? 'Back to the menu' : 'Back to the case');
     $('.pv-back span').textContent = backLabel;
     accents(fav ? fav.accents : cat.accents);
 
