@@ -86,23 +86,27 @@ Left out until confirmed:
 - Read all: https://www.google.com/maps?cid=17619190509406293360
 
 ## Hero box scene (js/hero-scene.js)
-- Every fresh load / refresh: the box sits closed and still, a chocolate-sprinkle donut falls in from above and
-  hits the lid, the lid gives under the hit and swings open with momentum (gravity about the hinge, damping, a
-  small bounce on its 135° stop), the donut makes one flip to the right and drops almost straight onto the ground
-  well clear of the box, then a gray mascot runs in from the right, bends, picks it up, turns round (through
-  facing the viewer) and runs off to the right with it. It starts once the box is on screen and plays once per load.
+- Every fresh load / refresh: the box sits closed and still; a chocolate-sprinkle donut falls in already tilted and
+  levels out smoothly as it comes down, hits the lid, and the lid gives under the hit and swings open with momentum
+  (gravity about the hinge, damping, a small bounce on its 135° stop). The donut carries on in one ballistic arc
+  (no pause, no straight drop): off the lid, one flip, down onto the ground well clear of the box, a short slide,
+  settled. Then a small gray silhouette runs in from the right, bends, picks it up, turns round gradually (the
+  donut swings over its head to the other side) and runs off with it. It starts once the box is on screen and
+  plays once per load.
 - Lid: drawn as real 3D cardboard (board thickness, cut edges, matching front and side flaps, a rounded hinge fold,
   baked fold/hinge shading, light and shadows, a contact shadow on the walls) in its own canvas inside the lid
   layer, so an open lid still sits behind the box. The flat CSS faces in js/hero-box.js remain as the fallback.
 - Donut: img/hero/sprinkle-donut.glb, built by tools/make_donut.py from the chocolate-sprinkle product photo
   (traced outline, raised sprinkles, satin glaze, an evenly golden fried underside with the pale fry line).
   Usage: py -3.12 -I tools/make_donut.py photo.webp out.glb
-- Mascot: an original, featureless gray clay figure built from primitives (egg torso with a soft belly, smooth
-  head, slim limbs, mitten hands). Legs and arms are solved with two-bone IK each frame; feet are planted on
-  footprints laid along its path so they never slide; poses blend continuously.
+- Mascot: a small, flat 2D gray silhouette (about the donut's size): rounded body fuller at the lower belly, slim
+  legs, smooth featureless head. Drawn on a 2D canvas above the 3D layer (the donut's outline is cut out of it
+  wherever the donut is in front). A little skeleton underneath walks on the real ground: legs and arms use
+  two-bone IK, feet are planted on footprints laid along its path, and the turn foreshortens it gradually like a
+  cut-out instead of flipping.
 - Where it happens adapts to the screen: beside the box on wide screens, in front of the box's right corner on
   laptops, tablets and phones (the hero and the phone layout have extra floor below the box for this). If that
   patch of ground is below the fold, the donut waits there and the mascot runs in once it scrolls into view.
-- Reduced motion: the box is shown open with the mascot standing beside it holding the donut. No WebGL / library
+- Reduced motion: the box is shown open with the mascot standing beside it holding the donut up. No WebGL / library
   unavailable: the lid opens on its own (CSS lid) after a short wait.
-- Debug: index.html?dropslow=1000 then HomiesDonutDrop.seek(seconds); HomiesDonutDrop.times has the key moments.
+- Debug: index.html?dropslow=1000 then HomiesDonutDrop.seek(seconds) or .frame(seconds); .times has the key moments.

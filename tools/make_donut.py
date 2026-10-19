@@ -163,8 +163,8 @@ bot_mr = to_img(np.dstack([np.zeros((BH, BW)), np.full((BH, BW), 0.8 * 255) + n2
 
 # ---------------- geometry ----------------
 NU, NT, NB = 400, 84, 44                        # around, over the top (outer->hole), under the bottom (hole->outer)
-BT, BB = 0.30, 0.22                           # half-heights above / below the widest line
-PT, PB = 2.2, 2.6                              # superellipse exponents: rounded dome, flatter fried base
+BT, BB = 0.37, 0.29                           # half-heights above / below the widest line
+PT, PB = 2.15, 2.4                              # superellipse exponents: rounded dome, flatter fried base
 def sx(c, p): return np.sign(c) * np.abs(c) ** (2 / p)
 ro_u = np.interp(np.linspace(0, len(ro), NU + 1) % len(ro), np.arange(len(ro) + 1), np.concatenate([ro, ro[:1]])) / Rs
 ri_u = np.interp(np.linspace(0, len(ri), NU + 1) % len(ri), np.arange(len(ri) + 1), np.concatenate([ri, ri[:1]])) / Rs

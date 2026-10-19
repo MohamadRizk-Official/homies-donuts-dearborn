@@ -3,16 +3,18 @@
  * 1. The box sits closed and still.
  * 2. A chocolate-sprinkle donut (img/hero/sprinkle-donut.glb, built from the product photo by tools/make_donut.py)
  *    falls in from above and hits the lid. The hit flexes the lid down and gives it the momentum that swings it open.
- * 3. The donut makes one smooth flip to the right and drops almost straight down onto the ground, well clear of the box.
- * 4. A gray mascot runs in from the right, bends, picks the donut up, turns round and runs off to the right with it.
+ * 3. It carries on in one continuous arc: off the lid, one smooth flip, down onto the ground well clear of the box,
+ *    where it slides a touch and settles.
+ * 4. A small flat gray silhouette runs in from the right, bends, picks the donut up, turns round and runs off with it.
  *
  * Everything is drawn with three.js through the camera recovered from the box photo, so it sits in the photo's space.
  * The lid is real 3D cardboard (thickness, folds, hinge, lighting and shadows) drawn in the lid's own layer, so it
  * still slips behind the box once open. The donut and mascot are drawn above the page in the hero; invisible stand-ins
  * for the box and lid hide them where the box is in front and catch their shadows.
  *
- * The mascot is an articulated figure: its legs and arms are solved with two-bone IK every frame, feet are planted
- * on footprints that are laid down along its path (so they never slide), and every pose blends into the next.
+ * The mascot is a flat 2D cut-out (drawn on a canvas under the 3D layer) with a little skeleton underneath: legs
+ * and arms use two-bone IK, feet are planted on footprints laid along its path (so they never slide), and it turns
+ * gradually, foreshortening like a cut-out rather than flipping.
  * Plays once per page load. Reduced motion: the box is shown open with the mascot standing beside it holding the donut.
  */
 // nothing is downloaded unless this page has the hero box (the menu page shares these scripts)
@@ -79,7 +81,7 @@ async function start() {
   const texLoader = new THREE.TextureLoader();
   const loadTex = (src) => new Promise((res, rej) => texLoader.load(src, (tx) => { tx.colorSpace = THREE.SRGBColorSpace; tx.anisotropy = 4; res(tx); }, undefined, rej));
   const [gltf, txPanelIn, txPanelOut, txLipIn, txLipFront, txLipSide] = await Promise.all([
-    new GLTFLoader().loadAsync('img/hero/sprinkle-donut.glb?v=1'),
+    new GLTFLoader().loadAsync('img/hero/sprinkle-donut.glb?v=2'),
     loadTex('img/hero/lid-inner.webp?v=2'), loadTex('img/hero/lid-outer.webp'), loadTex('img/hero/lip-in.webp'),
     loadTex('img/hero/lip-out-front.webp'), loadTex('img/hero/lip-out-side.webp')
   ]);
@@ -287,58 +289,29 @@ async function start() {
   });
   const mb = new THREE.Box3().setFromObject(model);
   const REST = -mb.min.z;                              // height of the donut's origin above whatever it rests on
-  const HALF = (mb.max.z - mb.min.z) / 2;
   donut.add(model);
   scene.add(donut);
   const donutBlob = blob(SIZE * 2.6);
 
-  // ---------------- the mascot: an articulated, featureless gray figure ----------------
-  const clay = new THREE.MeshPhysicalMaterial({ color: 0x67676c, roughness: 0.9, metalness: 0, sheen: 0.6, sheenRoughness: 0.75, sheenColor: new THREE.Color(0x9a9aa2) });
-  const FS = 0.9;                                       // overall figure scale: ~0.92 tall, under three donuts
-  const FIG_H = 1.02 * FS;
-  const M = {                                           // proportions (box units)
-    hip: 0.42 * FS, hipW: 0.072 * FS, thigh: 0.2 * FS, shin: 0.195 * FS, ankle: 0.045 * FS,
-    shoulderUp: 0.31 * FS, shoulderW: 0.145 * FS, upper: 0.165 * FS, fore: 0.15 * FS, neck: 0.47 * FS, headR: 0.135 * FS
-  };
-  const fig = new THREE.Group();
-  const part = (geo) => { const m = new THREE.Mesh(geo, clay); m.castShadow = true; m.receiveShadow = true; fig.add(m); return m; };
-  // torso: an egg, a touch wider low down, with a soft belly in front
-  const torsoGeo = (() => {
-    const g = new THREE.SphereGeometry(1, 48, 32), p = g.attributes.position;
-    for (let i = 0; i < p.count; i++) {
-      const x = p.getX(i), y = p.getY(i), z = p.getZ(i);
-      // sphere is Y-up here; map to body axes: forward = +x, left = +z(sphere), up = +y(sphere)
-      const up = y, fwd = x, side = -z;            // a proper rotation (keeps the winding, so normals face out)
-      const wide = 1 + 0.1 * clamp(-up, 0, 1);
-      let f = fwd * 0.125 * FS * wide, s = side * 0.148 * FS * wide, u = up * 0.2 * FS;
-      const belly = 0.05 * FS * Math.exp(-((up + 0.3) ** 2) / 0.16 - (side ** 2) / 0.3) * Math.max(0, fwd);
-      f += belly;
-      p.setXYZ(i, f, s, u);
-    }
-    // after the remap: x forward, y side, z up
-    g.computeVertexNormals(); return g;
-  })();
-  const torso = part(torsoGeo);
-  const head = part(new THREE.SphereGeometry(M.headR, 40, 28));
-  const neck = part(new THREE.CylinderGeometry(0.05 * FS, 0.06 * FS, 0.06 * FS, 16));
-  const caps = (r, len) => new THREE.CapsuleGeometry(r, len, 6, 14);
-  const limb = (r, len) => { const m = part(caps(r, len)); m.userData.len = len; return m; };
-  const thighL = limb(0.046 * FS, M.thigh), thighR = limb(0.046 * FS, M.thigh), shinL = limb(0.036 * FS, M.shin), shinR = limb(0.036 * FS, M.shin);
-  const upL = limb(0.034 * FS, M.upper), upR = limb(0.034 * FS, M.upper), foreL = limb(0.029 * FS, M.fore), foreR = limb(0.029 * FS, M.fore);
-  const footGeo = (() => { const g = new THREE.SphereGeometry(1, 24, 16); g.scale(0.072 * FS, 0.042 * FS, 0.03 * FS); g.translate(0.03 * FS, 0, 0); return g; })();
-  const footL = part(footGeo), footR = part(footGeo);
-  const handGeo = (() => { const g = new THREE.SphereGeometry(1, 20, 14); g.scale(0.04 * FS, 0.054 * FS, 0.033 * FS); g.translate(0, 0.02 * FS, 0); return g; })();
-  const handL = part(handGeo), handR = part(handGeo);
-  fig.scale.setScalar(1);
-  scene.add(fig);
-  const figBlob = blob(0.62 * FS);
+  // ---------------- the mascot: a small, flat gray silhouette ----------------
+  // Drawn in 2D on its own canvas above the 3D layer; wherever the donut is in front of it, the donut's outline is
+  // cut out of the figure, so a carried donut still sits in front of the body. Its little
+  // skeleton walks on the real ground (footprints, IK), but every point is flattened onto a screen-facing plane
+  // through its feet: it stays a flat cut-out and only foreshortens, gradually, as it turns round.
+  const figCanvas = document.createElement('canvas');
+  figCanvas.className = 'hb-fig';
+  figCanvas.setAttribute('aria-hidden', 'true');
+  const fctx = figCanvas.getContext('2d');
+  const FK = 1.25;                                      // figure scale: about as tall as the donut is wide on screen
+  const FIG_H = 0.42 * FK;
+  const M = { hip: 0.165 * FK, hipW: 0.024 * FK, thigh: 0.088 * FK, shin: 0.082 * FK, ankle: 0.012 * FK, shoulderUp: 0.1 * FK, shoulderW: 0.046 * FK, upper: 0.085 * FK, fore: 0.078 * FK, headR: 0.058 * FK, foot: 0.034 * FK };
+  const camR = V3(R[0][0], R[0][1], 0).normalize();     // screen-right, along the ground
+  const camF = V3(R[2][0], R[2][1], 0).normalize();     // the camera's view direction, along the ground
+  const camBack = camF.clone().negate();
+  const Z = V3(0, 0, 1);
+  const figBlob = blob(0.3 * FK);
+  let figPose = null;
 
-  const Y = V3(0, 1, 0), tmpQ = new THREE.Quaternion(), tmpM = new THREE.Matrix4();
-  function placeLimb(mesh, a, b) {
-    const d = b.clone().sub(a), len = d.length();
-    mesh.position.copy(a).add(b).multiplyScalar(0.5);
-    mesh.quaternion.setFromUnitVectors(Y, d.divideScalar(len || 1));
-  }
   // two-bone IK: from root joint S toward target T with a bend hint; returns [middle joint, reached end]
   function ik(S, Tg, L1, L2, hint) {
     const d = Tg.clone().sub(S);
@@ -348,49 +321,94 @@ async function start() {
     const m = hint.clone().addScaledVector(n, -hint.dot(n)).normalize();
     return [S.clone().addScaledVector(n, a).addScaledVector(m, h), S.clone().addScaledVector(n, len)];
   }
-
-  /* pose the figure. q: { x, y, heading, hipZ, pitch, lean (sideways), footL/footR: {p: Vector3, yaw, pitch},
-     handL/handR: Vector3 targets, visible } */
-  function poseFigure(q) {
-    fig.visible = q.visible !== false;
-    if (!fig.visible) { figBlob.material.opacity = 0; return; }
-    const fwd = V3(Math.cos(q.heading), Math.sin(q.heading), 0), left = V3(-Math.sin(q.heading), Math.cos(q.heading), 0), up = V3(0, 0, 1);
-    const U = up.clone().multiplyScalar(Math.cos(q.pitch)).addScaledVector(fwd, Math.sin(q.pitch)).addScaledVector(left, Math.sin(q.lean || 0)).normalize();
-    const F = fwd.clone().addScaledVector(U, -fwd.dot(U)).normalize();
-    const Ls = U.clone().cross(F).normalize();          // body's left
-    const pel = V3(q.x, q.y, q.hipZ);
-    tmpM.makeBasis(F, Ls, U);
-    torso.position.copy(pel).addScaledVector(U, 0.17 * FS); torso.quaternion.setFromRotationMatrix(tmpM);
-    const nk = pel.clone().addScaledVector(U, 0.36 * FS);
-    neck.position.copy(nk); neck.quaternion.setFromUnitVectors(Y, U);
-    head.position.copy(pel).addScaledVector(U, M.neck).addScaledVector(F, (0.015 + (q.nod || 0) * 0.05) * FS);
-    // legs
-    [[thighL, shinL, footL, q.footL, 1], [thighR, shinR, footR, q.footR, -1]].forEach(([th, sh, ft, f, s]) => {
-      const hipJ = pel.clone().addScaledVector(Ls, s * M.hipW).addScaledVector(U, -0.01);
-      const ankle = f.p.clone().add(V3(0, 0, M.ankle));
-      const hint = fwd.clone().addScaledVector(left, s * 0.12);
-      const [knee, end] = ik(hipJ, ankle, M.thigh, M.shin, hint);
-      placeLimb(th, hipJ, knee); placeLimb(sh, knee, end);
-      ft.position.copy(end).add(V3(0, 0, -M.ankle + 0.03 * FS));
-      ft.rotation.set(0, -(f.pitch || 0), f.yaw, 'ZYX');
-    });
-    // arms
-    [[upL, foreL, handL, q.handL, 1], [upR, foreR, handR, q.handR, -1]].forEach(([ua, fa, hd, tg, s]) => {
-      const sh = pel.clone().addScaledVector(U, M.shoulderUp).addScaledVector(Ls, s * M.shoulderW).addScaledVector(F, -0.01 * FS);
-      const hint = F.clone().multiplyScalar(-0.45).addScaledVector(Ls, s * 0.8).addScaledVector(U, -0.5);
-      const [elbow, wrist] = ik(sh, tg, M.upper, M.fore, hint);
-      placeLimb(ua, sh, elbow); placeLimb(fa, elbow, wrist);
-      hd.position.copy(wrist); hd.quaternion.setFromUnitVectors(Y, wrist.clone().sub(elbow).normalize());
-    });
-    figBlob.position.set(q.x + 0.02, q.y + 0.02, -BOXH + 0.001);
-    figBlob.material.opacity = 0.42;
+  // body-local coordinates (a = forward, b = left, c = up from the ground) of a world point
+  function toLocal(q, p) {
+    const dx = p.x - q.x, dy = p.y - q.y, ch = Math.cos(q.heading), sh = Math.sin(q.heading);
+    return V3(dx * ch + dy * sh, -dx * sh + dy * ch, p.z + BOXH);
   }
-  // body frame helpers for the choreography
-  function frame(q) {
-    const fwd = V3(Math.cos(q.heading), Math.sin(q.heading), 0), left = V3(-Math.sin(q.heading), Math.cos(q.heading), 0), up = V3(0, 0, 1);
-    const U = up.clone().multiplyScalar(Math.cos(q.pitch)).addScaledVector(fwd, Math.sin(q.pitch)).normalize();
-    const F = fwd.clone().addScaledVector(U, -fwd.dot(U)).normalize();
-    return { fwd, left, U, F, pel: V3(q.x, q.y, q.hipZ) };
+  const bellyBump = (v) => Math.exp(-(((v - 0.3) / 0.2) ** 2));
+  const prof = (v) => Math.sqrt(Math.max(0, 1 - ((v - 0.42) / 0.62) ** 2));
+  function drawFigure() {
+    fctx.setTransform(1, 0, 0, 1, 0, 0);
+    fctx.clearRect(0, 0, figCanvas.width, figCanvas.height);
+    const q = figPose;
+    if (!q || !q.visible || !CR) return;
+    const dpr = figCanvas.width / CR.width;
+    fctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const fwd = V3(Math.cos(q.heading), Math.sin(q.heading), 0), left = V3(-Math.sin(q.heading), Math.cos(q.heading), 0);
+    const f = fwd.dot(camR), l = left.dot(camR);
+    const sg = f >= 0 ? 1 : -1;
+    // flatten a body-local point onto the screen-facing plane through the feet, then onto the canvas
+    const P = (a, b, c) => { const s = a * f + b * l; return toCanvas([q.x + camR.x * s, q.y + camR.y * s, -BOXH + c]); };
+    const o = P(0, 0, 0), up1 = P(0, 0, 0.1);
+    const unit = Math.hypot(up1[0] - o[0], up1[1] - o[1]) / 0.1;          // canvas px per box unit, here
+    const sPt = (s, c) => toCanvas([q.x + camR.x * s, q.y + camR.y * s, -BOXH + c]);
+    const lean = q.lean, cl = Math.cos(lean), sl = Math.sin(lean);
+    const body = '#67676d', far = '#58585e';
+    const limb = (pts, wdt, col) => {
+      fctx.strokeStyle = col; fctx.lineWidth = wdt * unit; fctx.lineCap = 'round'; fctx.lineJoin = 'round';
+      fctx.beginPath(); pts.forEach((p, i) => (i ? fctx.lineTo(p[0], p[1]) : fctx.moveTo(p[0], p[1]))); fctx.stroke();
+    };
+    // joints (body-local)
+    const torsoAt = (x, y) => V3(x * cl + y * sl, 0, q.hip + (-x * sl + y * cl));
+    const shoulderC = torsoAt(-0.005 * FK, M.shoulderUp);
+    const leg = (side) => {
+      const hipJ = V3(0, side * M.hipW, q.hip - 0.01), ankle = q.feet[side > 0 ? 0 : 1].clone().add(V3(0, 0, M.ankle));
+      const [knee, end] = ik(hipJ, ankle, M.thigh, M.shin, V3(1, 0, 0.1));
+      const toe = end.clone().add(V3(M.foot * Math.cos(q.footPitch[side > 0 ? 0 : 1]), 0, -M.ankle * 0.5 + M.foot * Math.sin(q.footPitch[side > 0 ? 0 : 1])));
+      return [[P(hipJ.x, hipJ.y, hipJ.z), P(knee.x, knee.y, knee.z), P(end.x, end.y, end.z)], [P(end.x - 0.008 * FK, end.y, end.z - M.ankle * 0.4), P(toe.x, toe.y, toe.z)]];
+    };
+    const arm = (side) => {
+      const sh = shoulderC.clone().add(V3(0, side * M.shoulderW, 0));
+      const [elbow, hand] = ik(sh, q.hands[side > 0 ? 0 : 1], M.upper, M.fore, V3(-0.7, side * 0.35, -0.6));
+      return [P(sh.x, sh.y, sh.z), P(elbow.x, elbow.y, elbow.z), P(hand.x, hand.y, hand.z)];
+    };
+    const farSide = left.dot(camF) > 0 ? 1 : -1;          // which side is further from the viewer
+    const drawLeg = (side, col) => { const [lg, ft] = leg(side); limb(lg, 0.026 * FK, col); limb(ft, 0.022 * FK, col); };
+    const drawArm = (side, col) => {
+      const a = arm(side); limb(a, 0.02 * FK, col);
+      fctx.fillStyle = col; fctx.beginPath(); fctx.arc(a[2][0], a[2][1], 0.015 * FK * unit, 0, Math.PI * 2); fctx.fill();
+    };
+    drawArm(farSide, far); drawLeg(farSide, far);
+    // torso: a rounded body, fuller low down in front (the belly), seen at whatever angle it is turned to
+    const af = Math.abs(f), pts1 = [], pts2 = [];
+    for (let i = 0; i <= 24; i++) {
+      const v = -0.2 + 1.24 * i / 24, y = v * 0.12 * FK, pv = prof(v);
+      const Af = (0.05 + 0.03 * bellyBump(v)) * pv * FK, Ab = 0.044 * pv * FK, B = 0.05 * pv * FK;
+      const cpt = torsoAt(0, y);
+      const sc = cpt.x * f, cc = cpt.z;
+      const e1 = Math.sqrt(Af * Af * f * f + B * B * l * l), e2 = Math.sqrt(Ab * Ab * f * f + B * B * l * l);
+      // widths go across the (leaning) body, toward its front (belly) and back
+      const dl = Math.hypot(sl * f, cl), ns = cl / dl * sg, nc = -sl * f / dl * sg;
+      pts1.push(sPt(sc + ns * e1, cc + nc * e1));
+      pts2.push(sPt(sc - ns * e2, cc - nc * e2));
+    }
+    fctx.fillStyle = body; fctx.beginPath();
+    pts1.forEach((p, i) => (i ? fctx.lineTo(p[0], p[1]) : fctx.moveTo(p[0], p[1])));
+    for (let i = pts2.length - 1; i >= 0; i--) fctx.lineTo(pts2[i][0], pts2[i][1]);
+    fctx.closePath(); fctx.fill();
+    // head: smooth and featureless
+    const hc = torsoAt(0.004 * FK, M.shoulderUp + 0.072 * FK);
+    const hp = P(hc.x, hc.y, hc.z);
+    fctx.beginPath(); fctx.arc(hp[0], hp[1], M.headR * unit, 0, Math.PI * 2); fctx.fill();
+    drawLeg(-farSide, body); drawArm(-farSide, body);
+    // the donut is in front of the figure (lying on the ground before it, or held out in front): cut its outline out
+    if (donut.visible && project([donut.position.x, donut.position.y, donut.position.z])[2] < project([q.x, q.y, -BOXH + q.hip])[2] + 0.04) {
+      donut.updateMatrixWorld();
+      fctx.globalCompositeOperation = 'destination-out';
+      fctx.fillStyle = '#000';
+      for (const hz of [-REST * 0.85, 0, REST * 0.85]) {
+        fctx.beginPath();
+        for (let i = 0; i < 40; i++) {
+          const a = i / 40 * Math.PI * 2;
+          const w = new THREE.Vector3(Math.cos(a) * SIZE * 0.99, Math.sin(a) * SIZE * 0.99, hz).applyMatrix4(donut.matrixWorld);
+          const c = toCanvas([w.x, w.y, w.z]);
+          if (i) fctx.lineTo(c[0], c[1]); else fctx.moveTo(c[0], c[1]);
+        }
+        fctx.closePath(); fctx.fill();
+      }
+      fctx.globalCompositeOperation = 'source-over';
+    }
   }
 
   // ================================================================================================================
@@ -418,6 +436,9 @@ async function start() {
     canvas.style.setProperty('--fade', fade + 'px');
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.setSize(CR.width, CR.height, false);
+    Object.assign(figCanvas.style, { left: canvas.style.left, top: canvas.style.top, width: canvas.style.width, height: canvas.style.height });
+    const fd = Math.min(window.devicePixelRatio || 1, 2);
+    figCanvas.width = Math.round(CR.width * fd); figCanvas.height = Math.round(CR.height * fd);
     fitCamera(camera, CR, sr);
     layoutLid();
     return true;
@@ -437,7 +458,7 @@ async function start() {
     return b;
   }
   const RUN_DIR = V3(1, 0.12, 0).normalize();          // the mascot comes in from (and leaves to) the right
-  const STOP = 0.27;                                     // it stops this far short of the donut
+  const STOP = SIZE + 0.15;                                     // it stops this far short of the donut
   function choosePlan() {
     // landing spots from right-of-the-box (preferred) round to in front of its right corner (narrow screens)
     // right of the box first (well clear of it), nearer the box only as far as still leaves a gap, then round the front
@@ -450,7 +471,7 @@ async function start() {
     let best = null;
     for (const [lx, ly] of pts) {
       const fx = lx + RUN_DIR.x * STOP, fy = ly + RUN_DIR.y * STOP;
-      const bd = figureBox(lx, ly, 0.14, SIZE * 1.05), bf = figureBox(fx, fy, FIG_H + 0.03, 0.16);
+      const bd = figureBox(lx, ly, 0.16, SIZE * 1.05), bf = figureBox(fx, fy, FIG_H + 0.08, SIZE * 1.15);
       const b = [Math.min(bd[0], bf[0]), Math.min(bd[1], bf[1]), Math.max(bd[2], bf[2]), Math.max(bd[3], bf[3])];
       const over = Math.max(0, m - b[0]) + Math.max(0, b[2] - (CR.width - m)) + Math.max(0, CR.fade + 4 - b[1]) + Math.max(0, b[3] - (CR.height - m));
       if (!best || over < best.over - 0.5) best = { lx, ly, over };
@@ -461,13 +482,14 @@ async function start() {
   // distance along RUN_DIR from point (x, y) at which the figure is completely off the right of the canvas
   function offscreenDist(x, y) {
     for (let d = 0; d < 6; d += 0.05) {
-      const b = figureBox(x + RUN_DIR.x * d, y + RUN_DIR.y * d, FIG_H + 0.03, 0.26);
+      const b = figureBox(x + RUN_DIR.x * d, y + RUN_DIR.y * d, FIG_H + 0.1, SIZE * 1.6);
       if (b[0] > CR.width + 4) return d;
     }
     return 6;
   }
 
   hero.appendChild(canvas);
+  hero.appendChild(figCanvas);
   lidCanvas.style.visibility = 'hidden';
   lidEl.appendChild(lidCanvas);
   await hb.revealed;
@@ -491,7 +513,10 @@ async function start() {
 
   // timing (seconds)
   const G = 12;                                       // gravity, box units/s² (a touch slower than life, for clarity)
-  const P = { x: clamp(Lx - 0.45, 1.0, 1.24), y: 0.45 };   // where it hits the lid: the right half, so it flips off to the right
+  const landRight = Ly > 0.2;
+  // where it hits the lid: its right side, near the back if it then flies off to the right (where the rising lid is
+  // lowest), near the front if it lands in front of the box (the lid's front edge swings up and back, away from it)
+  const P = { x: clamp(Lx - 0.36, 1.0, 1.3), y: landRight ? 0.62 : 0.15 };
   const zHit = T + REST;
   // start just above where the donut comes into view
   let zStart = zHit + 0.5;
@@ -499,14 +524,23 @@ async function start() {
   const tHold = 0.45;
   const tFall = Math.sqrt(2 * (zStart - zHit) / G);
   const tHit = tHold + tFall;
-  const vHit = G * tFall;
-  // flight after the hit: up and over to the right, one flip, then a near-vertical drop
-  const apex = 0.4, vUp = Math.sqrt(2 * G * apex);
+  const FALL_DRIFT = 0.1;                              // it is already drifting right as it falls
+  const tiltAxis = V3(0.8, -0.6, 0).normalize(), TILT0 = 0.62, TILT1 = 0.12;   // tilted at first, nearly level on impact
+  const qTilt = (a) => new THREE.Quaternion().setFromAxisAngle(tiltAxis, a);
+  const qSpin = (a) => new THREE.Quaternion().setFromAxisAngle(Z, a);
+  const qFlip = (a) => new THREE.Quaternion().setFromAxisAngle(V3(0, 1, 0), a);   // top rolls over toward +x (the right)
+  // after the hit: one ballistic arc (it never hovers) with one flip, then it touches down and slides to a stop
+  const vUp = 3.05;
   const zLand = -BOXH + REST;
-  const tUp = vUp / G, tDown = Math.sqrt(2 * (zHit + apex - zLand) / G);
-  const tFly = tUp + tDown;
-  const tLeave = tHit + 0.03;
+  const tFly = (vUp + Math.sqrt(vUp * vUp + 2 * G * (zHit - zLand))) / G;
+  const tLeave = tHit + 0.035;
   const tLand = tLeave + tFly;
+  const KICK = 0.4;                                    // the slide across the lid during the contact itself
+  const dir = V3(Lx - P.x, Ly - P.y, 0); const span = dir.length(); dir.normalize();
+  let slide = 0.09, vh = (span - slide) / tFly, tSlide = 0.2;
+  for (let i = 0; i < 3; i++) { tSlide = clamp(2 * slide / Math.max(vh, 0.2), 0.12, 0.3); slide = Math.min(0.14, vh * tSlide / 2); vh = (span - slide) / tFly; }
+  const TD = V3(Lx - dir.x * slide, Ly - dir.y * slide, zLand);   // touchdown point
+  const tRest = tLand + tSlide;
   // the lid: dips under the hit, then swings open with real momentum (gravity about the hinge, damping, a stop at 135°)
   const lidTrack = (() => {
     const out = [], dt = 1 / 240, open = LID.open * Math.PI / 180;
@@ -514,9 +548,9 @@ async function start() {
     const gl = 3 * G / (2 * L) * 0.5;                    // gravity about the hinge (a light board, so it swings slowly)
     for (let i = 0; i < 240 * 3; i++) {
       tt = i * dt;
-      if (tt < 0.06) { th = -0.05 * Math.sin(Math.PI * tt / 0.06); }        // the board gives a little under the hit
+      if (tt < 0.07) { th = -0.05 * Math.sin(Math.PI * tt / 0.07); }        // the board gives a little under the hit
       else {
-        if (!popped) { popped = true; th = 0; w = 4.75; }                   // ...and springs back with the hit's energy
+        if (!popped) { popped = true; th = 0; w = 4.75; }                   // ...and springs back with the energy of the hit
         w += (-gl * Math.cos(th) - 0.18 * w) * dt;
         th += w * dt;
         if (th > open) { th = open; if (w > 0) w = -w * 0.22; }
@@ -531,16 +565,16 @@ async function start() {
   const tLidRest = tHit + lidTrack.rest;
 
   // mascot: run in, stop, bend and pick up, turn round, run off
-  const STRIDE = 0.6 * FS, VRUN = 1.45, DEC = 0.24;
-  const tRunIn = tLand + 0.18;
-  let dIn = Math.max(offscreenDist(stopX, stopY) + 0.1, 1);
+  const STRIDE = 0.27 * FK, VRUN = 0.95, DEC = 0.12;
+  const tRunIn = tRest + 0.12;
+  let dIn = Math.max(offscreenDist(stopX, stopY) + 0.08, 0.6);
   dIn = STRIDE * (Math.ceil(dIn / STRIDE - 0.525) + 0.525);                 // arrive in double support, both feet down
   const tCruise = (dIn - DEC) / VRUN, tDec = 2 * DEC / VRUN;
   const tStop = tRunIn + tCruise + tDec;
-  const tPick = 1.3, tTurn = 0.62;
+  const tPick = 1.2, tTurn = 0.9;
   const tTurnAt = tStop + tPick, tOut = tTurnAt + tTurn;
-  const dOut = offscreenDist(stopX, stopY) + 0.2, ACC = 0.32;
-  const tOutRun = ACC / (VRUN / 2) * 1 + (dOut - ACC) / VRUN;
+  const dOut = offscreenDist(stopX, stopY) + 0.15, ACC = 0.12;
+  const tOutRun = ACC / (VRUN / 2) + (dOut - ACC) / VRUN;
   const tEnd = Math.max(tLidRest, tOut + tOutRun + 0.05);
   const phiStop = dIn / STRIDE;
 
@@ -561,7 +595,7 @@ async function start() {
   function gaitPhi(tt) {
     if (tt < tStop) return runInDist(tt) / STRIDE;
     if (tt < tTurnAt) return phiStop;
-    if (tt < tOut) return phiStop + (tt - tTurnAt) / tTurn;
+    if (tt < tOut) return phiStop + (tt - tTurnAt) / tTurn;               // two small steps while it turns
     return phiStop + 1 + runOutDist(tt) / STRIDE;
   }
   function rootAt(tt) {                              // position, heading, speed (0..1)
@@ -586,142 +620,142 @@ async function start() {
     return tableT[hi];
   }
   // footprints: where a foot lands at the end of a swing, from the body's pose at that moment
-  const SWING = 0.45;
+  const SWING = 0.45, FOOT_W = 0.026 * FK;
   function footprint(ph, side) {
     const tt = timeAtPhi(ph), r = rootAt(tt);
     const lead = STRIDE * 0.24 * r.speed;
-    return { x: r.x + Math.cos(r.heading) * lead - Math.sin(r.heading) * side * 0.078 * FS, y: r.y + Math.sin(r.heading) * lead + Math.cos(r.heading) * side * 0.078 * FS, yaw: r.heading };
+    return { x: r.x + Math.cos(r.heading) * lead - Math.sin(r.heading) * side * FOOT_W, y: r.y + Math.sin(r.heading) * lead + Math.cos(r.heading) * side * FOOT_W };
   }
   function foot(tt, side) {
     const off = side > 0 ? 0 : 0.5, ph = gaitPhi(tt) + off, k = Math.floor(ph), f = ph - k;
     const plant = (kk) => footprint(kk - off, side);
-    if (f < 1 - SWING) { const p = plant(k); return { p: V3(p.x, p.y, -BOXH), yaw: p.yaw, pitch: 0 }; }
+    if (f < 1 - SWING) { const p = plant(k); return { p: V3(p.x, p.y, -BOXH), pitch: 0 }; }
     const s = (f - (1 - SWING)) / SWING, a = plant(k), b = plant(k + 1), e = smoother(s);
-    const r = rootAt(tt), lift = (0.035 + 0.06 * r.speed) * FS;
-    return { p: V3(lerp(a.x, b.x, e), lerp(a.y, b.y, e), -BOXH + Math.sin(Math.PI * s) * lift), yaw: angLerp(a.yaw, b.yaw, e), pitch: Math.sin(Math.PI * s) * 0.35 * (r.speed + 0.3) };
+    const r = rootAt(tt), lift = (0.014 + 0.03 * r.speed) * FK;
+    return { p: V3(lerp(a.x, b.x, e), lerp(a.y, b.y, e), -BOXH + Math.sin(Math.PI * s) * lift), pitch: Math.sin(Math.PI * s) * 0.5 * (r.speed + 0.3) };
   }
 
   // donut poses
-  const qFlat = new THREE.Quaternion();
-  const qFlip = (a) => new THREE.Quaternion().setFromAxisAngle(V3(0, 1, 0), a);   // top rolls over toward +x (the right)
-  const qWobble = new THREE.Quaternion();
-  function carryPose(q) {                         // in front of the belly, held upright, facing forward
-    const f = frame(q);
-    const c = f.pel.clone().addScaledVector(f.U, 0.13 * FS).addScaledVector(f.F, 0.12 + SIZE * 0.45);
-    const quat = new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(f.left, f.U, f.F));
-    return { c, quat, f };
-  }
   const groundQuat = new THREE.Quaternion();
   const groundC = V3(Lx, Ly, zLand);
+  // carried in both hands out in front at chest height, its face to the viewer; seen side-on that puts it beside the
+  // body, and during the turn it swings up over the head to the other side, so body and turn stay readable
+  const carryQuat = (() => {
+    const n = camBack.clone().addScaledVector(Z, 0.55).normalize(), x = camR.clone(), y = n.clone().cross(x).normalize();
+    return new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(x, y, n));
+  })();
+  function carryCentre(r, hip) {
+    const f = Math.cos(r.heading) * camR.x + Math.sin(r.heading) * camR.y;      // how side-on it is (+1 facing right)
+    const sOff = f * (SIZE + 0.075 * FK), cOff = hip + 0.12 * FK + (1 - f * f) * 0.27 * FK;
+    return V3(r.x, r.y, -BOXH + cOff).addScaledVector(camR, sOff).addScaledVector(camBack, 0.04);
+  }
+  function grips(dc, r, carried) {                    // where the hands hold it
+    const fwd = V3(Math.cos(r.heading), Math.sin(r.heading), 0), left = V3(-Math.sin(r.heading), Math.cos(r.heading), 0);
+    if (!carried) return [1, -1].map((s) => groundC.clone().addScaledVector(fwd, -SIZE * 0.72).addScaledVector(left, s * 0.06 * FK).add(V3(0, 0, 0.035)));
+    const f = fwd.dot(camR), af = Math.abs(f), sl = Math.sign(left.dot(camR) || 1);
+    // side-on: both hands on the rim nearest the body (one high, one low); facing the viewer: one each side, underneath
+    return [1, -1].map((s) => dc.clone()
+      .addScaledVector(camR, -Math.sign(f || 1) * SIZE * 0.82 * af + s * sl * SIZE * 0.8 * (1 - af))
+      .addScaledVector(Z, s * SIZE * 0.4 * af - SIZE * 0.45 * (1 - af)));
+  }
 
   function figureAt(tt, reduced) {
-    const r = reduced ? { x: stopX, y: stopY, heading: toCam - 0.5 * turnSign, speed: 0 } : rootAt(tt);
+    const r = reduced ? { x: stopX, y: stopY, heading: Math.atan2(camBack.y, camBack.x) + 0.55 * turnSign, speed: 0 } : rootAt(tt);
     const spd = r.speed;
     const ph = reduced ? phiStop : gaitPhi(tt);
     // bend for the pickup: down, hold, up
     const pk = reduced ? 1 : clamp((tt - tStop) / tPick, 0, 1);
-    const bend = reduced ? 0 : sstep(0.04, 0.4, pk) * (1 - sstep(0.56, 0.95, pk));
-    const bob = 0.022 * FS * spd * (0.5 + 0.5 * Math.cos(Math.PI * 4 * ph));
-    const q = {
-      x: r.x, y: r.y, heading: r.heading,
-      hipZ: -BOXH + M.hip - bob - bend * 0.16 * FS,
-      pitch: 0.2 * spd + bend * 0.98, lean: 0.03 * spd * Math.sin(Math.PI * 2 * ph), nod: bend * 0.6,
-      footL: reduced ? { p: V3(r.x - Math.sin(r.heading) * 0.078 * FS, r.y + Math.cos(r.heading) * 0.078 * FS, -BOXH), yaw: r.heading } : foot(tt, 1),
-      footR: reduced ? { p: V3(r.x + Math.sin(r.heading) * 0.078 * FS, r.y - Math.cos(r.heading) * 0.078 * FS, -BOXH), yaw: r.heading } : foot(tt, -1)
-    };
-    const f = frame(q);
+    const bend = reduced ? 0 : sstep(0.04, 0.38, pk) * (1 - sstep(0.56, 0.95, pk));
+    const bob = 0.012 * FK * spd * (0.5 + 0.5 * Math.cos(Math.PI * 4 * ph));
+    const hip = M.hip - bob - bend * 0.075 * FK;
+    const q = { x: r.x, y: r.y, heading: r.heading, hip, lean: 0.22 * spd + bend * 1.05, visible: reduced || (tt > tRunIn - 0.01 && tt < tEnd) };
+    const fl = reduced ? { p: V3(r.x - Math.sin(r.heading) * FOOT_W, r.y + Math.cos(r.heading) * FOOT_W, -BOXH), pitch: 0 } : foot(tt, 1);
+    const fr = reduced ? { p: V3(r.x + Math.sin(r.heading) * FOOT_W, r.y - Math.cos(r.heading) * FOOT_W, -BOXH), pitch: 0 } : foot(tt, -1);
+    q.feet = [toLocal(q, fl.p), toLocal(q, fr.p)];
+    q.footPitch = [fl.pitch, fr.pitch];
+    // where the donut is right now
+    let dc, dq, carried = false, liftE = 0;
+    if (reduced || tt >= tStop + tPick * 0.95) { dc = carryCentre(r, hip); dq = carryQuat.clone(); carried = true; liftE = 1; }
+    else if (tt >= tStop + tPick * 0.5) {
+      liftE = smoother((pk - 0.5) / 0.45);
+      const fwd = V3(Math.cos(r.heading), Math.sin(r.heading), 0);
+      dc = groundC.clone().lerp(carryCentre(r, hip), liftE).addScaledVector(fwd, Math.sin(Math.PI * liftE) * 0.03);
+      dq = groundQuat.clone().slerp(carryQuat, liftE);
+      dc.z += Math.sin(Math.PI * liftE) * 0.04; carried = true;
+    } else { dc = groundC.clone(); dq = groundQuat.clone(); }
     // hands: swinging while running, reaching for the donut, then holding it
-    const sh = (s) => f.pel.clone().addScaledVector(f.U, M.shoulderUp).addScaledVector(f.left, s * M.shoulderW);
+    const cl = Math.cos(q.lean), sl = Math.sin(q.lean);
     const swing = (s) => {
       const a = Math.sin(Math.PI * 2 * ph + (s > 0 ? Math.PI : 0)) * spd;
-      return sh(s).addScaledVector(f.F, (0.06 + 0.13 * a) * FS).addScaledVector(f.left, s * 0.05 * FS).addScaledVector(f.U, (-0.2 + 0.04 * Math.abs(a)) * FS);
+      const sh = V3(M.shoulderUp * sl, s * M.shoulderW, hip + M.shoulderUp * cl);
+      return sh.add(V3((0.015 + 0.07 * a) * FK, s * 0.012 * FK, (-0.11 + 0.025 * Math.abs(a)) * FK));
     };
-    const carrying = reduced || tt >= tStop + tPick * 0.52;
-    const holdW = reduced ? 1 : (tt < tStop ? 0 : sstep(0.06, 0.36, pk));
-    // where the donut is right now
-    let dc, dq;
-    if (reduced || tt >= tStop + tPick * 0.95) { const cp = carryPose(q); dc = cp.c; dq = cp.quat; }
-    else if (tt >= tStop + tPick * 0.5) {
-      const cp = carryPose(q), e = smoother((pk - 0.5) / 0.45);
-      dc = groundC.clone().lerp(cp.c, e); dq = groundQuat.clone().slerp(cp.quat, e);
-      dc.z += Math.sin(Math.PI * e) * 0.04;
-    } else { dc = groundC.clone(); dq = groundQuat.clone(); }
-    const grip = (s) => {
-      // the sides of the donut, from the mascot's point of view
-      return dc.clone().addScaledVector(f.left, s * SIZE * 0.95).addScaledVector(V3(0, 0, 1), carrying ? 0 : 0.02);
-    };
-    q.handL = swing(1).lerp(grip(1), holdW);
-    q.handR = swing(-1).lerp(grip(-1), holdW);
-    q.visible = reduced || (tt > tRunIn - 0.01 && tt < tEnd);
-    return { q, dc, dq, carrying: carrying || tt >= tStop + tPick * 0.5 };
+    const holdW = reduced ? 1 : (tt < tStop ? 0 : sstep(0.06, 0.34, pk));
+    const g0 = grips(dc, r, false), g1 = grips(dc, r, true);
+    q.hands = [1, -1].map((s, i) => {
+      const g = g0[i].clone().lerp(g1[i], liftE);
+      return swing(s).lerp(toLocal(q, g), holdW);
+    });
+    return { q, dc, dq, carried };
   }
 
   const ev = { hit: false, open: false };
   // tt drives the drop and the lid; tf drives the mascot (it can be held back until its patch of ground is on screen)
   function frameAt(tt, reduced, tf = tt) {
     // ---- lid
-    let lid = reduced ? LID.open : (tt < tHit ? 0 : lidTrack.at(tt - tHit));
+    const lid = reduced ? LID.open : (tt < tHit ? 0 : lidTrack.at(tt - tHit));
     // ---- donut
-    let dz, dx, dy, quat = qFlat.clone(), squash = 1, shadowOn = 0;
-    if (reduced) { dx = 0; dy = 0; dz = 0; }
-    else if (tt < tHit) {                                 // falling, with a lazy turn
-      const s = tt - tHold; dx = P.x - 0.02 * (tFall - Math.max(0, s)); dy = P.y; dz = zStart - 0.5 * G * Math.max(0, s) ** 2;
-      quat = new THREE.Quaternion().setFromAxisAngle(V3(1, 0.2, 0).normalize(), -0.12 * (1 - s / tFall));
-    } else if (tt < tLeave) {                             // the hit: a brief squash on the lid
-      dx = P.x; dy = P.y; dz = zHit; squash = 1 - 0.07 * Math.sin(Math.PI * (tt - tHit) / (tLeave - tHit));
-    } else if (tt < tLand) {                              // one smooth flip to the right, then down
+    const pos = V3(0, 0, 0);
+    let quat = new THREE.Quaternion(), squash = 1;
+    const p0x = P.x + dir.x * KICK * (tLeave - tHit), p0y = P.y + dir.y * KICK * (tLeave - tHit);
+    if (reduced) { /* placed by the mascot below */ }
+    else if (tt < tHit) {                                  // falling, tilted, levelling out smoothly as it comes down
+      const s = Math.max(0, tt - tHold), u = clamp(s / tFall, 0, 1);
+      pos.set(P.x - FALL_DRIFT * (1 - u), P.y, zStart - 0.5 * G * s * s);
+      quat = qSpin(0.5 * (1 - u)).multiply(qTilt(lerp(TILT0, TILT1, smoother(u))));
+    } else if (tt < tLeave) {                              // the hit: a brief squash as it skids on the lid
+      const k = tt - tHit;
+      pos.set(P.x + dir.x * KICK * k, P.y + dir.y * KICK * k, zHit);
+      quat = qTilt(TILT1);
+      squash = 1 - 0.08 * Math.sin(Math.PI * k / (tLeave - tHit));
+    } else if (tt < tLand) {                               // one continuous arc: away from the box, one flip, down
       const s = tt - tLeave, u = s / tFly;
-      const xe = 1 - Math.pow(1 - clamp(u / 0.8, 0, 1), 3);
-      dx = lerp(P.x, Lx, xe); dy = lerp(P.y, Ly, xe);
-      dz = zHit + vUp * s - 0.5 * G * s * s;
-      quat = qFlip(Math.PI * 2 * smoother(clamp((u - 0.02) / 0.8, 0, 1)));
-    } else {                                              // landed: a small settling rock, no bounce
-      const s = tt - tLand;
-      dx = Lx; dy = Ly; dz = zLand;
-      squash = 1 - 0.05 * Math.exp(-s / 0.05) * (s < 0.12 ? 1 : 0);
-      quat = qWobble.setFromAxisAngle(V3(0, 1, 0), 0.07 * Math.exp(-s / 0.11) * Math.sin(s * 26));
-      shadowOn = 1;
+      pos.set(lerp(p0x, TD.x, u), lerp(p0y, TD.y, u), zHit + vUp * s - 0.5 * G * s * s);
+      quat = qFlip(Math.PI * 2 * (1 - Math.pow(1 - u, 1.6))).multiply(qTilt(TILT1 * (1 - u)));
+    } else {                                               // touched down: slides a little, settles, no bounce
+      const k = tt - tLand, s = Math.min(k, tSlide), d = vh * s - 0.5 * (vh / tSlide) * s * s;
+      pos.set(TD.x + dir.x * d, TD.y + dir.y * d, zLand);
+      squash = 1 - 0.05 * Math.exp(-k / 0.05) * (k < 0.12 ? 1 : 0);
+      quat = new THREE.Quaternion().setFromAxisAngle(V3(-dir.y, dir.x, 0), 0.06 * Math.exp(-k / 0.12) * Math.sin(k * 24));
     }
     const F2 = figureAt(tf, reduced);
-    if (reduced || (tf >= tStop + tPick * 0.5)) {
-      donut.position.copy(F2.dc); donut.quaternion.copy(F2.dq); squash = 1;
-    } else {
-      if (tt >= tLand) { donut.position.set(groundC.x, groundC.y, groundC.z); donut.quaternion.copy(groundQuat).multiply(quat); }
-      else { donut.position.set(dx, dy, dz); donut.quaternion.copy(quat); }
-    }
+    if (reduced || F2.carried) { donut.position.copy(F2.dc); donut.quaternion.copy(F2.dq); squash = 1; }
+    else { donut.position.copy(pos); donut.quaternion.copy(quat); }
     donut.scale.set(1, 1, squash);
     donut.visible = reduced || tf < tEnd - 0.02;
-    poseFigure(F2.q);
+    figPose = F2.q;
+    figBlob.position.set(F2.q.x + 0.01, F2.q.y + 0.01, -BOXH + 0.001);
+    figBlob.material.opacity = F2.q.visible ? 0.35 : 0;
     // shadows: faint while high up, firm near the ground
     const zz = donut.position.z;
-    ground.material.opacity = 0.32 * clamp(1.2 - (zz + BOXH) / 0.55, 0, 1) + (fig.visible ? 0.0 : 0);
-    if (fig.visible) ground.material.opacity = Math.max(ground.material.opacity, 0.3);
+    ground.material.opacity = Math.max(0.32 * clamp(1.2 - (zz + BOXH) / 0.55, 0, 1), F2.q.visible ? 0.3 : 0);
     shadeWall.opacity = 0.24 * clamp(1.2 - (zz + BOXH) / 0.55, 0, 1);
     shadeLid.opacity = 0.34 * clamp(1.2 - (zz - T) / 0.5, 0, 1);
-    const onGround = !F2.carrying && (tt >= tLand || reduced);
-    if (!reduced && tt < tLand) donutBlob.material.opacity = 0;
+    const onGround = !F2.carried && (reduced || tt >= tLand);
     donutBlob.position.set(donut.position.x + 0.01, donut.position.y + 0.015, -BOXH + 0.001);
-    donutBlob.material.opacity = onGround ? 0.5 * Math.min(1, (tt - tLand) / 0.05 + (reduced ? 1 : 0)) : 0.32 * clamp(1 - (zz - zLand) / 0.25, 0, 1) * (zz < 0 ? 1 : 0);
+    donutBlob.material.opacity = onGround ? 0.5 : (tt < tLand && !reduced ? 0.32 * clamp(1 - (zz - zLand) / 0.25, 0, 1) * (zz < 0 ? 1 : 0) : 0);
     lidProxy.rotation.x = -lid * Math.PI / 180;
     return lid;
   }
 
-  let zoom = null;                                    // debug magnification (see ?dropslow)
-  const draw = () => {
-    if (zoom && fig.visible) {
-      const pm = camera.projectionMatrix.clone(), c = new THREE.Vector3(fig.children[0].position.x, fig.children[0].position.y, fig.children[0].position.z).project(camera);
-      const Tz = new THREE.Matrix4().set(zoom, 0, 0, -zoom * c.x, 0, zoom, 0, -zoom * c.y, 0, 0, 1, 0, 0, 0, 0, 1);
-      camera.projectionMatrix.premultiply(Tz); renderer.render(scene, camera); camera.projectionMatrix.copy(pm); return;
-    }
-    renderer.render(scene, camera);
-  };
+  const draw = () => { renderer.render(scene, camera); drawFigure(); };
   window.addEventListener('resize', () => { if (layout()) { drawLid(); draw(); } });
 
   const settledStatic = () => { hb.el.dataset.drop = 'done'; };
   if (hb.reduced || !ours) {
     // reduced motion (or the lid already opened on its own): a clean final picture, no motion
     frameAt(0, true); hb.render(LID.open); drawLid(LID.open); draw();
-    if (!ours) canvas.classList.add('is-late');
+    if (!ours) { canvas.classList.add('is-late'); figCanvas.classList.add('is-late'); }
     settledStatic();
     return;
   }
@@ -731,16 +765,17 @@ async function start() {
   let seekTo = null;
 
   if (slow > 1) window.HomiesDonutDrop = {
-    seek: (s) => { seekTo = s; }, times: { tHit, tLand, tRunIn, tStop, tTurnAt, tOut, tEnd, tLidRest }, plan, layout: CR,
-    box: (x, y, h, r) => figureBox(x, y, h, r),
-    zoom: (f) => { zoom = f || null; }               // magnify the view round the mascot (checking only)
+    seek: (s) => { seekTo = s; },
+    frame: (s) => { seekTo = s; hb.render(frameAt(s, false, s)); draw(); },   // render one moment right now
+    times: { tHit, tLand, tRest, tRunIn, tStop, tTurnAt, tOut, tEnd, tLidRest }, plan, layout: CR
+
   };
   // where the mascot will act: if that patch of ground is below the fold (short laptop screens), the donut waits on
   // the ground and the mascot runs in once it scrolls into view
   const area = document.createElement('div');
   area.className = 'hb-scene-area'; area.setAttribute('aria-hidden', 'true');
   (() => {
-    const a = figureBox(Lx, Ly, 0.14, SIZE), b = figureBox(stopX, stopY, FIG_H, 0.16);
+    const a = figureBox(Lx, Ly, 0.16, SIZE), b = figureBox(stopX, stopY, FIG_H + 0.08, SIZE * 1.15);
     const x0 = Math.min(a[0], b[0]), y0 = Math.min(a[1], b[1]), x1 = Math.max(a[2], b[2]), y1 = Math.max(a[3], b[3]);
     const offL = parseFloat(canvas.style.left), offT = parseFloat(canvas.style.top);
     Object.assign(area.style, { left: (offL + x0) + 'px', top: (offT + y0) + 'px', width: (x1 - x0) + 'px', height: (y1 - y0) + 'px' });
