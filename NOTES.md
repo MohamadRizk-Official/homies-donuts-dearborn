@@ -62,3 +62,15 @@ Left out until confirmed:
 - Simpsonfont (Sharkshock): wired in from the DEMO file `fonts/Simpsonfont-DEMO.otf`, which is free for personal use only.
   A commercial licence (contact dennis@sharkshock.net, see sharkshock.net/license) is needed before launch.
   The demo has limited punctuation; missing characters fall back to Paytone One.
+
+## Favourite detail views (v5)
+- The six supplied mockups arrived as unnamed attachments; matched by content to 01-Elmo-Donut … 06-Mille-Feuille-Donut.
+  img/fav-detail/<name>-donut.webp is each mockup's donut artwork; <name>-bg.webp is the mockup background with its
+  baked-in text, header, X and donut painted out, so real, working elements sit on top.
+- Clicking a donut in the hero box flies it (one eased path) into the view; closing flies it back into its slot.
+
+## Reviews
+- Three verbatim Google reviews (Moses, Lola D, Diana Gray) from Google's place data for Homie's Donuts,
+  place ID ChIJ_73tSwBLO4gRcI0Y92rwg_Q, fetched 18 Oct 2026. Rating 4.5 from 311 reviews at that date.
+- Leave a Review: https://search.google.com/local/writereview?placeid=ChIJ_73tSwBLO4gRcI0Y92rwg_Q (opens Google sign-in).
+- Read all: https://www.google.com/maps?cid=17619190509406293360

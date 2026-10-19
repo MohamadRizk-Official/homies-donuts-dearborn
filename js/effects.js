@@ -82,7 +82,7 @@
     var FALL_COLORS = ['#ef4f93', '#ffc83d', '#5fc2ef', '#7ad36b', '#cbb9ff', '#ff8a3d'];
     document.querySelectorAll('main > section, .hero').forEach(function (sec, si) {
       var gutter = (window.innerWidth - 1200) / 2;
-      var n = gutter > 90 ? 6 : (window.innerWidth >= 700 ? 3 : 2);
+      var n = gutter > 90 ? 8 : (window.innerWidth >= 700 ? 4 : 3);
       var layer = document.createElement('div'); layer.className = 'fall'; layer.setAttribute('aria-hidden', 'true');
       for (var i = 0; i < n; i++) {
         var s = document.createElement('i');
@@ -195,38 +195,56 @@
           requestAnimationFrame(function () { if (overlapsContent(sec, b.getBoundingClientRect())) { b._pos = freeSpot(sec, b); set(); } });
         }
       };
-      var set = function () { b.style.transform = 'translate(' + b._pos.x + 'px,' + b._pos.y + 'px)'; };
+      var set = function () { b.style.transform = 'translate(' + b._pos.x + 'px,' + b._pos.y + 'px) rotate(' + (b._ang || 0).toFixed(2) + 'deg)'; };
       place();
       window.addEventListener('resize', place);
       window.addEventListener('load', function () { setTimeout(function () { if (!b._moved && overlapsContent(sec, b.getBoundingClientRect())) { b._pos = freeSpot(sec, b); set(); } }, 600); });
 
       var drag = null, raf = null;
+      b._ang = 0; b._angV = 0; b._vx = 0; b._vy = 0;
+      // one physics loop: follows the pointer softly while held, then coasts with gravity, damping and a swinging basket
+      var tick = function () {
+        var sr = sec.getBoundingClientRect();
+        var maxX = sr.width - b.offsetWidth, maxY = sr.height - b.offsetHeight;
+        if (drag) {
+          var tx = drag.px - drag.ox, ty = drag.py - drag.oy;
+          var nx = b._pos.x + (tx - b._pos.x) * 0.35, ny = b._pos.y + (ty - b._pos.y) * 0.35;
+          b._vx = nx - b._pos.x; b._vy = ny - b._pos.y;
+          b._pos.x = nx; b._pos.y = ny;
+        } else {
+          b._vy += (b._g || 0); b._g = (b._g || 0) * 0.97;   // light gravity that fades as it settles back to floating
+          b._vx *= 0.965; b._vy *= 0.955;      // air damping
+          b._pos.x += b._vx; b._pos.y += b._vy;
+          if (b._pos.x < 0 || b._pos.x > maxX) { b._vx = -b._vx * 0.5; b._pos.x = Math.min(Math.max(b._pos.x, 0), maxX); }
+          if (b._pos.y < 0 || b._pos.y > maxY) { b._vy = -b._vy * 0.4; b._pos.y = Math.min(Math.max(b._pos.y, 0), maxY); }
+        }
+        // moving right → the basket lags behind (left), so the balloon leans right
+        var targetAng = Math.max(-28, Math.min(28, b._vx * 2.4));
+        b._angV += (targetAng - b._ang) * 0.09; b._angV *= 0.82; b._ang += b._angV;
+        set();
+        var moving = drag || Math.abs(b._vx) + Math.abs(b._vy) > 0.15 || Math.abs(b._ang) > 0.4 || Math.abs(b._angV) > 0.05;
+        if (moving) raf = requestAnimationFrame(tick);
+        else { b._ang = 0; set(); b.classList.remove('is-flying'); settle(); }
+      };
       b.addEventListener('pointerdown', function (e) {
-        e.preventDefault(); b.setPointerCapture(e.pointerId); b._moved = true;
-        cancelAnimationFrame(raf); b.classList.add('is-grabbed'); b.classList.remove('is-hidden');
-        drag = { ox: e.clientX - b._pos.x, oy: e.clientY - b._pos.y, hist: [{ x: e.clientX, y: e.clientY, t: performance.now() }] };
+        e.preventDefault(); try { b.setPointerCapture(e.pointerId); } catch (err) {} b._moved = true;
+        b.classList.add('is-grabbed', 'is-flying'); b.classList.remove('is-hidden');
+        drag = { ox: e.clientX - b._pos.x, oy: e.clientY - b._pos.y, px: e.clientX, py: e.clientY };
+        cancelAnimationFrame(raf);
+        if (reduce) return;
+        raf = requestAnimationFrame(tick);
       });
       b.addEventListener('pointermove', function (e) {
         if (!drag) return;
-        b._pos = { x: e.clientX - drag.ox, y: e.clientY - drag.oy }; set();
-        drag.hist.push({ x: e.clientX, y: e.clientY, t: performance.now() }); if (drag.hist.length > 6) drag.hist.shift();
+        drag.px = e.clientX; drag.py = e.clientY;
+        if (reduce) { b._pos = { x: e.clientX - drag.ox, y: e.clientY - drag.oy }; set(); }
       });
       var release = function () {
         if (!drag) return;
-        var h = drag.hist, a = h[0], z = h[h.length - 1], dt = Math.max(16, z.t - a.t);
-        var vx = reduce ? 0 : (z.x - a.x) / dt * 16, vy = reduce ? 0 : (z.y - a.y) / dt * 16;
         drag = null; b.classList.remove('is-grabbed');
-        var sr = sec.getBoundingClientRect();
-        var step = function () {
-          vx *= 0.93; vy *= 0.93;
-          b._pos.x += vx; b._pos.y += vy;
-          var maxX = sr.width - b.offsetWidth, maxY = sr.height - b.offsetHeight;
-          if (b._pos.x < 0 || b._pos.x > maxX) { vx = -vx * 0.6; b._pos.x = Math.min(Math.max(b._pos.x, 0), maxX); }
-          if (b._pos.y < 0 || b._pos.y > maxY) { vy = -vy * 0.6; b._pos.y = Math.min(Math.max(b._pos.y, 0), maxY); }
-          set();
-          if (Math.abs(vx) + Math.abs(vy) > 0.3) raf = requestAnimationFrame(step); else settle();
-        };
-        step();
+        if (reduce) { settle(); return; }
+        // keep the throw from the last few frames, gently capped
+        b._vx = Math.max(-26, Math.min(26, b._vx * 1.1)); b._vy = Math.max(-26, Math.min(26, b._vy * 1.1)); b._g = 0.14;
       };
       var settle = function () {
         if (!overlapsContent(sec, b.getBoundingClientRect())) return;
@@ -238,4 +256,38 @@
       b.addEventListener('pointercancel', release);
     });
   });
+
+  /* ---------- 8. traveling LED light around card edges ---------- */
+  var LED = '.tile, .primary-nav .nav-link, .cater-card, .review-card, .polaroid, .reel-phone, .menu-section .card';
+  var ledIO = 'IntersectionObserver' in window ? new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) { en.target.classList.toggle('led-live', en.isIntersecting); });
+  }, { rootMargin: '80px' }) : null;
+  document.querySelectorAll(LED).forEach(function (el) {
+    if (el.querySelector(':scope > .led')) return;
+    var glow = document.createElement('span'); glow.className = 'led-glow'; glow.setAttribute('aria-hidden', 'true');
+    var ring = document.createElement('span'); ring.className = 'led'; ring.setAttribute('aria-hidden', 'true');
+    el.appendChild(glow); el.appendChild(ring); el.classList.add('has-led');
+    if (ledIO) ledIO.observe(el); else el.classList.add('led-live');
+  });
+
+  /* ---------- 9. reviews: swipe on phones, arrows, slow optional advance ---------- */
+  var track = document.querySelector('[data-reviews]');
+  if (track) {
+    var cards = track.querySelectorAll('.review-card');
+    var step = function (dir) {
+      var w = cards[0].getBoundingClientRect().width + 18;
+      var maxL = track.scrollWidth - track.clientWidth;
+      var next = track.scrollLeft + dir * w;
+      if (next > maxL + 4) next = 0; if (next < -4) next = maxL;
+      track.scrollTo({ left: next, behavior: reduce ? 'auto' : 'smooth' });
+    };
+    document.querySelectorAll('[data-rev]').forEach(function (btn) {
+      btn.addEventListener('click', function () { step(btn.getAttribute('data-rev') === 'next' ? 1 : -1); });
+    });
+    // advance slowly on narrow screens only (desktop shows all three); pause on hover, focus or touch
+    var paused = false, timer = null;
+    ['pointerenter', 'focusin', 'touchstart'].forEach(function (ev) { track.parentElement.addEventListener(ev, function () { paused = true; }, { passive: true }); });
+    ['pointerleave', 'focusout'].forEach(function (ev) { track.parentElement.addEventListener(ev, function () { paused = false; }); });
+    if (!reduce) timer = setInterval(function () { if (!paused && track.scrollWidth > track.clientWidth + 10 && !document.hidden) step(1); }, 7000);
+  }
 })();
