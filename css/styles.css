@@ -249,7 +249,7 @@ p { margin: 0; }
 }
 .drawer-link:hover { color: var(--pink-deep); }
 .drawer-sub-title { margin: 18px 6px 10px; font: 600 0.78rem/1 var(--font-body); letter-spacing: 0.14em; text-transform: uppercase; color: var(--pink-deep); }
-.drawer-cats { list-style: none; margin: 0 0 6px; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.drawer-cats { list-style: none; margin: 0 0 22px; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .drawer-cats a {
   display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 8px 14px;
   border-radius: var(--r-md); background: var(--tile); text-decoration: none; color: var(--cocoa);
@@ -552,7 +552,7 @@ html.no-scroll { overflow: hidden; }
    ========================================================================== */
 .visit { position: relative; padding: 76px 0 70px; background: linear-gradient(180deg, var(--cream) 0, var(--cream-2) 100%); overflow: hidden; }
 .visit-grid { position: relative; z-index: 1; display: grid; gap: 18px; }
-@media (min-width: 900px) { .visit-grid { grid-template-columns: 1fr 1.15fr; align-items: stretch; } }
+@media (min-width: 900px) { .visit-grid { max-width: 760px; margin-inline: auto; } }   /* one card now (no embedded map) */
 .visit-card { background: #fff; border-radius: var(--r-lg); padding: 26px 22px; box-shadow: var(--shadow-card); position: relative; }
 .visit-card h3 { font-size: clamp(1.6rem, 6vw, 2.1rem); }
 .visit-card .fun { color: var(--pink); font-size: 1.4rem; display: block; margin-bottom: 4px; }
@@ -1208,9 +1208,29 @@ html.pv-open { overflow: hidden; }
 .review-card footer strong { display: block; font-weight: 600; }
 .review-card footer small { color: var(--cocoa-3); font-size: 0.8rem; }
 .rev-avatar { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font: 700 1rem/1 var(--font-body); color: #fff; background: linear-gradient(135deg, #4285F4, #34A853); }
-.reviews-nav { display: flex; justify-content: center; gap: 12px; margin-top: 4px; }
+.reviews-nav { display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 4px; }
 .rev-btn { width: 46px; height: 46px; border-radius: 50%; border: 0; background: #fff; color: var(--cocoa); cursor: pointer; display: grid; place-items: center; box-shadow: 0 8px 18px -10px rgba(80, 30, 40, 0.5); }
 .rev-btn svg { width: 22px; height: 22px; }
+/* phones and tablets: the carousel runs edge to edge (so a card's glowing edge is never clipped and each card
+   snaps to the page gutter), cards are narrower so the next one shows, and long reviews fold to a few lines */
+@media (max-width: 999.98px) {
+  .reviews-track { margin-inline: calc(var(--gutter) * -1); padding: 18px var(--gutter) 26px; scroll-padding-inline: var(--gutter); align-items: start; }
+  .rev-dots { display: flex; align-items: center; gap: 8px; padding: 0 6px; }
+  .rev-dots i { width: 8px; height: 8px; border-radius: 99px; background: rgba(80, 40, 50, 0.22); transition: width 0.3s ease, background 0.3s ease; }
+  .rev-dots i.on { width: 22px; background: var(--pink); }
+}
+@media (max-width: 639.98px) {
+  .reviews-track { grid-auto-columns: 80%; gap: 14px; }
+  .review-card { padding: 20px 18px 18px; gap: 10px; border-radius: 22px; }
+  .review-card .g-logo { top: 16px; right: 16px; width: 24px; height: 24px; }
+  .review-card .stars { font-size: 1rem; }
+  .review-card blockquote { font-size: 0.92rem; line-height: 1.55; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; overflow: hidden; }
+  .review-card.is-open blockquote { -webkit-line-clamp: unset; display: block; }
+  .rev-more { align-self: flex-start; margin-top: -4px; padding: 2px 0; border: 0; background: none; font: 600 0.85rem/1.2 var(--font-body); color: var(--pink-deep); cursor: pointer; }
+  .rev-avatar { width: 34px; height: 34px; font-size: 0.9rem; }
+}
+@media (min-width: 640px) { .rev-more { display: none; } }
+.rev-more[hidden] { display: none; }
 .reviews-cta { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 14px; margin-top: 26px; position: relative; z-index: 1; }
 .visit { background: linear-gradient(180deg, var(--blush) 0, #fdeeea 160px, var(--cream) 340px, var(--cream-2) 100%); }
 

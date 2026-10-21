@@ -84,6 +84,16 @@ Left out until confirmed:
   place ID ChIJ_73tSwBLO4gRcI0Y92rwg_Q, fetched 18 Oct 2026. Rating 4.5 from 311 reviews at that date.
 - Leave a Review: https://search.google.com/local/writereview?placeid=ChIJ_73tSwBLO4gRcI0Y92rwg_Q (opens Google sign-in).
 - Read all: https://www.google.com/maps?cid=17619190509406293360
+- Phones and tablets: the reviews carousel runs edge to edge with the cards snapping to the page gutter (so a card's
+  glowing edge is never clipped), cards are 80% wide on phones so the next one shows, page dots sit between the
+  arrows, and on phones each review folds to 4 lines with a "Read more". Desktop still shows all three in full.
+
+## Layout choices (Oct 2026)
+- Category order is the same everywhere (homepage tiles, desktop Menu dropdown, phone drawer, menu page bar and
+  sections): savory first, then Pizza Donuts, BEIGNEwiches, Donuts, BUNZ, Desserts, Drinks. It comes from the order in
+  js/menu-data.js plus the static lists in index.html and build-menu.js.
+- Visit Us has no embedded Google Map (the Get directions button already opens Maps).
+- Phone drawer: Call us and Directions side by side, Rate us on Google full width under them.
 
 ## Hero box scene (js/hero-scene.js)
 - Every fresh load / refresh: the box sits closed and still; a chocolate-sprinkle donut falls in already tilted and

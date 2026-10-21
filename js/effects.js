@@ -278,7 +278,7 @@
   if (track) {
     var cards = track.querySelectorAll('.review-card');
     var step = function (dir) {
-      var w = cards[0].getBoundingClientRect().width + 18;
+      var w = cards[0].getBoundingClientRect().width + parseFloat(getComputedStyle(track).columnGap || 18);
       var maxL = track.scrollWidth - track.clientWidth;
       var next = track.scrollLeft + dir * w;
       if (next > maxL + 4) next = 0; if (next < -4) next = maxL;
@@ -286,6 +286,33 @@
     };
     document.querySelectorAll('[data-rev]').forEach(function (btn) {
       btn.addEventListener('click', function () { step(btn.getAttribute('data-rev') === 'next' ? 1 : -1); });
+    });
+    // page dots: one per review, the current one stretched
+    var dotsHost = document.querySelector('[data-rev-dots]'), dots = [];
+    if (dotsHost) {
+      cards.forEach(function () { var d = document.createElement('i'); dotsHost.appendChild(d); dots.push(d); });
+      var markDot = function () {
+        var w = cards[0].getBoundingClientRect().width + parseFloat(getComputedStyle(track).columnGap || 18);
+        var maxL = track.scrollWidth - track.clientWidth;
+        var i = track.scrollLeft >= maxL - 4 ? cards.length - 1 : Math.round(track.scrollLeft / w);
+        dots.forEach(function (d, k) { d.classList.toggle('on', k === i); });
+      };
+      track.addEventListener('scroll', function () { requestAnimationFrame(markDot); }, { passive: true });
+      markDot();
+    }
+    // long reviews fold to a few lines on phones, with a "Read more" to open them
+    cards.forEach(function (card) {
+      var q = card.querySelector('blockquote'); if (!q) return;
+      var more = document.createElement('button'); more.type = 'button'; more.className = 'rev-more'; more.textContent = 'Read more';
+      more.setAttribute('aria-expanded', 'false');
+      q.insertAdjacentElement('afterend', more);
+      more.addEventListener('click', function () {
+        var open = card.classList.toggle('is-open');
+        more.textContent = open ? 'Show less' : 'Read more'; more.setAttribute('aria-expanded', String(open));
+      });
+      var fit = function () { if (!card.classList.contains('is-open')) more.hidden = q.scrollHeight <= q.clientHeight + 2; };
+      fit(); window.addEventListener('resize', fit, { passive: true });
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
     });
     // advance slowly on narrow screens only (desktop shows all three); pause on hover, focus or touch
     var paused = false, timer = null;

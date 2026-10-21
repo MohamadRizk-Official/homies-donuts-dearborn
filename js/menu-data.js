@@ -6,6 +6,50 @@
  */
 window.HOMIES_MENU = [
   {
+    id: 'pizza-donuts',
+    title: 'Pizza Donuts',
+    kicker: 'The savory side of the box',
+    savory: true,
+    banner: { img: 'img/shop/pizza-donut-box.webp', alt: 'A pink box of six pizza donuts with cheese, pepperoni and ranch drizzle' },
+    groups: [
+      {
+        id: 'pizza',
+        title: '',
+        items: [
+          { name: 'Cheese', img: 'img/pizza/Cheese-Pizza-Donut.webp' },
+          { name: 'Pepperoni, Cheese & Hot Honey', img: 'img/pizza/Pepperoni-Cheese-Hot-Honey-Pizza-Donut.webp' },
+          { name: 'Jalapeño Cheddar Ranch', img: 'img/pizza/Jalapeno-Cheddar-Ranch-Pizza-Donut.webp' },
+          { name: 'Pesto Pistachio', img: 'img/pizza/Pesto-Pistachio-Pizza-Donut.webp' },
+          { name: 'Dill Pickle Ranch', img: 'img/pizza/Dill-Pickle-Ranch-Pizza-Donut.webp' },
+          { name: 'Tomato Parsley', img: 'img/pizza/Tomato-Parsley-Pizza-Donut.webp' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'beignewiches',
+    title: 'BEIGNEwiches',
+    kicker: 'Stacked savory sandwiches',
+    savory: true,
+    groups: [
+      {
+        id: 'beignewiches-all',
+        title: '',
+        /* Brief filenames say "Halal Bacon": halal wording is left off until confirmed */
+        items: [
+          { name: 'Cheeseburger', img: 'img/beignewiches/Savory-Donuts-Cheeseburger.webp' },
+          { name: 'Egg & Cheese', img: 'img/beignewiches/Savory-Donuts-Egg-and-Cheese.webp' },
+          { name: 'Egg, Bacon & Cheese', img: 'img/beignewiches/Savory-Donuts-Egg-Halal-Bacon-and-Cheese.webp', verify: true },
+          { name: 'Fried Chicken, Cheese & Bacon', img: 'img/beignewiches/Savory-Donuts-Fried-Chicken-Cheese-Halal-Bacon.webp', verify: true },
+          { name: 'Fried Chicken, Pickle & Chipotle Mayo', img: 'img/beignewiches/Savory-Donuts-Fried-Chicken-Pickle-Chipotle-Mayo.webp' },
+          { name: 'Steak ’n Cheese', img: 'img/beignewiches/Savory-Donuts-Steak-N-Cheese.webp' },
+          { name: 'Steak ’n Egg', img: 'img/beignewiches/Savory-Donuts-Steak-N-Egg.webp' },
+          { name: 'Loaded Potatoes & Steak', img: 'img/beignewiches/Savory-Donuts-Loaded-Potatoes-Steak.webp' }
+        ]
+      }
+    ]
+  },
+  {
     id: 'donuts',
     title: 'Donuts',
     kicker: 'Sweet rings & wild ideas',
@@ -72,27 +116,6 @@ window.HOMIES_MENU = [
     ]
   },
   {
-    id: 'pizza-donuts',
-    title: 'Pizza Donuts',
-    kicker: 'The savory side of the box',
-    savory: true,
-    banner: { img: 'img/shop/pizza-donut-box.webp', alt: 'A pink box of six pizza donuts with cheese, pepperoni and ranch drizzle' },
-    groups: [
-      {
-        id: 'pizza',
-        title: '',
-        items: [
-          { name: 'Cheese', img: 'img/pizza/Cheese-Pizza-Donut.webp' },
-          { name: 'Pepperoni, Cheese & Hot Honey', img: 'img/pizza/Pepperoni-Cheese-Hot-Honey-Pizza-Donut.webp' },
-          { name: 'Jalapeño Cheddar Ranch', img: 'img/pizza/Jalapeno-Cheddar-Ranch-Pizza-Donut.webp' },
-          { name: 'Pesto Pistachio', img: 'img/pizza/Pesto-Pistachio-Pizza-Donut.webp' },
-          { name: 'Dill Pickle Ranch', img: 'img/pizza/Dill-Pickle-Ranch-Pizza-Donut.webp' },
-          { name: 'Tomato Parsley', img: 'img/pizza/Tomato-Parsley-Pizza-Donut.webp' }
-        ]
-      }
-    ]
-  },
-  {
     id: 'bunz',
     title: 'BUNZ',
     kicker: 'Big, swirly cinnamon buns',
@@ -107,29 +130,6 @@ window.HOMIES_MENU = [
           { name: 'Oreo Cheesecake', img: 'img/bunz/BUNZ-Oreo-Cheesecake.webp' },
           { name: 'Pistachio Raspberry', img: 'img/bunz/BUNZ-Pistachio-Raspberry.webp' },
           { name: 'Tiramisu', img: 'img/bunz/BUNZ-Tiramisu.webp' }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'beignewiches',
-    title: 'BEIGNEwiches',
-    kicker: 'Stacked savory sandwiches',
-    savory: true,
-    groups: [
-      {
-        id: 'beignewiches-all',
-        title: '',
-        /* Brief filenames say "Halal Bacon": halal wording is left off until confirmed */
-        items: [
-          { name: 'Cheeseburger', img: 'img/beignewiches/Savory-Donuts-Cheeseburger.webp' },
-          { name: 'Egg & Cheese', img: 'img/beignewiches/Savory-Donuts-Egg-and-Cheese.webp' },
-          { name: 'Egg, Bacon & Cheese', img: 'img/beignewiches/Savory-Donuts-Egg-Halal-Bacon-and-Cheese.webp', verify: true },
-          { name: 'Fried Chicken, Cheese & Bacon', img: 'img/beignewiches/Savory-Donuts-Fried-Chicken-Cheese-Halal-Bacon.webp', verify: true },
-          { name: 'Fried Chicken, Pickle & Chipotle Mayo', img: 'img/beignewiches/Savory-Donuts-Fried-Chicken-Pickle-Chipotle-Mayo.webp' },
-          { name: 'Steak ’n Cheese', img: 'img/beignewiches/Savory-Donuts-Steak-N-Cheese.webp' },
-          { name: 'Steak ’n Egg', img: 'img/beignewiches/Savory-Donuts-Steak-N-Egg.webp' },
-          { name: 'Loaded Potatoes & Steak', img: 'img/beignewiches/Savory-Donuts-Loaded-Potatoes-Steak.webp' }
         ]
       }
     ]

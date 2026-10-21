@@ -26,10 +26,10 @@ const body = `<main id="main">
 
     <nav class="cat-bar" aria-label="Menu categories">
       <ul>
-        <li><a href="#donuts">Donuts</a></li>
         <li><a href="#pizza-donuts">Pizza Donuts</a></li>
-        <li><a href="#bunz">BUNZ</a></li>
         <li><a href="#beignewiches">BEIGNEwiches</a></li>
+        <li><a href="#donuts">Donuts</a></li>
+        <li><a href="#bunz">BUNZ</a></li>
         <li><a href="#desserts">Desserts</a></li>
         <li><a href="#drinks">Drinks</a></li>
       </ul>
