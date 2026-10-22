@@ -71,29 +71,6 @@
     return null;
   }
 
-  /* The six supplied detail mockups. On wide screens the whole mockup is shown, uncropped and unfiltered;
-     real controls sit exactly over its drawn Order Now / Back / X. All boxes are in mockup pixels. */
-  var MOCK = {
-    'Elmo': { file: '01-Elmo-Donut', box: [742, 132, 1471, 878], order: [188, 666, 528, 740], back: [188, 784, 448, 820], x: [1610, 65, 40],
-      edges: ['#fde9de', '#fd9682'], ink: '#ef4f93', title: ['Elmo', 'Donut'], accent: 1,
-      desc: 'A playful classic that brings big smiles.' },
-    'Peanut Butter & Jelly': { file: '02-Peanut-Butter-and-Jelly-Donut', box: [766, 116, 1498, 864], order: [110, 636, 420, 708], back: [110, 736, 340, 772], x: [1611, 89, 40],
-      edges: ['#f8ccc8', '#e89e8a'], ink: '#c2414f', title: ['Peanut', 'Butter & Jelly', 'Donut'], accent: -1,
-      desc: 'A golden donut topped with rich, creamy peanut butter, a center of sweet strawberry jelly, and a crunchy peanut topping.' },
-    'Homers': { file: '03-Homers-Donut', box: [772, 162, 1481, 836], order: [164, 640, 548, 720], back: [168, 752, 414, 792], x: [1580, 146, 42],
-      edges: ['#fce2de', '#f4ddd5'], ink: '#ef4f93', title: ['Homers', 'Donut'], accent: 1,
-      desc: 'A classic done right. Fluffy, golden dough with sweet pink icing and a generous sprinkle of colourful joy.' },
-    'Cookie Monster': { file: '04-Cookie-Monster-Donut', box: [794, 159, 1566, 878], order: [120, 674, 550, 758], back: [124, 794, 400, 838], x: [1604, 62, 40],
-      edges: ['#7acff5', '#e7d2bf'], ink: '#1f86e0', title: ['Cookie', 'Monster', 'Donut'], accent: 1,
-      desc: 'Soft, fluffy donut topped with smooth blue vanilla icing and a generous layer of cookie crumbles.' },
-    'Biscoff': { file: '05-Biscoff-Donut', box: [749, 194, 1511, 868], order: [116, 660, 472, 732], back: [124, 752, 376, 792], x: [1596, 72, 40],
-      edges: ['#c69674', '#cea484'], ink: '#b8641f', title: ['Biscoff', 'Donut'], accent: 1,
-      desc: 'A golden donut topped with creamy Biscoff icing, crushed Biscoff cookies and a hint of cookie crunch in every bite.' },
-    'Mille-Feuille': { file: '06-Mille-Feuille-Donut', box: [756, 129, 1556, 856], order: [112, 618, 432, 690], back: [114, 726, 354, 762], x: [1592, 58, 40],
-      edges: ['#fadbd4', '#facebc'], ink: '#9b4a2c', title: ['Mille-Feuille', 'Donut'], accent: -1,
-      desc: 'Light, flaky layers of golden pastry, filled with silky cream and topped with a smooth fondant finish.' }
-  };
-  var MW = 1672, MH = 940;
   var ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
   // ---- build the view once
@@ -101,11 +78,9 @@
   view.className = 'pv'; view.hidden = true;
   view.setAttribute('role', 'dialog'); view.setAttribute('aria-modal', 'true'); view.setAttribute('aria-labelledby', 'pv-title');
   view.innerHTML =
-    '<div class="pv-bg" aria-hidden="true"><img class="pv-mock" alt="" decoding="async"></div>' +
+    '<div class="pv-bg" aria-hidden="true"></div>' +
     '<div class="pv-accents" aria-hidden="true"></div>' +
     '<div class="pv-flyer" aria-hidden="true"><img class="pv-from" alt=""><img class="pv-to" alt=""></div>' +
-    '<a class="pv-hot pv-hot-order" target="_blank" rel="noopener"><span class="sr-only">Order Now</span></a>' +
-    '<button class="pv-hot pv-hot-back" type="button"><span class="sr-only">Back to favourites</span></button>' +
     '<button class="pv-close" type="button" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/></svg></button>' +
     '<div class="pv-copy">' +
       '<p class="pv-kicker"></p>' +
@@ -119,8 +94,8 @@
     '</div>';
   document.body.appendChild(view);
   var $ = function (s) { return view.querySelector(s); };
-  var flyer = $('.pv-flyer'), fromImg = $('.pv-from'), toImg = $('.pv-to'), mockImg = $('.pv-mock'), copy = $('.pv-copy');
-  var hotOrder = $('.pv-hot-order'), hotBack = $('.pv-hot-back'), closeBtn = $('.pv-close');
+  var flyer = $('.pv-flyer'), fromImg = $('.pv-from'), toImg = $('.pv-to'), copy = $('.pv-copy');
+  var closeBtn = $('.pv-close');
   var state = null;
 
   function accents(spec, n) {
@@ -142,45 +117,23 @@
   function headerBottom() { var b = document.querySelector('.site-header .bar'); return b ? b.getBoundingClientRect().bottom : 70; }
   function place(el, l, t, w, h) { el.style.left = l + 'px'; el.style.top = t + 'px'; el.style.width = w + 'px'; el.style.height = h + 'px'; }
 
-  /* Wide screens: the whole mockup, contained (never cropped or enlarged past the space), top-aligned so its drawn
-     header sits under the real one. Narrow/portrait screens: the same layout rebuilt in HTML with the mockup's donut. */
+  /* Wide screens: product on the right, copy on the left. Narrow/portrait screens: product on top, copy below. */
   function layout() {
-    var W = document.documentElement.clientWidth, H = window.innerHeight;
-    var m = state.mock, full = !!m && W >= 760 && W / H >= 1.15, target;
-    view.classList.toggle('pv--full', full);
-    view.classList.toggle('pv--stacked', !full);
-    if (full) {
-      var s = Math.min((W - 64) / MW, H / MH);
-      var iw = MW * s, ih = MH * s, ox = (W - iw) / 2, oy = 0;
-      place(mockImg, ox, oy, iw, ih);
-      var P = function (b) { return [ox + b[0] * s, oy + b[1] * s, (b[2] - b[0]) * s, (b[3] - b[1]) * s]; };
-      var d = P(m.box); target = { left: d[0], top: d[1], width: d[2], height: d[3] };
-      var o = P(m.order); place(hotOrder, o[0] - 4, o[1] - 4, o[2] + 8, o[3] + 8);
-      var bk = P(m.back); place(hotBack, bk[0] - 6, bk[1] - 6, bk[2] + 12, bk[3] + 12);
-      var size = Math.max(54, m.x[2] * 2 * s + 10);
-      place(closeBtn, ox + m.x[0] * s - size / 2, oy + m.x[1] * s - size / 2, size, size);
-      // keep the real header clear of the close button (it stays centred, just a little narrower)
-      var xl = ox + m.x[0] * s - size / 2;
-      document.documentElement.style.setProperty('--pv-hdr-w', Math.max(700, Math.min(1240, 2 * (xl - 14 - W / 2))) + 'px');
-      copy.style.cssText = '';
+    var W = document.documentElement.clientWidth, H = window.innerHeight, target;
+    var top = headerBottom();
+    var a = state.aspect || 1;
+    var maxH = (H - top) * (state.drink ? 0.46 : 0.4);
+    var w = Math.min(W * 0.78, 460, maxH * a);
+    target = { width: w, height: w / a, left: (W - w) / 2, top: top + 14 };
+    if (W / H >= 1.15) {
+      var hgt = Math.min(H - top - 70, W * 0.36 / a);
+      target = { width: hgt * a, height: hgt, left: W * 0.71 - hgt * a / 2, top: top + (H - top - hgt) / 2 + 10 };
+      var cl = Math.max(28, (W - 1200) / 2 + 24);
+      copy.style.cssText = 'left:' + cl + 'px;width:' + Math.min(560, target.left - cl - 30) + 'px';
+      view.classList.remove('pv--stacked'); view.classList.add('pv--side');
     } else {
-      var top = headerBottom();
-      var a = state.aspect || 1;
-      var maxH = (H - top) * (state.drink ? 0.46 : 0.4);
-      var w = Math.min(W * 0.78, 460, maxH * a);
-      target = { width: w, height: w / a, left: (W - w) / 2, top: top + 14 };
-      if (W / H >= 1.15 && !m) {   // wide, non-favourite: product on the right, copy on the left
-        var hgt = Math.min(H - top - 70, W * 0.36 / a);
-        target = { width: hgt * a, height: hgt, left: W * 0.71 - hgt * a / 2, top: top + (H - top - hgt) / 2 + 10 };
-        var cl = Math.max(28, (W - 1200) / 2 + 24);
-        copy.style.cssText = 'left:' + cl + 'px;width:' + Math.min(560, target.left - cl - 30) + 'px';
-        view.classList.remove('pv--stacked'); view.classList.add('pv--side');
-      } else {
-        view.classList.remove('pv--side');
-        copy.style.cssText = 'left:0;width:' + W + 'px;top:' + (target.top + target.height + 10) + 'px';
-      }
-      closeBtn.style.cssText = '';
-      document.documentElement.style.removeProperty('--pv-hdr-w');
+      view.classList.remove('pv--side'); view.classList.add('pv--stacked');
+      copy.style.cssText = 'left:0;width:' + W + 'px;top:' + (target.top + target.height + 10) + 'px';
     }
     place(flyer, target.left, target.top, target.width, target.height);
     return target;
@@ -202,47 +155,43 @@
     if (!found) return;
     var isFavGroup = found.group.id === 'favourites';
     var fav = FAV[name] && isFavGroup ? FAV[name] : null;
-    var mock = fav && MOCK[name] ? MOCK[name] : null;
     var cat = CAT[found.cat.id] || CAT.donuts;
     var mood = fav ? fav.mood : cat.mood;
     var srcImg = trigger.closest('.dz') ? trigger.closest('.dz').querySelector('.dn img') : (trigger.querySelector('img') || null);
-    state = { trigger: trigger, sourceImg: srcImg, mock: mock, drink: found.cat.id === 'drinks', anims: [] };
+    state = { trigger: trigger, sourceImg: srcImg, drink: found.cat.id === 'drinks', anims: [] };
 
-    view.style.setProperty('--pv-bg1', mock ? mock.edges[0] : mood.bg1); view.style.setProperty('--pv-bg2', mock ? mock.edges[1] : mood.bg2);
-    view.style.setProperty('--pv-ink', mock ? mock.ink : mood.ink); view.style.setProperty('--pv-glow', mood.glow);
-    view.classList.toggle('pv--mock', !!mock);
+    view.style.setProperty('--pv-bg1', mood.bg1); view.style.setProperty('--pv-bg2', mood.bg2);
+    view.style.setProperty('--pv-ink', mood.ink); view.style.setProperty('--pv-glow', mood.glow);
     view.classList.toggle('pv--drink', state.drink);
     $('.pv-kicker').textContent = found.group.title || found.cat.title;
     var h = $('.pv-title'); h.innerHTML = '';
-    var title = mock ? mock.title : fav ? fav.title : [found.item.name];
-    var accentIdx = mock ? mock.accent : title.length - 1;
+    var title = [found.item.name];   // the same plain name heading for every item, favourites included
+    var accentIdx = title.length - 1;
     title.forEach(function (part, i) {
       var span = document.createElement('span'); span.textContent = part;
       if (i === accentIdx && title.length > 1) span.className = 'pv-accent-word';
       h.appendChild(span);
     });
-    $('.pv-desc').textContent = mock ? mock.desc : fav ? fav.desc : defaultCopy(found);
-    [$('.pv-order'), hotOrder].forEach(function (a) {
+    $('.pv-desc').textContent = fav ? fav.desc : defaultCopy(found);
+    [$('.pv-order')].forEach(function (a) {
       a.href = SITE.orderHref || '#';
       if (SITE.orderUrl) a.target = '_blank'; else a.removeAttribute('target');
     });
     $('.pv-back span').textContent = isFavGroup ? 'Back to favourites' : (document.querySelector('[data-menu]') ? 'Back to the menu' : 'Back');
-    accents(fav ? fav.accents : cat.accents, mock ? 8 : 14);
+    accents(fav ? fav.accents : cat.accents, 14);
 
-    var toSrc = mock ? 'img/fav-detail/' + mock.file + '-donut.webp' : (fav ? fav.img : found.item.img);
-    if (mock) mockImg.src = 'img/fav-detail/' + mock.file + '.webp'; else mockImg.removeAttribute('src');
-    mockImg.alt = mock ? (title.join(' ') + ': ' + mock.desc) : '';
+    var toSrc = fav ? fav.img : found.item.img;
     fromImg.src = srcImg ? srcImg.currentSrc || srcImg.src : toSrc;
     toImg.src = toSrc; toImg.alt = found.item.name;
 
     // wait for the new artwork so nothing old or half-loaded ever shows
-    var ready = [toImg, mock ? mockImg : null].filter(Boolean).map(function (im) { return im.decode ? im.decode().catch(function () {}) : null; });
+    var ready = [toImg].map(function (im) { return im.decode ? im.decode().catch(function () {}) : null; });
     Promise.race([Promise.all(ready), new Promise(function (r) { setTimeout(r, 1200); })]).then(function () {
       if (!state) return;
       state.aspect = toImg.naturalWidth && toImg.naturalHeight ? toImg.naturalWidth / toImg.naturalHeight : 1;
       document.documentElement.classList.add('pv-open');
       view.hidden = false;
-      view.classList.remove('is-in', 'is-closing', 'is-landed');
+      view.classList.remove('is-in', 'is-closing');
       var t = layout();
       void view.offsetWidth;
       view.classList.add('is-in');
@@ -258,8 +207,6 @@
         fromImg.style.opacity = 0;
         state.anims.push(flyer.animate([{ opacity: 0, transform: 'scale(.94)' }, { opacity: 1, transform: 'none' }], { duration: dur, easing: 'ease-out', fill: 'both' }));
       }
-      // once landed over the mockup's own donut, hand over to the untouched mockup
-      state.landTimer = setTimeout(function () { if (state && !view.classList.contains('is-closing')) view.classList.add('is-landed'); }, dur + 40);
       setTimeout(function () { closeBtn.focus({ preventScroll: true }); }, reduce ? 0 : 80);
     });
   }
@@ -272,21 +219,18 @@
 
   function finishClose() {
     if (!state) return;
-    clearTimeout(state.closeTimer); clearTimeout(state.landTimer);
+    clearTimeout(state.closeTimer);
     state.anims.forEach(function (a) { a.cancel(); });
     if (state.sourceImg) state.sourceImg.style.visibility = '';
     fromImg.style.opacity = ''; flyer.style.opacity = '';
     view.hidden = true;
-    view.classList.remove('is-in', 'is-closing', 'is-landed');
+    view.classList.remove('is-in', 'is-closing');
     document.documentElement.classList.remove('pv-open');
-    document.documentElement.style.removeProperty('--pv-hdr-w');
     var trig = state.trigger; state = null;
     if (trig && document.contains(trig)) trig.focus({ preventScroll: true });
   }
   function close() {
     if (!state || view.classList.contains('is-closing')) return;
-    clearTimeout(state.landTimer);
-    view.classList.remove('is-landed');   // the flyer takes over from the mockup's donut (same pixels, same place)
     view.classList.add('is-closing'); view.classList.remove('is-in');
     var t = flyer.getBoundingClientRect(), r = sourceRect();
     state.anims.forEach(function (a) { a.cancel(); });
@@ -307,7 +251,6 @@
 
   closeBtn.addEventListener('click', close);
   $('.pv-back').addEventListener('click', close);
-  hotBack.addEventListener('click', close);
   view.addEventListener('click', function (e) { if (e.target === view || e.target.closest('.pv-bg')) close(); });
   document.addEventListener('keydown', function (e) {
     if (view.hidden) return;
@@ -340,7 +283,7 @@
   if (document.querySelector('[data-hero-box]')) {
     window.addEventListener('load', function () {
       setTimeout(function () {
-        Object.keys(MOCK).forEach(function (k) { ['', '-donut'].forEach(function (s) { var i = new Image(); i.src = 'img/fav-detail/' + MOCK[k].file + s + '.webp'; }); });
+        Object.keys(FAV).forEach(function (k) { var i = new Image(); i.src = FAV[k].img; });
       }, 1200);
     });
   }

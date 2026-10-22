@@ -879,9 +879,7 @@ html.pv-open { overflow: hidden; }
     radial-gradient(ellipse 80% 70% at 20% 0%, rgba(255, 255, 255, 0.85), transparent 60%),
     linear-gradient(160deg, var(--pv-bg1) 0%, var(--pv-bg2) 100%); }
 .pv-bgimg { position: absolute; max-width: none; display: block; }
-.pv:not(.pv--mock) .pv-bgimg { display: none; }
 .pv-bg::after { content: ""; position: absolute; left: -10%; right: -10%; bottom: -14%; height: 32%; border-radius: 50% 50% 0 0; background: color-mix(in srgb, var(--pv-bg2) 80%, var(--pv-ink) 12%); opacity: 0.45; }
-.pv--mock .pv-bg::after { display: none; }
 /* soft light behind the text on narrow screens */
 .pv--stacked .pv-bg::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, transparent 30%, rgba(255, 250, 246, 0.72) 62%, rgba(255, 250, 246, 0.85)); }
 .pv-accents { position: absolute; inset: 0; overflow: hidden; pointer-events: none; opacity: 0; transition: opacity 0.6s ease 0.3s; }
@@ -898,7 +896,7 @@ html.pv-open { overflow: hidden; }
 
 .pv-flyer { position: absolute; z-index: 2; transform-origin: 0 0; pointer-events: none; will-change: transform; }
 .pv-flyer img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; max-width: none; }
-.pv:not(.pv--mock) .pv-to { filter: drop-shadow(0 26px 30px rgba(60, 20, 20, 0.32)); }
+.pv .pv-to { filter: drop-shadow(0 26px 30px rgba(60, 20, 20, 0.32)); }
 
 .pv-close { position: absolute; top: calc(var(--header-h) + 14px); right: 18px; z-index: 4; width: 52px; height: 52px; border: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.94); color: var(--pv-ink); cursor: pointer; display: grid; place-items: center; box-shadow: 0 10px 24px -12px rgba(80, 30, 40, 0.6); opacity: 0; transition: opacity 0.3s ease 0.25s, transform 0.25s ease; }
 .pv.is-in .pv-close { opacity: 1; }
@@ -1249,40 +1247,18 @@ html.pv-open { overflow: hidden; }
 @media (min-width: 1000px) { .reviews-nav { display: none; } }
 
 /* ==========================================================================
-   v6 — full mockups, clean donut hover, clear close, Rate Us
+   v6 — detail view, clean donut hover, clear close, Rate Us
    ========================================================================== */
-/* the detail view: the supplied mockup, whole and sharp */
-.pv-bg { background: linear-gradient(180deg, var(--pv-bg1), var(--pv-bg2)); }
-.pv:not(.pv--mock) .pv-bg { background:
-    radial-gradient(ellipse 50% 60% at 72% 52%, var(--pv-glow), transparent 70%),
-    radial-gradient(ellipse 80% 70% at 20% 0%, rgba(255, 255, 255, 0.85), transparent 60%),
-    linear-gradient(160deg, var(--pv-bg1) 0%, var(--pv-bg2) 100%); }
-.pv-mock { position: absolute; display: none; max-width: none; object-fit: contain; image-rendering: auto; filter: none; transform: none; }
-.pv--full .pv-mock { display: block; }
-.pv--full .pv-bg { transition: opacity 0.45s ease 0.22s; }
-.pv--full .pv-accents { display: none; }
+/* the detail view: soft mood gradient, the product on top of it */
 .pv-bgimg { display: none; }
-/* the flyer covers the mockup's own donut while flying, then hands over to the untouched mockup */
 .pv-flyer { transition: opacity 0.18s ease; }
-.pv--full.is-landed .pv-flyer { opacity: 0 !important; }
-.pv:not(.pv--full) .pv-to { filter: drop-shadow(0 22px 26px rgba(60, 20, 20, 0.28)); }
-/* in full view the mockup itself shows the title, text and buttons; the real copy stays for screen readers */
-.pv--full .pv-copy { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-.pv--full .pv-actions { display: none; }
-.pv-hot { position: absolute; z-index: 5; display: none; border: 0; background: transparent; border-radius: 999px; cursor: pointer; padding: 0;
-  transition: box-shadow 0.25s ease, background 0.25s ease; }
-.pv--full .pv-hot { display: block; }
-.pv-hot-order:hover { background: rgba(255, 255, 255, 0.14); box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.85), 0 12px 24px -10px rgba(201, 47, 115, 0.6); }
-.pv-hot-back:hover { background: rgba(255, 255, 255, 0.35); }
-.pv-hot:focus-visible { outline: 3px solid #2f9fd8; outline-offset: 3px; }
-/* the close button: big, high contrast, sits on the mockup's own X with room from the edge */
+.pv .pv-to { filter: drop-shadow(0 22px 26px rgba(60, 20, 20, 0.28)); }
+/* the close button: big, high contrast, with room from the edge */
 .pv-close { width: 58px; height: 58px; background: #fff; color: var(--cocoa); border: 3px solid var(--pv-ink, #ef4f93);
   box-shadow: 0 10px 24px -8px rgba(60, 20, 30, 0.55); right: 22px; top: calc(var(--header-h) + 16px); }
-.pv--full .pv-close { right: auto; }
 .pv-close svg { width: 46%; height: 46%; }
 .pv-close:hover { transform: scale(1.06); background: #fff5f8; }
 .pv-close:focus-visible { outline: 3px solid #2f9fd8; outline-offset: 3px; }
-/* while open, the real header covers the mockup's drawn one completely */
 html.pv-open .site-header .bar { background: #fffaf4; -webkit-backdrop-filter: none; backdrop-filter: none; }
 
 /* ---------- hero box donuts: rise only; no ring, nothing left behind ---------- */
@@ -1316,9 +1292,6 @@ html.pv-open .rate-tab { display: none; }
 @keyframes starshine { 0%, 55% { background-position: 100% 0; } 100% { background-position: -50% 0; } }
 .rating small { color: var(--cocoa-3); font-size: 0.82rem; }
 @media (prefers-reduced-motion: reduce) { .shine-stars::before { animation: none; } }
-html.pv-open .site-header .bar { max-width: var(--pv-hdr-w, 1240px); transition: max-width 0.3s ease; }
-/* the band below a mockup on taller screens: a soft continuation of the mockup's lower edge */
-.pv--full .pv-bg { background: linear-gradient(180deg, var(--pv-bg1) 0, var(--pv-bg2) 70%, color-mix(in srgb, var(--pv-bg2) 70%, #fff) 100%); }
 
 /* ==========================================================================
    Hero box donut overlay (box donuts only)

@@ -72,12 +72,11 @@ Left out until confirmed:
   the backdrop and the panel's outer edges. Close with X, Escape or a click outside.
 
 ## Favourite detail views (menu and shelf cards)
-- The six mockups (img/fav-detail/01-Elmo-Donut.webp … 06-Mille-Feuille-Donut.webp) are the supplied files, unchanged.
-  They arrived as unnamed .webp attachments and were matched to names by content.
-- Wide screens show the whole mockup (object-fit: contain, never cropped or enlarged, no filters). Real links/buttons sit
-  exactly over its drawn Order Now, Back to favourites and X. Narrow/portrait screens rebuild the layout in HTML with the
-  mockup's own donut artwork (*-donut.webp, an unfiltered crop) and the mockup's wording.
-- Clicking a donut in the hero box flies it into its spot in the mockup; closing flies it back.
+- Every product, the six favourites included, opens the same detail view (js/product-view.js): name, a short line,
+  Order Now and Back, with the product photo on the right (wide screens) or on top (phones). The favourites keep their
+  own photo (img/fav/*.webp), a description of what's visible and a colour tint; everything else uses its category's.
+- The six supplied full-page mockups (with a header drawn into the image) were removed in Oct 2026 at the owner's
+  request; img/fav-detail/ is gone.
 
 ## Reviews
 - Three verbatim Google reviews (Moses, Lola D, Diana Gray) from Google's place data for Homie's Donuts,
